@@ -1,0 +1,293 @@
+% \iffalse meta-comment
+% !TEX program  = pdfLaTeX
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+----------------------------------------------------------------
+l3erw-csutil --- 
+Source repository: TODO
+Source repository mirror: TODO
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+%</readme>
+%<*internal>
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+  \expandafter\begingroup
+\fi
+%</internal>
+%<*install>
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+----------------------------------------------------------------
+l3erw-cs-util --- 
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+\endpreamble
+\postamble
+
+Copyright (C) 2018 by Erwann Rogard
+
+This work may be distributed and/or modified under the
+conditions of the LaTeX Project Public License (LPPL), either
+version 1.3c of this license or (at your option) any later
+version.  The latest version of this license is in the file:
+
+http://www.latex-project.org/lppl.txt
+
+This work is "maintained" (as per LPPL maintenance status) by
+Erwann Rogard.
+
+This work consists of the file  l3erw-csutil.dtx
+and the derived files   l3erw-csutil.ins,
+                                l3erw-csutil.pdf and
+                                l3erw-csutil.sty.
+
+\endpostamble
+\generate{
+  \file{\jobname.sty}{\from{\jobname.dtx}{package}}
+}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\generate{
+  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
+}
+\nopreamble\nopostamble
+%\generate{
+%  \file{README.txt}{\from{\jobname.dtx}{readme}}
+%}
+\ifx\fmtname\nameofplainTeX
+  \expandafter\endbatchfile
+\else
+  \expandafter\endgroup
+\fi
+%</internal>
+%<package>\ProvidesExplPackage
+%<package>  {l3erw-csutil}              % Package name
+%<package>  {2018/05/20}          % Release date
+%<package>  {0.1}                 % Release version
+%<package>  {Handy control sequences} % Description
+%
+%<*driver>
+\documentclass[full]{l3doc}
+\usepackage{l3erw-csutil}
+\usepackage{float}
+\usepackage{tabto}
+\usepackage{cleveref}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{\jobname.sty}
+%
+%
+%\title{^^A
+%  \textsf{l3erw-csutil}\thanks{^^A
+%    This file describes version \fileversion, last revised \filedate.^^A
+%  }^^A
+%}
+%\author{Erwann Rogard\thanks{firstname dot lastname AusTria gmail dot com}}
+%
+%
+%\date{Released \filedate}
+%
+%\maketitle
+%
+%\begin{abstract}\LaTeX3 package defining narrow-purpose control sequences .\end{abstract}
+%
+%\changes{0.1}{2018/05/20}{First version}
+%
+% \section{Usage}\label{sec:usage}
+% \begin{function}{\erw_map:Nn}
+%	\begin{syntax}{\cs{erw_map:Nn}}\meta{cs}\marg{args}
+%     \end{syntax}
+% See Listing~\autoref{listng:map}.
+% Redundant with \cs{tl_map_function:nN} (but I use it to access internals in another package).
+% \end{function}
+%
+% \begin{function}{\erw_map_inline:nn}
+%	\begin{syntax}{\cs{erw_map_inline:nn}}\marg{code}\marg{args}
+%     \end{syntax}
+% See Listing~\autoref{listng:mapinl}
+% \end{function}
+%
+% \begin{function}{\erw_apply:Nn, \erw_apply:cn}
+%	\begin{syntax}{\cs{erw_apply:Nn}}\meta{cs}\marg{args}
+%     \end{syntax}
+% See Listing~\autoref{listng:mapinl}
+% \end{function}
+% \begin{function}{\erw_fold:NV, \erw_fold:cV}
+%	\begin{syntax}{\cs{erw_fold:NV}}\meta{cs}\meta{var}
+%     \end{syntax}
+% See Listing~\autoref{listng:fold}
+% \end{function}
+%
+% \floatstyle{ruled}
+% \newfloat{Listing}{H}{lop}
+% \NewDocumentCommand{\erwtab}{O{0.5}}{\tabto{#1\linewidth}}
+% 
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \\\verb|\cs_set:Npn\__foo #1 {f(#1)}|\erwtab\cs_set:Npn \__foo #1 {(#1)}
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{Initialization}\label{listng:init}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \erwtab\cs_set:Npn \__foo #1 {(#1)}
+% \\\verb|\erw_map:Nn \__foo{{a}{b}{c}}|\erwtab\erw_map:Nn \__foo{{a}{b}{c}}
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{ }\label{listng:map}
+% \end{Listing}
+% 
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \erwtab\cs_set:Npn \__foo #1 {(#1)}
+% \\\verb|\erw_map_inline:nn{|
+% \\\verb|  (#1)}{{a}{b}{c}}| \erwtab\erw_map_inline:nn{(#1)}{{a}{b}{c}}
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{ }\label{listng:mapinl}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \erwtab\cs_set:Npn \__foo #1 {f(#1)}
+% \\\verb|\erw_apply:Nn\__foo{X}|\erwtab\erw_apply:Nn\__foo{X}
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{ }\label{listng:apply}
+% \end{Listing}
+% 
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \erwtab\cs_set:Npn \__foo #1 {f(#1)}
+% \\\verb|\tl_set:Nn \l_tmpa_tl{X}|\erwtab\tl_set:Nn \l_tmpa_tl{X}
+% \\\verb|\erw_fold_set_par:n{Nf}|\erw_fold_set_par:n{Nf}
+% \\\verb|\erw_fold_apply_par:n{Nf}|\erw_fold_apply_par:n{Nf}
+% \\\verb|\erw_fold:NV\__foo\l_tmpa_tl|\erwtab\erw_fold:NV\__foo\l_tmpa_tl
+% \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
+% \\\verb|\cs_set:Npn\__bar #1 {g[#1]}|\erwtab\cs_set:Npn \__bar #1 {g[#1]}
+% \\\verb|\erw_fold:cV{__bar}\l_tmpa_tl|\erwtab\erw_fold:cV {__bar}\l_tmpa_tl
+% \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{ }\label{listng:fold}
+% \end{Listing}
+%
+%\StopEventually{^^A
+%  \PrintChanges
+%  \PrintIndex
+%}
+% 
+% \section{Implementation}
+%
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{expl3}[2018/02/21]
+\ExplSyntaxOn
+\msg_new:nnn
+  {erw_csutil}
+  {generic}
+  {#1}
+\cs_set:Npn \erw_cs_set_eq:NN #1 #2
+{
+  \cs_set:Npn #1 ##1{#2{##1}}
+}
+\cs_generate_variant:Nn \erw_cs_set_eq:Nn {c}
+\cs_set:Npn \erw_cs_set_inline:Nn #1 #2
+{
+  \cs_set:Npn #1 ##1{#2}
+}
+\cs_generate_variant:Nn \erw_cs_set_inline:Nn {c}
+\cs_set:Npn \erw_map:n #1
+{    
+  \__erw_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+}
+\cs_set:Npn \__erw_map:nn #1 #2
+{
+  \quark_if_recursion_tail_stop:n{#1}  
+  \__erw_map:n{#1}  \__erw_map:nn{#2}
+}
+\cs_new:Npn \__erw_map:n #1
+{
+  \msg_error:nnn
+    {erw_csutil}
+    {generic}
+    {__erw_map:n~not~set}
+}
+\cs_set:Npn \erw_map:Nn 
+  #1 % fun 
+  #2 % tl
+{
+  \erw_cs_set_eq:NN \__erw_map:n #1
+  \erw_map:n{#2}  
+}
+\cs_set:Npn \erw_map_inline:nn 
+  #1 % inl 
+  #2 % tl
+{
+  \erw_cs_set_inline:Nn \__erw_map:n {#1}
+  \erw_map:n{#2}
+}
+\cs_set:Npn \erw_apply:Nn 
+  #1 % fun
+  #2 % tl
+{
+  #1{#2}
+}
+\cs_generate_variant:Nn \erw_apply:Nn {No, Nf, Nx, c}
+\tl_set:Nn \__erw_fold_set_par_tl{\c_novalue_tl}
+\tl_set:Nn \__erw_fold_apply_par_tl{\c_novalue_tl}
+\cs_set:Npn \erw_fold_set_par:n #1
+{
+  \tl_set:Nn \__erw_fold_set_par_tl{#1}
+}
+\cs_set:Npn \erw_fold_apply_par:n #1
+{
+  \tl_set:Nn \__erw_fold_apply_par_tl{#1}  
+}
+\cs_set:Npn \erw_fold:NV 
+  #1 % fun 
+  #2 % var
+{
+  \use:c{tl_set:\__erw_fold_set_par_tl}
+     #2
+    {\use:c{erw_apply:\__erw_fold_apply_par_tl}{#1}{#2}}
+}
+\cs_generate_variant:Nn \erw_fold:NV {cV}
+\ExplSyntaxOff
+%    \end{macrocode}
+%
+% \begin{thebibliography}{1}
+%
+% \bibitem{l3pckg} The \LaTeX3 Project Team {\em l3packages}  \url{http://mirror.ctan.org/macros/latex/contrib/l3packages/}
+%
+% \end{thebibliography}
+%
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+\endinput
