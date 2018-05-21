@@ -1,0 +1,112 @@
+%%
+%% This is file `l3erw-csutil.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% l3erw-csutil.dtx  (with options: `package')
+%% ----------------------------------------------------------------
+%% l3erw-cs-util ---
+%% Released under the LaTeX Project Public License v1.3c or later
+%% See http://www.latex-project.org/lppl.txt
+%% ----------------------------------------------------------------
+%% 
+\ProvidesExplPackage
+  {l3erw-csutil}              % Package name
+  {2018/05/20}          % Release date
+  {0.1}                 % Release version
+  {Handy control sequences} % Description
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{expl3}[2018/02/21]
+\ExplSyntaxOn
+\msg_new:nnn
+  {erw_csutil}
+  {generic}
+  {#1}
+\cs_set:Npn \erw_cs_set_eq:NN #1 #2
+{
+  \cs_set:Npn #1 ##1{#2{##1}}
+}
+\cs_generate_variant:Nn \erw_cs_set_eq:Nn {c}
+\cs_set:Npn \erw_cs_set_inline:Nn #1 #2
+{
+  \cs_set:Npn #1 ##1{#2}
+}
+\cs_generate_variant:Nn \erw_cs_set_inline:Nn {c}
+\cs_set:Npn \erw_map:n #1
+{
+  \__erw_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+}
+\cs_set:Npn \__erw_map:nn #1 #2
+{
+  \quark_if_recursion_tail_stop:n{#1}
+  \__erw_map:n{#1}  \__erw_map:nn{#2}
+}
+\cs_new:Npn \__erw_map:n #1
+{
+  \msg_error:nnn
+    {erw_csutil}
+    {generic}
+    {__erw_map:n~not~set}
+}
+\cs_set:Npn \erw_map:Nn
+  #1 % fun
+  #2 % tl
+{
+  \erw_cs_set_eq:NN \__erw_map:n #1
+  \erw_map:n{#2}
+}
+\cs_set:Npn \erw_map_inline:nn
+  #1 % inl
+  #2 % tl
+{
+  \erw_cs_set_inline:Nn \__erw_map:n {#1}
+  \erw_map:n{#2}
+}
+\cs_set:Npn \erw_apply:Nn
+  #1 % fun
+  #2 % tl
+{
+  #1{#2}
+}
+\cs_generate_variant:Nn \erw_apply:Nn {No, Nf, Nx, c}
+\tl_set:Nn \__erw_fold_set_par_tl{\c_novalue_tl}
+\tl_set:Nn \__erw_fold_apply_par_tl{\c_novalue_tl}
+\cs_set:Npn \erw_fold_set_par:n #1
+{
+  \tl_set:Nn \__erw_fold_set_par_tl{#1}
+}
+\cs_set:Npn \erw_fold_apply_par:n #1
+{
+  \tl_set:Nn \__erw_fold_apply_par_tl{#1}
+}
+\cs_set:Npn \erw_fold:NV
+  #1 % fun
+  #2 % var
+{
+  \use:c{tl_set:\__erw_fold_set_par_tl}
+     #2
+    {\use:c{erw_apply:\__erw_fold_apply_par_tl}{#1}{#2}}
+}
+\cs_generate_variant:Nn \erw_fold:NV {cV}
+\ExplSyntaxOff
+%% 
+%% Copyright (C) 2018 by Erwann Rogard
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Erwann Rogard.
+%% 
+%% This work consists of the file  l3erw-csutil.dtx
+%% and the derived files   l3erw-csutil.ins,
+%%                                 l3erw-csutil.pdf and
+%%                                 l3erw-csutil.sty.
+%% 
+%%
+%% End of file `l3erw-csutil.sty'.

@@ -1,0 +1,147 @@
+% \iffalse meta-comment
+% !TEX program  = pdfLaTeX
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+----------------------------------------------------------------
+l3erw --- Bundles together packages sharing the l3erw prefix
+By Erwann Rogard
+Source repository: TODO
+Source repository mirror: TODO
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+%</readme>
+%<*internal>
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+  \expandafter\begingroup
+\fi
+%</internal>
+%<*install>
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+----------------------------------------------------------------
+l3erw --- Bundles together packages sharing the l3erw prefix
+By Erwann Rogard
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+\endpreamble
+\postamble
+
+Copyright (C) 2018 by Erwann Rogard
+
+This work may be distributed and/or modified under the
+conditions of the LaTeX Project Public License (LPPL), either
+version 1.3c of this license or (at your option) any later
+version.  The latest version of this license is in the file:
+
+http://www.latex-project.org/lppl.txt
+
+This work is "maintained" (as per LPPL maintenance status) by Erwann Rogard.
+
+This work consists of the file  l3erw.dtx
+and the derived files   l3erw.ins,
+                                l3erw.pdf and
+                                l3erw.sty.
+
+\endpostamble
+\generate{
+  \file{\jobname.sty}{\from{\jobname.dtx}{package}}
+}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\generate{
+  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
+}
+\nopreamble\nopostamble
+\generate{
+  \file{README.txt}{\from{\jobname.dtx}{readme}}
+}
+\ifx\fmtname\nameofplainTeX
+  \expandafter\endbatchfile
+\else
+  \expandafter\endgroup
+\fi
+%</internal>
+%<package>\ProvidesExplPackage
+%<package>  {l3erw}              % Package name
+%<package>  {2018/05/20}          % Release date
+%<package>  {0.1}                 % Release version
+%<package>  {Bundle of utilities} % Description
+%
+%<*driver>
+\documentclass[full]{l3doc}
+\usepackage{l3erw}
+\usepackage{comment}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{\jobname.sty}
+%
+%
+%\title{^^A
+%  \textsf{l3erw}\thanks{^^A
+%    This file describes version \fileversion, last revised \filedate.^^A
+%  }^^A
+%}
+%\author{Erwann Rogard\thanks{firstname dot lastname AusTria gmail dot com}}
+%
+%\date{Released \filedate}
+%
+%\maketitle
+%
+%\begin{abstract}Bundles \LaTeX3 packages sharing the \pkg{l3erw} prefix. \end{abstract}
+% 
+% List of packages in this bundle: 
+%\begin{itemize}
+% \item \pkg{l3erw-compose}: compose control sequences, whether predefined or inline
+% \item \pkg{l3erw-csutil}: narrow purpose control sequences (backend to other packages)
+% \item \pkg{l3erw-disambig}: wrapper around \cs{NewDocumentCommand} to prevent name conflicts with external cmds
+% \item \pkg{l3erw-numbrdcs}: numbered control sequences built from other control sequences or inline
+% \end{itemize}
+% 
+%
+% \changes{0.1}{2018/05/20}{First version}
+%
+%\StopEventually{^^A
+%  \PrintChanges
+%  \PrintIndex
+%}
+% 
+%
+% \section{Implementation}
+%
+% \iffalse
+%<*package>
+% \fi
+%
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{l3erw-disambig}[2018/05/20]
+\RequirePackage{l3erw-csutil}[2018/05/20]
+\RequirePackage{l3erw-numbrdcs}[2018/05/20]
+\RequirePackage{l3erw-compose}[2018/05/20]
+%    \end{macrocode}
+%
+%
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+\endinput
