@@ -1,0 +1,299 @@
+% \iffalse meta-comment
+% !TEX program  = pdfLaTeX
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+----------------------------------------------------------------
+l3erw-numbrdcs --- 
+Source repository: TODO
+Source repository mirror: TODO
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+%</readme>
+%<*internal>
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+  \expandafter\begingroup
+\fi
+%</internal>
+%<*install>
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+----------------------------------------------------------------
+l3erw-numbrdcs --- 
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+\endpreamble
+\postamble
+
+Copyright (C) 2018 by Erwann Rogard
+
+This work may be distributed and/or modified under the
+conditions of the LaTeX Project Public License (LPPL), either
+version 1.3c of this license or (at your option) any later
+version.  The latest version of this license is in the file:
+
+http://www.latex-project.org/lppl.txt
+
+This work is "maintained" (as per LPPL maintenance status) by
+Erwann Rogard.
+
+This work consists of the file  l3erw-numbrdcs.dtx
+and the derived files   l3erw-numbrdcs.ins,
+                                l3erw-numbrdcs.pdf and
+                                l3erw-numbrdcs.sty.
+
+\endpostamble
+\generate{
+  \file{\jobname.sty}{\from{\jobname.dtx}{package}}
+}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\generate{
+  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
+}
+\nopreamble\nopostamble
+%\generate{
+%  \file{README.txt}{\from{\jobname.dtx}{readme}}
+%}
+\ifx\fmtname\nameofplainTeX
+  \expandafter\endbatchfile
+\else
+  \expandafter\endgroup
+\fi
+%</internal>
+%<package>\ProvidesExplPackage
+%<package>  {l3erw-numbrdcs}              % Package name
+%<package>  {2018/05/20}          % Release date
+%<package>  {0.1}                 % Release version
+%<package>  {Numbered control sequences} % Description
+%
+%<*driver>
+\documentclass[full]{l3doc}
+\usepackage{l3erw-numbrdcs}
+\IfFileExists{l3erw-compose.sty}{
+   \usepackage{l3erw-compose}
+}{}
+\usepackage{float}
+\usepackage{tabto}
+\usepackage{ccaption}
+\usepackage{cleveref}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{\jobname.sty}
+%
+%
+%\title{^^A
+%  \textsf{l3erw-numbrdcs}\thanks{^^A
+%    This file describes version \fileversion, last revised \filedate.^^A
+%  }^^A
+%}
+%\author{Erwann Rogard\thanks{firstname dot lastname AusTria gmail dot com}}
+%
+%
+%\date{Released \filedate}
+%
+%\maketitle
+%
+%\begin{abstract}\LaTeX3 package to make numbered control sequences from other control sequences or inline.\end{abstract}
+%
+%\changes{0.1}{2018/05/20}{First version}
+%
+% \section{Usage}\label{sec:usage}
+%
+% \subsection{Front end}
+% \begin{function}{\newnumbrdcs,\newnumbrdcs*}
+%   \begin{syntax}\cs{newnumbrdcs}\marg{list of cs or code}
+%   \end{syntax} Creates numbered control sequences. The starred version does not reset. See Listing~\ref{listng:numbrdcs}
+% \end{function}
+%
+% \begin{function}{\numbrdcs}
+%   \begin{syntax}\cs{numbrdcs}\marg{int}\marg{arg}
+%   \end{syntax} Evaluates control sequence numbered \meta{int} with argument \meta{arg}. See Listing~\ref{listng:numbrdcs}
+% \end{function}
+%
+% \floatstyle{ruled}
+% \newfloat{Listing}{H}{lop}
+% \NewDocumentCommand{\erwtab}{O{0.7}}{\tabto{#1\linewidth}}
+% 
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\NewDocumentCommand{\myfoo}{m}{f(#1)}|\erwtab\NewDocumentCommand{\myfoo}{m}{f(#1)}
+% \\\verb|\NewDocumentCommand{\mybar}{m}{g(#1)}|\erwtab\NewDocumentCommand{\mybar}{m}{g(#1)}
+% \\\verb|\NewDocumentCommand{\mybaz}{m}{h(#1)}|\erwtab\NewDocumentCommand{\mybaz}{m}{h(#1)}
+% \caption{Initialization}\label{listng:init}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \erwtab\NewDocumentCommand{\myfoo}{m}{f(#1)}
+% \erwtab\NewDocumentCommand{\mybar}{m}{g(#1)}
+% \erwtab\NewDocumentCommand{\mybaz}{m}{h(#1)}
+% \\\verb|\newnumbrdcs{{\myfoo}{g[#1]}{\mybaz}}|\erwtab\newnumbrdcs{{\myfoo}{g[#1]}{\mybaz}}
+% \\\verb|\numbrdcs{1}{X}|\erwtab\numbrdcs{1}{X}
+% \\\verb|\numbrdcs{2}{X}|\erwtab\numbrdcs{2}{X}
+% \\\verb|\numbrdcs{3}{X}|\erwtab\numbrdcs{3}{X}
+% \\\verb|\newnumbrdcs*{{\myfoo}{g[#1]}{\mybaz}}|\erwtab\newnumbrdcs*{{\myfoo}{g[#1]}{\mybaz}}
+% \\\verb|\numbrdcs{4}{X}|\erwtab\numbrdcs{4}{X}
+% \\\verb|\numbrdcs{5}{X}|\erwtab\numbrdcs{5}{X}
+% \\\verb|\numbrdcs{6}{X}|\erwtab\numbrdcs{6}{X}
+% \caption{ }\label{listng:numbrdcs}
+% \end{Listing}
+%
+% \subsection{Backend}
+% 
+% \begin{function}{\erw_numbrd_cs_reset:}
+%   \begin{syntax}\cs{erw_numbrd_cs_reset:}|{}|
+%   \end{syntax}See Listing~\ref{listng:numbrdcsnames}
+% \end{function}
+%
+% \begin{function}{ \erw_numbrd_cs_new:n}
+%   \begin{syntax}\cs{erw_numbrd_cs_new:n} \marg{cs or code}
+%   \end{syntax} Use it as the first arg to \cs{tl_function_map:Nn}
+% \end{function}
+%
+% \begin{function}{ \erw_numbrd_cs:nn}
+%   \begin{syntax}\cs{erw_numbrd_cs:nn} \marg{cs or code}
+%   \end{syntax} 
+% \end{function}
+%
+% \begin{function}{\erw_numbrd_cs_names_braced:nnn}
+%   \begin{syntax}\cs{erw_numbrd_cs_names_braced:nnn}\marg{first}\marg{step}\marg{last}
+%   \end{syntax}See Listing~\ref{listng:numbrdcsnames}
+% \end{function}
+% 
+% \newif\ifcompose
+% \IfFileExists{l3erw-compose.sty}{\composetrue}{\composefalse}
+% \ifcompose
+% \vspace*{\fill}
+% \begin{Listing}
+% \NewDocumentCommand{\myfoo}{m}{f(#1)}
+% \NewDocumentCommand{\mybar}{m}{g(#1)}
+% \NewDocumentCommand{\mybaz}{m}{h(#1)}
+% \newnumbrdcs{{\myfoo}{g[#1]}{\mybaz}}
+% \verb|\ExplSyntaxOn|
+% \\\verb|\exp_last_unbraced:Nx|
+% \\\verb|  \erw_compose_c:nn|
+% \\\verb|  {|
+% \\\verb|    {\erw_numbrd_cs_names|
+% \\\verb|         _braced:nnn{1}{1}{3}}|
+% \\\verb|    {X}|
+% \\\verb|  }|
+% \\\verb|\ExplSyntaxOff|\erwtab
+% \ExplSyntaxOn
+% \exp_last_unbraced:Nx
+%   \erw_compose_c:nn
+%   {{\erw_numbrd_cs_names_braced:nnn{1}{1}{3}}
+%   {X}}
+% \ExplSyntaxOff
+% \caption{ }\label{listng:numbrdcsnames}
+% \legend{Requires \pkg{l3erw-compose} to be loaded}
+% \end{Listing}
+% \else \file{l3erw-compose.sty} not found, so cannot show the last Listing
+% \fi
+%
+% \section{History}
+% 
+% The idea to create numbered cs arose while developing \pkg{l3erw-compose} and stumbling upon a problem discussed in \cite{tex.stack:431046}
+%
+%\StopEventually{^^A
+%  \PrintChanges
+%  \PrintIndex
+%}
+% 
+% \section{Implementation}
+%
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{expl3}[2018/02/21]
+\RequirePackage{xparse}[2018/02/21]
+\RequirePackage{l3erw-csutil}[2018/05/20]
+\ExplSyntaxOn
+\NewDocumentCommand{\newnumbrdcs}{ s m }
+{
+	\IfBooleanTF{#1}
+		{} 
+		{ \erw_numbrd_cs_reset:{}}
+	\tl_map_function:nN {#2}\erw_numbrd_cs_new:n
+}
+\NewDocumentCommand{\numbrdcs}{ m m }
+{
+	\erw_numbrd_cs:nn{#1}{#2}
+}
+\msg_new:nnn
+  {erw_numbrdcs}
+  {generic}
+  {#1}
+\int_new:N \__erw_numbrd_cs_int
+\cs_set:Npn \erw_numbrd_cs_name:n #1{__erw_numbrd_cs_\int_to_alph:n{#1}:n}
+\cs_set:Npn \erw_numbrd_cs_name_braced:n #1{{\erw_numbrd_cs_name:n{#1}}}
+\tl_set:Nn \__erw_numbrd_cs_name_tl {\erw_numbrd_cs_name:n{\__erw_numbrd_cs_int}}
+\cs_set:Npn \erw_numbrd_cs:nn #1 #2
+{
+	\erw_apply:cn{__erw_numbrd_cs_\int_to_alph:n{#1}:n}{#2}
+}
+\cs_new_protected:Npn \erw_numbrd_cs_reset: 
+{
+	\int_zero:N \__erw_numbrd_cs_int
+	\tl_set:Nn \__erw_numbrd_cs_ext_tl{}
+}
+\cs_new_protected:Npn \erw_numbrd_cs_new:n #1
+{ 
+	\int_incr:N \__erw_numbrd_cs_int
+	\erw_cs_set_inline:cn{\__erw_numbrd_cs_name_tl}
+	{
+		\token_if_cs:NTF
+			{#1}
+			{#1{##1}}
+			{#1}
+	}
+}
+\cs_new:Npn \erw_numbrd_cs_names:nnn #1 #2 #3
+{
+    \int_step_function:nnnN {#1 }{ #2 }{ #3 } \erw_numbrd_cs_name:n
+}
+\cs_new:Npn \erw_numbrd_cs_names_braced:nnn #1 #2 #3
+{
+    \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_numbrd_cs_name_braced:n
+    % TODO \tl_range_braced:nnn?
+}
+\cs_new:Npn \erw_numbrd_cs_names_braced: 
+{
+    \erw_numbrd_cs_names_braced:nnn{1}{1}{\__erw_numbrd_cs_int}
+}
+\ExplSyntaxOff
+%    \end{macrocode}
+%
+% \begin{thebibliography}{1}
+%
+% \bibitem{l3pckg} The \LaTeX3 Project Team {\em l3packages}  \url{http://mirror.ctan.org/macros/latex/contrib/l3packages/}
+% 
+% \bibitem{tex.stack:431046} \url{https://tex.stackexchange.com/questions/431046/calling-expl3s-usec-on-an-expression-expanding-to-a-cs-name-causes-error}
+%
+% \end{thebibliography}
+%
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+\endinput

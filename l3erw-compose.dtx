@@ -1,0 +1,376 @@
+% \iffalse meta-comment
+% !TEX program  = pdfLaTeX
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+----------------------------------------------------------------
+l3erw-compose --- Composition of control sequences
+firstname dot lastname AusTria gmail dot com
+Source repository: TODO
+Source repository mirror: TODO
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+%</readme>
+%<*internal>
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+  \expandafter\begingroup
+\fi
+%</internal>
+%<*install>
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+----------------------------------------------------------------
+l3erw-compose --- Composition of control sequences
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+\endpreamble
+\postamble
+
+Copyright (C) 2018 by Erwann Rogard <firstname dot lastname AusTria gmail dot com>
+
+This work may be distributed and/or modified under the
+conditions of the LaTeX Project Public License (LPPL), either
+version 1.3c of this license or (at your option) any later
+version.  The latest version of this license is in the file:
+
+http://www.latex-project.org/lppl.txt
+
+This work is "maintained" (as per LPPL maintenance status) by
+Erwann Rogard.
+
+This work consists of the file  l3erw-compose.dtx
+and the derived files           l3erw-compose.ins,
+                                l3erw-compose.pdf and
+                                l3erw-compose.sty.
+
+\endpostamble
+\usedir{tex/latex/l3erw}
+\generate{
+  \file{\jobname.sty}{\from{\jobname.dtx}{package}}
+}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\generate{
+  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
+}
+\nopreamble\nopostamble
+\usedir{doc/latex/l3erw}
+%\generate{
+%  \file{README.txt}{\from{\jobname.dtx}{readme}}
+%}
+\ifx\fmtname\nameofplainTeX
+  \expandafter\endbatchfile
+\else
+  \expandafter\endgroup
+\fi
+%</internal>
+%<package>\ProvidesExplPackage
+%<package>  {l3erw-compose}              % Package name
+%<package>  {2018/05/20}          % Release date
+%<package>  {0.1}                 % Release version
+%<package>  {Composition of control sequences (including inline)} % Description
+%
+%<*driver>
+\documentclass[full]{l3doc}
+\usepackage{float}
+\usepackage{tabto}
+\usepackage{l3erw-compose}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{\jobname.sty}
+%
+%
+%\title{^^A
+%  \textsf{l3erw-compose}\thanks{^^A
+%    This file describes version \fileversion, last revised \filedate.^^A
+%  }^^A
+%}
+%\author{Erwann Rogard\thanks{firstname dot lastname AusTria gmail dot com}}
+%
+%\date{Released \filedate}
+%
+%\maketitle
+%
+%\changes{0.1}{2018/05/20}{Initial version}
+%
+%
+% \begin{abstract}
+%
+% \LaTeX3 package to compose control sequences (think $g \circ f$) whether predefined or inline.
+%
+% \end{abstract}
+%
+% \section{Usage}
+%
+% \begin{function}{\erw_compose:nV,\erw_compose:nn}
+%   \begin{syntax}
+%     \cs{erw_compose:nV}\marg{cs list}\meta{var}
+%   \end{syntax}
+% See Listing~\autoref{listng:compose}
+% \end{function}
+%
+% \begin{function}{\erw_compose_c:nV,\erw_compose_c:nn}
+%   \begin{syntax}
+%     \cs{erw_compose_c:nV}\marg{cs names}\meta{var}
+%   \end{syntax}
+% See Listing~\autoref{listng:composec}
+% \end{function}
+%
+% \begin{function}{\erw_compose_seq:nV}
+%   \begin{syntax}
+%     \cs{erw_compose:nV}\marg{cs list}\meta{seq}
+%   \end{syntax}
+% See Listing~\autoref{listng:composeseq}
+% \end{function}
+%
+% \begin{function}{\erw_compose_seq_c:nV}
+%   \begin{syntax}
+%     \cs{erw_compose_c:nV}\marg{cs names}\meta{seq}
+%   \end{syntax}
+% See Listing~\autoref{listng:composeseqc}
+% \end{function}
+%
+% \begin{function}{\erw_compose_vers:nV,\erw_compose_vers:nn}
+%   \begin{syntax}
+%     \cs{erw_compose_vers:nV}\marg{list of cs or code}\meta{var}
+%   \end{syntax}
+% See Listing~\autoref{listng:composevers}.
+% Only the |nn| version is implemented
+% \end{function}
+%
+% \begin{function}{\erw_compose_seq_vers:nV,\erw_compose_seq_vers:nn}
+%   \begin{syntax}
+%     \cs{erw_compose_seq_vers:nV}\marg{list of cs or code}\meta{seq}
+%   \end{syntax}
+% Not implemented.
+% \end{function}
+%
+% \floatstyle{ruled}
+% \newfloat{Listing}{h}{lop}
+% \NewDocumentCommand{\erwtab}{O{0.5}}{\tabto{#1\linewidth}}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \verb|\cs_set:Npn \__foo #1 {f(#1)}|\cs_set:Npn \__foo #1 {f(#1)}
+% \\\verb|\cs_set:Npn \__bar #1 {g[#1]}|\cs_set:Npn \__bar #1 {g[#1]}
+% \\\verb|\cs_set:Npn\__baz #1 {h\{#1\}}|\cs_set:Npn \__baz #1 {h\{#1\}}
+% \ExplSyntaxOff
+% \caption{Initialization}\label{listng:init}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\tl_set:Nn \l_tmpa_tl{X}|\erwtab\tl_set:Nn \l_tmpa_tl{X}
+% \\\verb|\erw_compose:nV{|
+% \\\verb|  {\__foo}{\__bar}{\__baz}}|
+% \\\verb|  \l_tmpa_tl|\erwtab\erw_compose:nV{{\__foo}{\__bar}{\__baz}}\l_tmpa_tl
+% \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
+% \\\verb|\tl_set:Nn \l_tmpa_tl{X}|\tl_set:Nn \l_tmpa_tl{X}
+% \\\verb|\erw_compose:nn{|
+% \\\verb|  {\__foo}{\__bar}{\__baz}}|
+% \\\verb|  {X}|\erwtab\erw_compose:nn{{\__foo}{\__bar}{\__baz}}{X}
+% \ExplSyntaxOff
+% \caption{ }\label{listng:compose}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\tl_set:Nn \l_tmpa_tl{X}|\tl_set:Nn \l_tmpa_tl{X}
+% \\\verb|\erw_compose_c:nV{|
+% \\\verb|  {__foo}{__bar}{__baz}}|
+% \\\verb|  \l_tmpa_tl|\erwtab\erw_compose_c:nV{{__foo}{__bar}{__baz}}\l_tmpa_tl
+% \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
+% \\\verb|\erw_compose_c:nn{|
+% \\\verb|  {__foo}{__bar}{__baz}}|
+% \\\verb|  {X}|\erwtab\erw_compose_c:nn{{__foo}{__bar}{__baz}}{X}
+% \ExplSyntaxOff
+% \caption{ }\label{listng:composec}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\seq_new:N\l_tmp_seq|\erwtab\seq_new:N \l_tmp_seq
+% \\\verb|\seq_put_right:Nn\l_tmp_seq{X}|\erwtab\seq_put_right:Nn \l_tmp_seq{X}
+% \\\verb|  \l_tmp_seq|\erwtab \erw_compose_seq:nV{{\__foo}{\__bar}{\__baz}}\l_tmp_seq
+% \\\verb|\seq_item:Nn\l_tmp_seq{1}|\erwtab \seq_item:Nn \l_tmp_seq{1}
+% \\\verb|\seq_item:Nn\l_tmp_seq{2}|\erwtab \seq_item:Nn \l_tmp_seq{2}
+% \\\verb|\seq_item:Nn\l_tmp_seq{3}|\erwtab \seq_item:Nn \l_tmp_seq{3}
+% \\\verb|\seq_item:Nn\l_tmp_seq{4}|\erwtab \seq_item:Nn \l_tmp_seq{4}
+% \ExplSyntaxOff
+% \caption{}\label{listng:composeseq}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\seq_new:N\l_tmp_seq|
+% \\\verb|\seq_put_right:Nn\l_tmp_seq{X}|\erwtab\seq_put_right:Nn \l_tmp_seq{X}
+% \\\verb|\erw_compose_seq_c:nV{|
+% \\\verb|  {__foo}{__bar}{__baz}}|
+% \\\verb|  \l_tmp_seq|\erwtab \erw_compose_seq_c:nV{{__foo}{__bar}{__baz}}\l_tmp_seq
+% \\\verb|\seq_item:Nn\l_tmp_seq{1}|\erwtab \seq_item:Nn \l_tmp_seq{1}
+% \\\verb|\seq_item:Nn\l_tmp_seq{2}|\erwtab \seq_item:Nn \l_tmp_seq{2}
+% \\\verb|\seq_item:Nn\l_tmp_seq{3}|\erwtab \seq_item:Nn \l_tmp_seq{3}
+% \\\verb|\seq_item:Nn\l_tmp_seq{4}|\erwtab \seq_item:Nn \l_tmp_seq{4}
+% \ExplSyntaxOff
+% \caption{}\label{listng:composeseqc}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\erw_compose_vers:nn{|
+% \\\verb|  {\__foo}{g[#1]}{\__baz}}|
+% \\\verb|  {X}|\erwtab\erw_compose_vers:nn{{\__foo}{g[#1]}{\__baz}}{X}
+% \ExplSyntaxOff
+% \caption{}\label{listng:composevers}
+% \end{Listing}
+%
+% \clearpage
+%\StopEventually{^^A
+%  \PrintChanges
+%  \PrintIndex
+%}
+%
+% \section{History}
+% 
+% It's \cs{erw_compose_versatile} that was problematic. Refer to Section `History' of \pkg{l3erw-numbrdcs} on which it is built. 
+% The use of  \cs{exp_last_unbraced:Nx} originated in \cite{tex.stack:432171}
+%
+% \section{Implementation}
+%
+% \iffalse
+%<*package>
+% \fi
+%
+%    \begin{macrocode}
+\ExplSyntaxOn
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{expl3}[2018/02/21]
+\RequirePackage{l3erw-csutil}[2018/05/20]
+\RequirePackage{l3erw-numbrdcs}[2018/05/20]
+\msg_new:nnn{erw_compose}{generic}{#1}
+\cs_set:Npn \erw_compose:NnV 
+  #1 % method
+  #2 % funs
+  #3 % var
+{
+  \erw_fold_set_par:n{Nf}
+  \erw_fold_apply_par:n{Nf}
+  \erw_cs_set_inline:Nn \__erw_map:n
+  {
+     #1{##1}#3
+  }
+  \erw_map:n{#2} 
+}
+\cs_set:Npn \erw_compose:nV #1 #2 
+{
+  \erw_compose:NnV \erw_fold:NV {#1} #2
+}
+\cs_set:Npn \erw_compose_c:nV #1 #2 
+{
+  \erw_compose:NnV \erw_fold:cV {#1} #2
+}
+\tl_new:N \__erw_compose_tl
+\cs_set:Npn \erw_compose:nn #1 #2
+{
+  \tl_set:Nn \__erw_compose_tl {#2}
+  \erw_compose:nV{#1}\__erw_compose_tl
+  \__erw_compose_tl
+}
+\cs_set:Npn \erw_compose_c:nn #1 #2 
+{
+  \tl_set:Nn \__erw_compose_tl {#2}
+  \erw_compose_c:nV{#1}\__erw_compose_tl
+  \__erw_compose_tl
+}
+\tl_new:N \__erw_fold_seq_item_tl
+\cs_set:Npn \erw_fold_seq:NV 
+  #1 % fun 
+  #2 % seq
+{
+  \seq_get_right:NN #2 \__erw_fold_seq_item_tl
+  \erw_fold:NV #1 \__erw_fold_seq_item_tl
+  \seq_put_right:No #2 {\__erw_fold_seq_item_tl}
+}
+\cs_generate_variant:Nn \erw_fold_seq:NV {cV}
+\cs_set:Npn \erw_compose_seq:nV #1 #2
+{
+  \erw_compose:NnV \erw_fold_seq:NV {#1} #2
+}
+\cs_set:Npn \erw_compose_seq_c:nV
+  #1 % funs 
+  #2 % seq
+{
+  \erw_compose:NnV \erw_fold_seq:cV {#1} #2
+}
+\cs_set:Npn \erw_compose_vers:nV #1 #2
+{
+   \msg_error:nnn{erw_rec}{generic}{erw_compose_vers:nV~to~be~defined}
+}
+\cs_set:Npn \erw_compose_seq_vers:nV #1 #2
+{
+   \msg_error:nnn{erw_rec}{generic}{erw_compose_seq_vers:nV~to~be~defined}
+}
+\cs_set:Npn \erw_compose_vers:nn #1 #2
+{
+   \erw_numbrd_cs_reset:{}
+      \tl_map_function:nN{#1}\erw_numbrd_cs_new:n
+      \exp_last_unbraced:Nx
+      \erw_compose_c:nn
+         {{\erw_numbrd_cs_names_braced:{}}}
+         {#2}
+}
+\ExplSyntaxOff
+%    \end{macrocode}
+%
+% \begin{thebibliography}{1}
+%
+% \bibitem{l3pckg} The \LaTeX3 Project Team {\em l3packages}  \url{http://mirror.ctan.org/macros/latex/contrib/l3packages/}
+% 
+% \bibitem{tex.stack:432171} \url{https://tex.stackexchange.com/questions/432171/expl3-making-arguments-from-a-loop}
+%
+% \end{thebibliography}
+%
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+\endinput
