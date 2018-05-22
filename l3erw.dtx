@@ -115,6 +115,26 @@ and the derived files   l3erw.ins,
 % \item \pkg{l3erw-numbrdcs}: numbered control sequences built from other control sequences or inline
 % \end{itemize}
 % 
+% ^^A \makeatletter
+% ^^A \newif\ifallloaded
+% ^^A \newcommand{\IfPackagesLoaded}[3]{%
+% ^^A   \allloadedtrue
+% ^^A   \@for\@tempa:=#1\do{%
+% ^^A     \ltx@ifpackageloaded{\@tempa}{}{\allloadedfalse}}%
+% ^^A   \ifallloaded #2\else #3\fi}
+% ^^A \makeatother
+% ^^A Check that all of these packages are indeed loaded\footnote{Hat tip to \cite{tex.stack:35282}}:
+% ^^A \IfPackagesLoaded{l3erw-compose, l3erw-csutil, l3erw-disambig, l3erw-numbrdcs}{positive}{negative}.
+% ^^A \begin{thebibliography}{1}
+% ^^A \bibitem{l3pckg} The \LaTeX3 Project Team {\em l3packages}  \url{http://mirror.ctan.org/macros/latex/contrib/l3packages/}
+% ^^A \bibitem{tex.stack:432171} \url{https://tex.stackexchange.com/questions/432171/expl3-making-arguments-from-a-loop}
+% ^^A \ExplSyntaxOn
+% ^^A \cs_set:Nn \__foo:n {(#1)}
+% ^^A \erw_compose:nn {{\__foo:n}}{X}
+% ^^A \erw_apply:Nn \__foo:n{X}
+% ^^A \newnumbrdcs{{\__foo}}
+% ^^A \ExplSyntaxOff
+% ^^A \disambigset{my}
 %
 % \changes{0.1}{2018/05/20}{First version}
 %
