@@ -1,6 +1,5 @@
 ----------------------------------------------------------------
-l3erw --- Bundles together packages sharing the l3erw prefix
-By Erwann Rogard
+erw-l3 --- Utilities built around expl3
 Source repository: TODO
 Source repository mirror: TODO
 Released under the LaTeX Project Public License v1.3c or later
