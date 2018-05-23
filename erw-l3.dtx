@@ -1,0 +1,838 @@
+% \iffalse meta-comment
+% !TEX program  = pdfLaTeX
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+----------------------------------------------------------------
+erw-l3 --- Utilities built around expl3
+Source repository: TODO
+Source repository mirror: TODO
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+%</readme>
+%<*internal>
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+  \expandafter\begingroup
+\fi
+%</internal>
+%<*install>
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+----------------------------------------------------------------
+erw-l3 Utilities built around expl3 
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+\endpreamble
+\postamble
+
+Copyright (C) 2018 by Erwann Rogard
+
+This work may be distributed and/or modified under the
+conditions of the LaTeX Project Public License (LPPL), either
+version 1.3c of this license or (at your option) any later
+version.  The latest version of this license is in the file:
+
+http://www.latex-project.org/lppl.txt
+
+This work is "maintained" (as per LPPL maintenance status) by
+Erwann Rogard.
+
+This work consists of the file  erw-l3.dtx
+and the derived files   erw-l3.ins,
+                                erw-l3.pdf and
+                                erw-l3.sty.
+
+\endpostamble
+\generate{
+  \file{\jobname.sty}{\from{\jobname.dtx}{package}}
+}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\generate{
+  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
+}
+\nopreamble\nopostamble
+\generate{
+  \file{README.txt}{\from{\jobname.dtx}{readme}}
+}
+\ifx\fmtname\nameofplainTeX
+  \expandafter\endbatchfile
+\else
+  \expandafter\endgroup
+\fi
+%</internal>
+%<package>\ProvidesExplPackage
+%<package>  {erw-l3}              % Package name
+%<package>  {2018/05/20}          % Release date
+%<package>  {0.1.1}                 % Release version
+%<package>  {Utilities built around expl3} % Description
+%
+%<*driver>
+\documentclass[full]{l3doc}
+\usepackage{erw-l3}
+\usepackage{float}
+\usepackage{tabto}
+\usepackage{cleveref}
+\ExplSyntaxOn
+\tl_gset:Nn \partname {Part}
+\ExplSyntaxOff
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{\jobname.sty}
+%
+%
+%\title{^^A
+%  \textsf{erw-l3}\thanks{^^A
+%    This file describes version \fileversion, last revised \filedate.^^A
+%  }^^A
+%}
+%\author{Erwann Rogard\thanks{firstname dot lastname AusTria gmail dot com}}
+%
+%
+%\date{Released \filedate}
+%
+%\maketitle
+%
+%\begin{abstract}\LaTeX3 package defining narrow-purpose commands built around \pkg{expl3}. \end{abstract}
+%
+%\changes{0.1}{2018/05/20}{First version}
+%\changes{0.1.1}{2018/05/20}
+% {
+% Changed the name from \pkg{l3erw} to \pkg{erw-l3} as per l3-team request
+% Brought all the modules under one file.
+% Require \pkg{l3keys2e}
+% By module:
+%  \pkg{csutil}/back-end: added usage for \cs{erw_cs_set_eq:Nn} and \cs{erw_cs_set_inline:Nn}
+%  \pkg{disambig}/back-end: changes to the key, added \cs{ProcessPackageKeysOption}
+%  \pkg{numbrdcs}/front-end: 'new' changed from prefix to suffix, made it 'disambiguable'
+% }
+%
+% \section{Intro}
+%
+% This package consists of the following modules
+%
+%   \begin{enumerate}
+% \item \pkg{compose} Musings in recursion. Think $f_1 \circ  f_2  \dots \circ f_n$, where the $f_i$'s are either pre- or inline-defined commands
+%   \end{enumerate}
+%
+%   \begin{enumerate}
+% \item \pkg{csutil} Narrow-purpose, handy, commands
+%   \end{enumerate}
+%
+%   \begin{enumerate}
+% \item \pkg{disambig} Wrapper around \cs{NewDocumentCommand} to prevent name conflicts with existing commands.
+%   \end{enumerate}
+%
+%   \begin{enumerate}
+% \item \pkg{numbrdcs} Numbered commands built from other commands or inline
+%   \end{enumerate}
+%
+% \part{Usage}\label{part:usage}
+%
+% We call front-end commands those that are for typesetting , and back-end commands those 
+% that go into the code of front-end commands. The first and are recognizable by the absence and presence, respectively, of 
+% the prefix |erw_| in, and |_| and |:| inside, their identifier (a.k.a control sequence name).  See Part~`l3bootstrap' of \cite{expl3}.
+%
+% \section{Getting started}
+%
+% Make sure the file \file{erw-l3.sty} is in the path of the \LaTeX~engine. Load the package as follows in the preamble of the document:
+%
+% \cs{usepackage}\oarg{options}|{|\pkg{erw-l3}|}|\linebreak
+%
+% \section{Options}
+% 
+% \DescribeOption{disambig=\meta{prefix}}
+%
+% A prefix that is added to front-end command names, should they conflict with existing commands. For all the modules, except the \pkg{disambig}
+% module itself.
+% 
+% \section{\textsf{csutil}} 
+%
+% \begin{function}{\erw_apply:Nn, \erw_apply:cn}
+%	\begin{syntax}{\cs{erw_apply:Nn}}\meta{cs}\marg{args}
+%     \end{syntax}
+% \end{function}
+%
+%  \begin{function}{\erw_cs_set_eq:NN, \erw_cs_set_eq:cN}
+%     \begin{syntax}{\cs{erw_cs_set_eq:NN}}\meta{cs}\meta{cs}
+%     \end{syntax}
+%  \end{function}
+%
+%  \begin{function}{\erw_cs_set_inline:Nn, \erw_cs_set_inline:cn}
+%     \begin{syntax}{\cs{erw_cs_set_inline:Nn}}\meta{cs}\marg{code}
+%     \end{syntax}
+%  \end{function}
+%
+% \begin{function}{\erw_fold:NV, \erw_fold:cV}
+%	\begin{syntax}{\cs{erw_fold:NV}}\meta{cs}\meta{var}
+%     \end{syntax}
+% See Listing~\autoref{listng:fold}
+% \end{function}
+%
+% \begin{function}{\erw_map:Nn}
+%	\begin{syntax}{\cs{erw_map:Nn}}\meta{cs}\marg{args}
+%     \end{syntax}
+% See Listing~\autoref{listng:map}.
+% Redundant with \cs{tl_map_function:nN} (but I use it to access internals in another package).
+% \end{function}
+%
+% \begin{function}{\erw_map_inline:nn}
+%	\begin{syntax}{\cs{erw_map_inline:nn}}\marg{code}\marg{args}
+%     \end{syntax}
+% See Listing~\autoref{listng:mapinl}
+% \end{function}
+%
+% \section{\textsf{compose}} 
+%
+% \begin{function}{\erw_compose:nV,\erw_compose:nn}
+%   \begin{syntax}
+%     \cs{erw_compose:nV}\marg{cs list}\meta{var}
+%   \end{syntax}
+% See Listing~\autoref{listng:compose}
+% \end{function}
+%
+% \begin{function}{\erw_compose_c:nV,\erw_compose_c:nn}
+%   \begin{syntax}
+%     \cs{erw_compose_c:nV}\marg{cs names}\meta{var}
+%   \end{syntax}
+% See Listing~\autoref{listng:compose:c}
+% \end{function}
+%
+% \begin{function}{\erw_compose_seq:nV}
+%   \begin{syntax}
+%     \cs{erw_compose_seq:nV}\marg{cs list}\meta{seq}
+%   \end{syntax}
+% See Listing~\autoref{listng:compose:seq}
+% \end{function}
+%
+% \begin{function}{\erw_compose_seq_c:nV}
+%   \begin{syntax}
+%     \cs{erw_compose_seq_c:nV}\marg{cs names}\meta{seq}
+%   \end{syntax}
+% See Listing~\autoref{listng:compose:seq:c}
+% \end{function}
+%
+% \begin{function}{\erw_compose_vers:nV,\erw_compose_vers:nn}
+%   \begin{syntax}
+%     \cs{erw_compose_vers:nV}\marg{list of cs or code}\meta{var}
+%   \end{syntax}
+%  See Listing~\autoref{listng:compose:vers}.
+%  Only the |nn| version is implemented
+%  \end{function}
+%
+% \begin{function}{\erw_compose_seq_vers:nV,\erw_compose_seq_vers:nn}
+%   \begin{syntax}
+%     \cs{erw_compose_seq_vers:nV}\marg{list of cs or code}\meta{seq}
+%   \end{syntax}
+%   Not implemented.
+%  \end{function}
+%
+% \section{\textsf{disambig}} 
+%
+% \begin{function}{\disambigset}
+%  \begin{syntax}
+%  \cs{disambigset}\marg{prefix}
+%  \end{syntax}See Listing~\ref{listng:disambig:set}
+% \end{function}
+%
+% \begin{function}{\disambignewcmd, \disambignewcmd*}
+%  \begin{syntax}
+%  \cs{disambignewcmd}\marg{cs name}\marg{pars}\marg{code}
+%  \end{syntax}See Listing~\ref{listng:disambig:cmd}
+% \end{function}
+%
+% \begin{function}{\disambignewenv, \disambignewenv*}
+%  \begin{syntax}
+%  \cs{disambignewenv}\marg{env name}\marg{pars}\marg{code1}\marg{code2}
+%  \end{syntax}See Listing~\ref{listng:disambig:env}
+% \end{function}
+%
+% \section{\textsf{numbrdcs}}
+%
+% \begin{function}{\numbrdcsnew,\numbrdcsnew*}
+%   \begin{syntax}\cs{numbrdcsnew}\marg{list of cs or code}
+%   \end{syntax} Creates numbered control sequences. The starred version does not reset. See Listing~\ref{listng:numbrdcs}
+% \end{function}
+%
+% \begin{function}{\numbrdcs}
+%   \begin{syntax}\cs{numbrdcs}\marg{int}\marg{arg}
+%   \end{syntax} Evaluates control sequence numbered \meta{int} with argument \meta{arg}. See Listing~\ref{listng:numbrdcs}
+% \end{function}
+%
+% \begin{function}{\erw_numbrd_cs_reset:}
+%   \begin{syntax}\cs{erw_numbrd_cs_reset:}|{}|
+%   \end{syntax}See Listing~\ref{listng:numbrdcs:names}
+% \end{function}
+%
+% \begin{function}{ \erw_numbrd_cs_new:n}
+%   \begin{syntax}\cs{erw_numbrd_cs_new:n} \marg{cs or code}
+%   \end{syntax} Use it as the first arg to \cs{tl_function_map:Nn}
+% \end{function}
+%
+% \begin{function}{ \erw_numbrd_cs:nn}
+%   \begin{syntax}\cs{erw_numbrd_cs:nn} \marg{cs or code}
+%   \end{syntax} 
+% \end{function}
+%
+% \begin{function}{\erw_numbrd_cs_names_braced:nnn}
+%   \begin{syntax}\cs{erw_numbrd_cs_names_braced:nnn}\marg{first}\marg{step}\marg{last}
+%   \end{syntax}See Listing~\ref{listng:numbrdcs:names}
+% \end{function}
+%
+% \clearpage
+%
+% \part{Listings}\label{part:listng}
+%
+% \floatstyle{ruled}
+% \newfloat{Listing}{H}{lop}
+% \NewDocumentCommand{\erwtab}{O{0.5}}{\tabto{#1\linewidth}}
+% 
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\NewDocumentCommand{\myfoo}{m}{f(#1)}|
+% \\\verb|\NewDocumentCommand{\mybar}{m}{g(#1)}|
+% \\\verb|\NewDocumentCommand{\mybaz}{m}{h(#1)}|
+% \caption{Initialization}\label{listng:init:front}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \\\verb|\cs_set:Npn\__foo #1 {f(#1)}|
+% \\\verb|\cs_set:Npn\__bar #1 {g[#1]}|
+% \\\verb|\cs_set:Npn\__baz #1 {h\{#1\}}|
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{Initialization}\label{listng:init:back}
+% \end{Listing}
+%
+% \section{compose}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\tl_set:Nn \l_tmpa_tl{X}|\erwtab\tl_set:Nn \l_tmpa_tl{X}
+% \\\verb|\erw_compose:nV{|
+% \\\verb|  {\__foo}{\__bar}{\__baz}}|
+% \\\verb|  \l_tmpa_tl|\erwtab\erw_compose:nV{{\__foo}{\__bar}{\__baz}}\l_tmpa_tl
+% \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
+% \\\verb|\tl_set:Nn \l_tmpa_tl{X}|\tl_set:Nn \l_tmpa_tl{X}
+% \\\verb|\erw_compose:nn{|
+% \\\verb|  {\__foo}{\__bar}{\__baz}}|
+% \\\verb|  {X}|\erwtab\erw_compose:nn{{\__foo}{\__bar}{\__baz}}{X}
+% \ExplSyntaxOff
+% \caption{ }\label{listng:compose}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\tl_set:Nn \l_tmpa_tl{X}|\tl_set:Nn \l_tmpa_tl{X}
+% \\\verb|\erw_compose_c:nV{|
+% \\\verb|  {__foo}{__bar}{__baz}}|
+% \\\verb|  \l_tmpa_tl|\erwtab\erw_compose_c:nV{{__foo}{__bar}{__baz}}\l_tmpa_tl
+% \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
+% \\\verb|\erw_compose_c:nn{|
+% \\\verb|  {__foo}{__bar}{__baz}}|
+% \\\verb|  {X}|\erwtab\erw_compose_c:nn{{__foo}{__bar}{__baz}}{X}
+% \ExplSyntaxOff
+% \caption{ }\label{listng:compose:c}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\seq_new:N\l_tmp_seq|\erwtab\seq_new:N \l_tmp_seq
+% \\\verb|\seq_put_right:Nn\l_tmp_seq{X}|\erwtab\seq_put_right:Nn \l_tmp_seq{X}
+% \\\verb|  \l_tmp_seq|\erwtab \erw_compose_seq:nV{{\__foo}{\__bar}{\__baz}}\l_tmp_seq
+% \\\verb|\seq_item:Nn\l_tmp_seq{1}|\erwtab \seq_item:Nn \l_tmp_seq{1}
+% \\\verb|\seq_item:Nn\l_tmp_seq{2}|\erwtab \seq_item:Nn \l_tmp_seq{2}
+% \\\verb|\seq_item:Nn\l_tmp_seq{3}|\erwtab \seq_item:Nn \l_tmp_seq{3}
+% \\\verb|\seq_item:Nn\l_tmp_seq{4}|\erwtab \seq_item:Nn \l_tmp_seq{4}
+% \ExplSyntaxOff
+% \caption{}\label{listng:compose:seq}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\seq_new:N\l_tmp_seq|
+% \\\verb|\seq_put_right:Nn\l_tmp_seq{X}|\erwtab\seq_put_right:Nn \l_tmp_seq{X}
+% \\\verb|\erw_compose_seq_c:nV{|
+% \\\verb|  {__foo}{__bar}{__baz}}|
+% \\\verb|  \l_tmp_seq|\erwtab \erw_compose_seq_c:nV{{__foo}{__bar}{__baz}}\l_tmp_seq
+% \\\verb|\seq_item:Nn\l_tmp_seq{1}|\erwtab \seq_item:Nn \l_tmp_seq{1}
+% \\\verb|\seq_item:Nn\l_tmp_seq{2}|\erwtab \seq_item:Nn \l_tmp_seq{2}
+% \\\verb|\seq_item:Nn\l_tmp_seq{3}|\erwtab \seq_item:Nn \l_tmp_seq{3}
+% \\\verb|\seq_item:Nn\l_tmp_seq{4}|\erwtab \seq_item:Nn \l_tmp_seq{4}
+% \ExplSyntaxOff
+% \caption{}\label{listng:compose:seq:c}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \ExplSyntaxOn
+% \cs_set:Npn \__foo #1 {f(#1)}
+% \cs_set:Npn \__bar #1 {g[#1]}
+% \cs_set:Npn \__baz #1 {h\{#1\}}
+% \verb|\erw_compose_vers:nn{|
+% \\\verb|  {\__foo}{g[#1]}{\__baz}}|
+% \\\verb|  {X}|\erwtab\erw_compose_vers:nn{{\__foo}{g[#1]}{\__baz}}{X}
+% \ExplSyntaxOff
+% \caption{}\label{listng:compose:vers}
+% \end{Listing}
+%
+% \section{csutil}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \erwtab\cs_set:Npn \__foo #1 {f(#1)}
+% \\\verb|\erw_apply:Nn\__foo{X}|\erwtab\erw_apply:Nn\__foo{X}
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{ }\label{listng:apply}
+% \end{Listing}
+% 
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \erwtab\cs_set:Npn \__foo #1 {f(#1)}
+% \\\verb|\tl_set:Nn \l_tmpa_tl{X}|\erwtab\tl_set:Nn \l_tmpa_tl{X}
+% \\\verb|\erw_fold_set_par:n{Nf}|\erw_fold_set_par:n{Nf}
+% \\\verb|\erw_fold_apply_par:n{Nf}|\erw_fold_apply_par:n{Nf}
+% \\\verb|\erw_fold:NV\__foo\l_tmpa_tl|\erwtab\erw_fold:NV\__foo\l_tmpa_tl
+% \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
+% \\\verb|\cs_set:Npn\__bar #1 {g[#1]}|\erwtab\cs_set:Npn \__bar #1 {g[#1]}
+% \\\verb|\erw_fold:cV{__bar}\l_tmpa_tl|\erwtab\erw_fold:cV {__bar}\l_tmpa_tl
+% \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{ }\label{listng:fold}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \erwtab\cs_set:Npn \__foo #1 {(#1)}
+% \\\verb|\erw_map:Nn \__foo{{a}{b}{c}}|\erwtab\erw_map:Nn \__foo{{a}{b}{c}}
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{ }\label{listng:map}
+% \end{Listing}
+% 
+% \vspace*{\fill}
+% \begin{Listing}
+% \verb|\ExplSyntaxOn| \ExplSyntaxOn
+% \erwtab\cs_set:Npn \__foo #1 {(#1)}
+% \\\verb|\erw_map_inline:nn{|
+% \\\verb|  (#1)}{{a}{b}{c}}| \erwtab\erw_map_inline:nn{(#1)}{{a}{b}{c}}
+% \\\verb|\ExplSyntaxOff|\ExplSyntaxOff
+% \caption{ }\label{listng:mapinl}
+% \end{Listing}
+% 
+% \section{disambig}
+%
+% \begin{Listing}
+% \textbf{Input}
+% \begin{verbatim}
+% \disambigset{my}
+% \end{verbatim}
+% \textbf{Output}
+% \disambigset{my}
+% \caption{}\label{listng:disambig:set}
+% \end{Listing}
+%
+% \begin{Listing}
+% \textbf{Input}
+% \begin{verbatim}
+% \disambignewcmd{foo}{m}{#1~world!}
+% \noindent\myfoo{Hello}
+% \disambignewcmd*{foo}{m}{#1~universe!}
+% \\\myfoo{Hello}
+% \end{verbatim}
+% \textbf{Output}
+% \disambigset{my}
+% \disambignewcmd{foo}{m}{#1~world!}
+% \\\myfoo{Hello}
+% \disambignewcmd*{foo}{m}{#1~universe!}
+% \\\myfoo{Hello}
+% \caption{}\label{listng:disambig:cmd}
+% \end{Listing}
+%
+% \begin{Listing}
+% \textbf{Input}
+% \begin{verbatim}
+% \disambignewenv{bar}{}{\textrightarrow}{\textleftarrow}
+% \begin{mybar}
+%   Hello~world
+% \end{mybar}
+% \disambignewenv*{bar}{}{>}{<}
+% \\\begin{mybar}
+%   Hello~world
+% \end{mybar}
+% \end{verbatim}
+% \textbf{Output}
+% \disambigset{my}
+% \disambignewenv{bar}{}{\textrightarrow}{\textleftarrow}
+% \\\begin{mybar}
+%   Hello~world
+% \end{mybar}
+% \disambignewenv*{bar}{}{>}{<}
+% \\\begin{mybar}
+%   Hello~world
+% \end{mybar}
+% \caption{}\label{listng:disambig:env}
+% \end{Listing}
+%
+% \section{numbrdcs}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \erwtab\NewDocumentCommand{\myfoo}{m}{f(#1)}
+% \erwtab\NewDocumentCommand{\mybar}{m}{g(#1)}
+% \erwtab\NewDocumentCommand{\mybaz}{m}{h(#1)}
+% \\\verb|\numbrdcsnew{{\myfoo}{g[#1]}{\mybaz}}|\erwtab\numbrdcsnew{{\myfoo}{g[#1]}{\mybaz}}
+% \\\verb|\numbrdcs{1}{X}|\erwtab\numbrdcs{1}{X}
+% \\\verb|\numbrdcs{2}{X}|\erwtab\numbrdcs{2}{X}
+% \\\verb|\numbrdcs{3}{X}|\erwtab\numbrdcs{3}{X}
+% \\\verb|\numbrdcsnew*{{\myfoo}{g[#1]}{\mybaz}}|\erwtab\numbrdcsnew*{{\myfoo}{g[#1]}{\mybaz}}
+% \\\verb|\numbrdcs{4}{X}|\erwtab\numbrdcs{4}{X}
+% \\\verb|\numbrdcs{5}{X}|\erwtab\numbrdcs{5}{X}
+% \\\verb|\numbrdcs{6}{X}|\erwtab\numbrdcs{6}{X}
+% \caption{ }\label{listng:numbrdcs}
+% \end{Listing}
+%
+% \vspace*{\fill}
+% \begin{Listing}
+% \NewDocumentCommand{\myfoo}{m}{f(#1)}
+% \NewDocumentCommand{\mybar}{m}{g(#1)}
+% \NewDocumentCommand{\mybaz}{m}{h(#1)}
+% \numbrdcsnew{{\myfoo}{g[#1]}{\mybaz}}
+% \verb|\ExplSyntaxOn|
+% \\\verb|\exp_last_unbraced:Nx|
+% \\\verb|  \erw_compose_c:nn|
+% \\\verb|  {|
+% \\\verb|    {\erw_numbrd_cs_names|
+% \\\verb|         _braced:nnn{1}{1}{3}}|
+% \\\verb|    {X}|
+% \\\verb|  }|
+% \\\verb|\ExplSyntaxOff|\erwtab
+% \ExplSyntaxOn
+% \exp_last_unbraced:Nx
+%   \erw_compose_c:nn
+%   {{\erw_numbrd_cs_names_braced:nnn{1}{1}{3}}
+%   {X}}
+% \ExplSyntaxOff
+% \caption{ }\label{listng:numbrdcs:names}
+% \end{Listing}
+%
+% \part{Other}
+% 
+% \section{Credits} 
+% The idea to create  \pkg{l3erw-numbrdcs} arose while developing \pkg{l3erw-compose} and stumbling upon a problem discussed in \cite{tex.stack:431046}.
+% The use of  \cs{exp_last_unbraced:Nx} originated in \cite{tex.stack:432171}.
+%
+%\StopEventually{^^A
+%  \PrintChanges
+%  \PrintIndex
+%}
+% 
+% \part{Implementation}\label{part:impl}
+%
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{expl3}[2018/02/21]
+\RequirePackage{xparse}[2018/02/21]
+\RequirePackage{l3keys2e}
+\ExplSyntaxOn
+%    \end{macrocode}
+% \section{\textsf{compose}} 
+%    \begin{macrocode}
+\msg_new:nnn{erw_compose}{generic}{#1}
+\cs_set:Npn \erw_compose:NnV 
+  #1 % method
+  #2 % funs
+  #3 % var
+{
+  \erw_fold_set_par:n{Nf}
+  \erw_fold_apply_par:n{Nf}
+  \erw_cs_set_inline:Nn \__erw_map:n
+  {
+     #1{##1}#3
+  }
+  \erw_map:n{#2} 
+}
+\cs_set:Npn \erw_compose:nV #1 #2 
+{
+  \erw_compose:NnV \erw_fold:NV {#1} #2
+}
+\cs_set:Npn \erw_compose_c:nV #1 #2 
+{
+  \erw_compose:NnV \erw_fold:cV {#1} #2
+}
+\tl_new:N \__erw_compose_tl
+\cs_set:Npn \erw_compose:nn #1 #2
+{
+  \tl_set:Nn \__erw_compose_tl {#2}
+  \erw_compose:nV{#1}\__erw_compose_tl
+  \__erw_compose_tl
+}
+\cs_set:Npn \erw_compose_c:nn #1 #2 
+{
+  \tl_set:Nn \__erw_compose_tl {#2}
+  \erw_compose_c:nV{#1}\__erw_compose_tl
+  \__erw_compose_tl
+}
+\tl_new:N \__erw_fold_seq_item_tl
+\cs_set:Npn \erw_fold_seq:NV 
+  #1 % fun 
+  #2 % seq
+{
+  \seq_get_right:NN #2 \__erw_fold_seq_item_tl
+  \erw_fold:NV #1 \__erw_fold_seq_item_tl
+  \seq_put_right:No #2 {\__erw_fold_seq_item_tl}
+}
+\cs_generate_variant:Nn \erw_fold_seq:NV {cV}
+\cs_set:Npn \erw_compose_seq:nV #1 #2
+{
+  \erw_compose:NnV \erw_fold_seq:NV {#1} #2
+}
+\cs_set:Npn \erw_compose_seq_c:nV
+  #1 % funs 
+  #2 % seq
+{
+  \erw_compose:NnV \erw_fold_seq:cV {#1} #2
+}
+\cs_set:Npn \erw_compose_vers:nV #1 #2
+{
+   \msg_error:nnn{erw_rec}{generic}{erw_compose_vers:nV~to~be~defined}
+}
+\cs_set:Npn \erw_compose_seq_vers:nV #1 #2
+{
+   \msg_error:nnn{erw_rec}{generic}{erw_compose_seq_vers:nV~to~be~defined}
+}
+\cs_set:Npn \erw_compose_vers:nn #1 #2
+{
+   \erw_numbrd_cs_reset:{}
+      \tl_map_function:nN{#1}\erw_numbrd_cs_new:n
+      \exp_last_unbraced:Nx
+      \erw_compose_c:nn
+         {{\erw_numbrd_cs_names_braced:{}}}
+         {#2}
+}
+%    \end{macrocode}
+% \section{\textsf{disambig}} 
+%    \begin{macrocode}
+\tl_new:N \__erw_disambig_tl
+\keys_define:nn { erw }    
+{
+  disambig .tl_set:N = \__erw_disambig_tl,
+  disambig .initial:n = \c_empty_tl
+}
+\cs_set:Npn \__erw_disambig:NN #1 #2 {#1{#2}}
+\cs_generate_variant:Nn \__erw_disambig:NN { Nc }
+\NewDocumentCommand{\disambignewcmd}{ s m m m }
+{
+  \IfBooleanTF{#1}
+      {\__erw_disambig:Nc{\RenewDocumentCommand}}
+      {\__erw_disambig:Nc{\NewDocumentCommand}}
+    {\__erw_disambig_tl #2}
+    {#3}
+    {#4}
+}
+\NewDocumentCommand{\disambignewenv}{ s m m m m }
+{
+  \IfBooleanTF{#1}
+    {\RenewDocumentEnvironment}
+    {\NewDocumentEnvironment}
+  {\__erw_disambig_tl #2}
+  {#3}
+  {#4}
+  {#5}
+}
+\NewDocumentCommand{\disambigset}{ m }
+{
+  \keys_set:nn { erw }
+  {    
+        disambig={#1}
+  }        
+}
+\ProcessKeysPackageOptions{ erw }
+%    \end{macrocode}
+% \section{\textsf{csutil}} 
+%    \begin{macrocode}
+\msg_new:nnn
+  {erw_csutil}
+  {generic}
+  {#1}
+\cs_set:Npn \erw_cs_set_eq:NN #1 #2
+{
+  \cs_set:Npn #1 ##1{#2{##1}}
+}
+\cs_generate_variant:Nn \erw_cs_set_eq:NN {cN}
+\cs_set:Npn \erw_cs_set_inline:Nn #1 #2
+{
+  \cs_set:Npn #1 ##1{#2}
+}
+\cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
+\cs_set:Npn \erw_map:n #1
+{    
+  \__erw_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+}
+\cs_set:Npn \__erw_map:nn #1 #2
+{
+  \quark_if_recursion_tail_stop:n{#1}  
+  \__erw_map:n{#1}  \__erw_map:nn{#2}
+}
+\cs_new:Npn \__erw_map:n #1
+{
+  \msg_error:nnn
+    {erw_csutil}
+    {generic}
+    {__erw_map:n~not~set}
+}
+\cs_set:Npn \erw_map:Nn 
+  #1 % fun 
+  #2 % tl
+{
+  \erw_cs_set_eq:NN \__erw_map:n #1
+  \erw_map:n{#2}  
+}
+\cs_set:Npn \erw_map_inline:nn 
+  #1 % inl 
+  #2 % tl
+{
+  \erw_cs_set_inline:Nn \__erw_map:n {#1}
+  \erw_map:n{#2}
+}
+\cs_set:Npn \erw_apply:Nn 
+  #1 % fun
+  #2 % tl
+{
+  #1{#2}
+}
+\cs_generate_variant:Nn \erw_apply:Nn {No, Nf, Nx, c}
+\tl_set:Nn \__erw_fold_set_par_tl{\c_novalue_tl}
+\tl_set:Nn \__erw_fold_apply_par_tl{\c_novalue_tl}
+\cs_set:Npn \erw_fold_set_par:n #1
+{
+  \tl_set:Nn \__erw_fold_set_par_tl{#1}
+}
+\cs_set:Npn \erw_fold_apply_par:n #1
+{
+  \tl_set:Nn \__erw_fold_apply_par_tl{#1}  
+}
+\cs_set:Npn \erw_fold:NV 
+  #1 % fun 
+  #2 % var
+{
+  \use:c{tl_set:\__erw_fold_set_par_tl}
+     #2
+    {\use:c{erw_apply:\__erw_fold_apply_par_tl}{#1}{#2}}
+}
+\cs_generate_variant:Nn \erw_fold:NV {cV}
+%    \end{macrocode}
+% \section{\textsf{numbrdcs}} 
+%    \begin{macrocode}
+\disambignewcmd{numbrdcsnew}{ s m }
+{
+	\IfBooleanTF{#1}
+		{} 
+		{ \erw_numbrd_cs_reset:{}}
+	\tl_map_function:nN {#2}\erw_numbrd_cs_new:n
+}
+\disambignewcmd{numbrdcs}{ m m }
+{
+	\erw_numbrd_cs:nn{#1}{#2}
+}
+\msg_new:nnn
+  {erw_numbrdcs}
+  {generic}
+  {#1}
+\int_new:N \__erw_numbrd_cs_int
+\cs_set:Npn \erw_numbrd_cs_name:n #1{__erw_numbrd_cs_\int_to_alph:n{#1}:n}
+\cs_set:Npn \erw_numbrd_cs_name_braced:n #1{{\erw_numbrd_cs_name:n{#1}}}
+\tl_set:Nn \__erw_numbrd_cs_name_tl {\erw_numbrd_cs_name:n{\__erw_numbrd_cs_int}}
+\cs_set:Npn \erw_numbrd_cs:nn #1 #2
+{
+	\erw_apply:cn{__erw_numbrd_cs_\int_to_alph:n{#1}:n}{#2}
+}
+\cs_new_protected:Npn \erw_numbrd_cs_reset: 
+{
+	\int_zero:N \__erw_numbrd_cs_int
+	\tl_set:Nn \__erw_numbrd_cs_ext_tl{}
+}
+\cs_new_protected:Npn \erw_numbrd_cs_new:n #1
+{ 
+	\int_incr:N \__erw_numbrd_cs_int
+	\erw_cs_set_inline:cn{\__erw_numbrd_cs_name_tl}
+	{
+		\token_if_cs:NTF
+			{#1}
+			{#1{##1}}
+			{#1}
+	}
+}
+\cs_new:Npn \erw_numbrd_cs_names:nnn #1 #2 #3
+{
+    \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_numbrd_cs_name:n
+}
+\cs_new:Npn \erw_numbrd_cs_names_braced:nnn #1 #2 #3
+{
+    \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_numbrd_cs_name_braced:n
+    % TODO \tl_range_braced:nnn?
+}
+\cs_new:Npn \erw_numbrd_cs_names_braced: 
+{
+    \erw_numbrd_cs_names_braced:nnn{1}{1}{\__erw_numbrd_cs_int}
+}
+%    \end{macrocode}
+%    \begin{macrocode}
+\ExplSyntaxOff
+%    \end{macrocode}
+%
+% \begin{thebibliography}{1}
+%
+% \bibitem{l3pckg} The \LaTeX3 Project Team {\em l3packages}  \url{http://mirror.ctan.org/macros/latex/contrib/l3packages/}
+%
+% \bibitem{tex.stack:431046} \url{https://tex.stackexchange.com/questions/431046/calling-expl3s-usec-on-an-expression-expanding-to-a-cs-name-causes-error}
+%
+% \bibitem{tex.stack:432171} \url{https://tex.stackexchange.com/questions/432171/expl3-making-arguments-from-a-loop}
+%
+% \end{thebibliography}
+%
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+\endinput
