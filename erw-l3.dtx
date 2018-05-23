@@ -165,13 +165,13 @@ and the derived files   erw-l3.ins,
 % \section{\textsf{csutil}} 
 %
 % \begin{function}{\erw_apply:Nn, \erw_apply:cn}
-%	\begin{syntax}{\cs{erw_apply:Nn}}\meta{cs}\marg{args}
-%     \end{syntax}
+%	\begin{syntax}{\cs{erw_apply:Nn}}\meta{cs}\marg{arg}
+%     \end{syntax}Expands \meta{cs}\marg{arg}
 % \end{function}
 %
 %  \begin{function}{\erw_cs_set_eq:NN, \erw_cs_set_eq:cN}
-%     \begin{syntax}{\cs{erw_cs_set_eq:NN}}\meta{cs}\meta{cs}
-%     \end{syntax}
+%     \begin{syntax}{\cs{erw_cs_set_eq:NN}}\meta{cs1}\meta{cs2}
+%     \end{syntax}\meta{cs1}\textleftarrow\meta{cs2}
 %  \end{function}
 %
 %  \begin{function}{\erw_cs_set_inline:Nn, \erw_cs_set_inline:cn}
@@ -181,8 +181,8 @@ and the derived files   erw-l3.ins,
 %
 % \begin{function}{\erw_fold:NV, \erw_fold:cV}
 %	\begin{syntax}{\cs{erw_fold:NV}}\meta{cs}\meta{var}
-%     \end{syntax}
-% See Listing~\autoref{listng:fold}
+%     \end{syntax}\meta{var}\textleftarrow \cs{erw_apply:NV}\meta{cs}\meta{var}.
+% See Listing~\autoref{listng:fold}. 
 % \end{function}
 %
 % \begin{function}{\erw_map:Nn}
