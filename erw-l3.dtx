@@ -109,7 +109,7 @@ and the derived files   erw-l3.ins,
 %
 %\maketitle
 %
-%\begin{abstract}\LaTeX3 package defining narrow-purpose commands built around \pkg{expl3}. \end{abstract}
+%\begin{abstract}\LaTeX3 package defining narrow-purpose commands built around \pkg{expl3}\cite{expl3}. \end{abstract}
 %
 %\changes{0.1}{2018/05/20}{First version}
 %\changes{0.1.1}{2018/05/23}
@@ -136,7 +136,7 @@ and the derived files   erw-l3.ins,
 %   \end{enumerate}
 %
 %   \begin{enumerate}
-% \item \pkg{disambig} Wrapper around \cs{NewDocumentCommand} to prevent name conflicts with existing commands.
+% \item \pkg{disambig} Wrapper around \cs{NewDocumentCommand}\cite{xparse} to prevent name conflicts with existing commands.
 %   \end{enumerate}
 %
 %   \begin{enumerate}
@@ -145,9 +145,9 @@ and the derived files   erw-l3.ins,
 %
 % \part{Usage}\label{part:usage}
 %
-% We call front-end commands those that are for typesetting , and back-end commands those 
-% that go into the code of front-end commands. The first and are recognizable by the absence and presence, respectively, of 
-% the prefix |erw_| in, and |_| and |:| inside, their identifier (a.k.a control sequence name).  See Part~`l3bootstrap' of \cite{expl3}.
+% We call front-end commands those that are for typesetting, and back-end commands those 
+% that go into the code of front-end commands. The first and second are recognizable by the absence and presence, respectively, of 
+% the prefix |erw_| in, and |_| and |:| inside, their identifier (a.k.a control sequence name).  See \cite[Part~\pkg{l3bootstrap}]{interface3}.
 %
 % \section{Getting started}
 %
@@ -553,14 +553,23 @@ and the derived files   erw-l3.ins,
 %
 % \part{Other}
 % 
-% \section{Credits} 
+% \section{Acknowledgment} 
 % The idea to create  \pkg{l3erw-numbrdcs} arose while developing \pkg{l3erw-compose} and stumbling upon a problem discussed in \cite{tex.stack:431046}.
 % The use of  \cs{exp_last_unbraced:Nx} originated in \cite{tex.stack:432171}.
 %
 % 
 % % \begin{thebibliography}{1}
 %
-% \bibitem{l3pckg} The \LaTeX3 Project Team {\em l3packages}  \url{http://mirror.ctan.org/macros/latex/contrib/l3packages/}
+% \bibitem{expl3} The \LaTeX3 Project Team {\em The \pkg{expl3} package and \LaTeX3 programming}  
+% \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3kernel/expl3.pdf}
+%
+% \bibitem{interface3} The \LaTeX3 Project Team {\em The \LaTeX3 interfaces} 
+% \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3kernel/interface3.pdf}
+%
+% \bibitem{xparse} The \LaTeX3 Project Team {\em The \pkg{xparse} package} 
+% \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3packages/xparse.pdf}
+%
+% ^^A \bibitem{l3pckg} The \LaTeX3 Project Team {\em l3packages}  \url{http://mirror.ctan.org/macros/latex/contrib/l3packages/}
 %
 % \bibitem{tex.stack:431046} \url{https://tex.stackexchange.com/questions/431046/calling-expl3s-usec-on-an-expression-expanding-to-a-cs-name-causes-error}
 %
