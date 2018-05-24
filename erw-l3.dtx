@@ -122,7 +122,11 @@ and the derived files   erw-l3.ins,
 %  \pkg{disambig}/back-end: changes to the key, added \cs{ProcessPackageKeysOption}
 %  \pkg{numbrdcs}/front-end: 'new' changed from prefix to suffix, made it 'disambiguable'
 % }
-%
+%\changes{0.1.2}{2018/05/24}
+%{
+% By module:
+%  \pkg{compose}/back-end: $g \circ f$ used to apply $g$ before $f$, now it's in the (mathematically) conventional order
+%}
 % \section{Intro}
 %
 % This package consists of the following modules
@@ -145,9 +149,9 @@ and the derived files   erw-l3.ins,
 %
 % \part{Usage}\label{part:usage}
 %
-% We call front-end commands those that are for typesetting, and back-end commands those 
-% that go into the code of front-end commands. The first and second are recognizable by the absence and presence, respectively, of 
-% the prefix |erw_| in, and |_| and |:| inside, their identifier (a.k.a control sequence name).  See \cite[Part~\pkg{l3bootstrap}]{interface3}.
+% We call front-end commands those that are for typesetting, and back-end commands those that go into the code of front-end commands. 
+% The first and second are recognizable by the absence and presence, respectively, of the prefix |erw_| in, and |_| and |:| inside, 
+% their identifier (a.k.a control sequence name).  See \cite[Part~\pkg{l3bootstrap}]{interface3}.
 %
 % \section{Getting started}
 %
@@ -306,8 +310,8 @@ and the derived files   erw-l3.ins,
 % \vspace*{\fill}
 % \begin{Listing}
 % \verb|\NewDocumentCommand{\myfoo}{m}{f(#1)}|
-% \\\verb|\NewDocumentCommand{\mybar}{m}{g(#1)}|
-% \\\verb|\NewDocumentCommand{\mybaz}{m}{h(#1)}|
+% \\\verb|\NewDocumentCommand{\mybar}{m}{g[#1]}|
+% \\\verb|\NewDocumentCommand{\mybaz}{m}{h\{#1\}}|
 % \caption{Initialization}\label{listng:init:front}
 % \end{Listing}
 %
@@ -331,13 +335,13 @@ and the derived files   erw-l3.ins,
 % \cs_set:Npn \__baz #1 {h\{#1\}}
 % \verb|\tl_set:Nn \l_tmpa_tl{X}|\erwtab\tl_set:Nn \l_tmpa_tl{X}
 % \\\verb|\erw_compose:nV{|
-% \\\verb|  {\__foo}{\__bar}{\__baz}}|
-% \\\verb|  \l_tmpa_tl|\erwtab\erw_compose:nV{{\__foo}{\__bar}{\__baz}}\l_tmpa_tl
+% \\\verb|  {\__baz}{\__bar}{\__foo}}|
+% \\\verb|  \l_tmpa_tl|\erwtab\erw_compose:nV{{\__baz}{\__bar}{\__foo}}\l_tmpa_tl
 % \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
 % \\\verb|\tl_set:Nn \l_tmpa_tl{X}|\tl_set:Nn \l_tmpa_tl{X}
 % \\\verb|\erw_compose:nn{|
-% \\\verb|  {\__foo}{\__bar}{\__baz}}|
-% \\\verb|  {X}|\erwtab\erw_compose:nn{{\__foo}{\__bar}{\__baz}}{X}
+% \\\verb|  {\__baz}{\__bar}{\__foo}}|
+% \\\verb|  {X}|\erwtab\erw_compose:nn{{\__baz}{\__bar}{\__foo}}{X}
 % \ExplSyntaxOff
 % \caption{ }\label{listng:compose}
 % \end{Listing}
@@ -350,12 +354,12 @@ and the derived files   erw-l3.ins,
 % \cs_set:Npn \__baz #1 {h\{#1\}}
 % \verb|\tl_set:Nn \l_tmpa_tl{X}|\tl_set:Nn \l_tmpa_tl{X}
 % \\\verb|\erw_compose_c:nV{|
-% \\\verb|  {__foo}{__bar}{__baz}}|
-% \\\verb|  \l_tmpa_tl|\erwtab\erw_compose_c:nV{{__foo}{__bar}{__baz}}\l_tmpa_tl
+% \\\verb|  {__baz}{__bar}{__foo}}|
+% \\\verb|  \l_tmpa_tl|\erwtab\erw_compose_c:nV{{__baz}{__bar}{__foo}}\l_tmpa_tl
 % \\\verb|\l_tmpa_tl|\erwtab\l_tmpa_tl
 % \\\verb|\erw_compose_c:nn{|
-% \\\verb|  {__foo}{__bar}{__baz}}|
-% \\\verb|  {X}|\erwtab\erw_compose_c:nn{{__foo}{__bar}{__baz}}{X}
+% \\\verb|  {__baz}{__bar}{__foo}}|
+% \\\verb|  {X}|\erwtab\erw_compose_c:nn{{__baz}{__bar}{__foo}}{X}
 % \ExplSyntaxOff
 % \caption{ }\label{listng:compose:c}
 % \end{Listing}
@@ -368,7 +372,9 @@ and the derived files   erw-l3.ins,
 % \cs_set:Npn \__baz #1 {h\{#1\}}
 % \verb|\seq_new:N\l_tmp_seq|\erwtab\seq_new:N \l_tmp_seq
 % \\\verb|\seq_put_right:Nn\l_tmp_seq{X}|\erwtab\seq_put_right:Nn \l_tmp_seq{X}
-% \\\verb|  \l_tmp_seq|\erwtab \erw_compose_seq:nV{{\__foo}{\__bar}{\__baz}}\l_tmp_seq
+% \\\verb|  \erw_compose_seq:nV{|
+% \\\verb|    {\__baz}{\__bar}{\__foo}}|
+% \\\verb|    \l_tmp_seq|\erwtab \erw_compose_seq:nV{{\__baz}{\__bar}{\__foo}}\l_tmp_seq
 % \\\verb|\seq_item:Nn\l_tmp_seq{1}|\erwtab \seq_item:Nn \l_tmp_seq{1}
 % \\\verb|\seq_item:Nn\l_tmp_seq{2}|\erwtab \seq_item:Nn \l_tmp_seq{2}
 % \\\verb|\seq_item:Nn\l_tmp_seq{3}|\erwtab \seq_item:Nn \l_tmp_seq{3}
@@ -386,8 +392,8 @@ and the derived files   erw-l3.ins,
 % \verb|\seq_new:N\l_tmp_seq|
 % \\\verb|\seq_put_right:Nn\l_tmp_seq{X}|\erwtab\seq_put_right:Nn \l_tmp_seq{X}
 % \\\verb|\erw_compose_seq_c:nV{|
-% \\\verb|  {__foo}{__bar}{__baz}}|
-% \\\verb|  \l_tmp_seq|\erwtab \erw_compose_seq_c:nV{{__foo}{__bar}{__baz}}\l_tmp_seq
+% \\\verb|  {__baz}{__bar}{__foo}}|
+% \\\verb|  \l_tmp_seq|\erwtab \erw_compose_seq_c:nV{{__baz}{__bar}{__foo}}\l_tmp_seq
 % \\\verb|\seq_item:Nn\l_tmp_seq{1}|\erwtab \seq_item:Nn \l_tmp_seq{1}
 % \\\verb|\seq_item:Nn\l_tmp_seq{2}|\erwtab \seq_item:Nn \l_tmp_seq{2}
 % \\\verb|\seq_item:Nn\l_tmp_seq{3}|\erwtab \seq_item:Nn \l_tmp_seq{3}
@@ -403,8 +409,8 @@ and the derived files   erw-l3.ins,
 % \cs_set:Npn \__bar #1 {g[#1]}
 % \cs_set:Npn \__baz #1 {h\{#1\}}
 % \verb|\erw_compose_vers:nn{|
-% \\\verb|  {\__foo}{g[#1]}{\__baz}}|
-% \\\verb|  {X}|\erwtab\erw_compose_vers:nn{{\__foo}{g[#1]}{\__baz}}{X}
+% \\\verb|  {\__baz}{g[#1]}{\__foo}}|
+% \\\verb|  {X}|\erwtab\erw_compose_vers:nn{{\__baz}{g[#1]}{\__foo}}{X}
 % \ExplSyntaxOff
 % \caption{}\label{listng:compose:vers}
 % \end{Listing}
@@ -514,8 +520,8 @@ and the derived files   erw-l3.ins,
 % \vspace*{\fill}
 % \begin{Listing}
 % \erwtab\NewDocumentCommand{\myfoo}{m}{f(#1)}
-% \erwtab\NewDocumentCommand{\mybar}{m}{g(#1)}
-% \erwtab\NewDocumentCommand{\mybaz}{m}{h(#1)}
+% \erwtab\NewDocumentCommand{\mybar}{m}{g[#1]}
+% \erwtab\NewDocumentCommand{\mybaz}{m}{h\{#1\}}
 % \\\verb|\numbrdcsnew{{\myfoo}{g[#1]}{\mybaz}}|\erwtab\numbrdcsnew{{\myfoo}{g[#1]}{\mybaz}}
 % \\\verb|\numbrdcs{1}{X}|\erwtab\numbrdcs{1}{X}
 % \\\verb|\numbrdcs{2}{X}|\erwtab\numbrdcs{2}{X}
@@ -530,9 +536,9 @@ and the derived files   erw-l3.ins,
 % \vspace*{\fill}
 % \begin{Listing}
 % \NewDocumentCommand{\myfoo}{m}{f(#1)}
-% \NewDocumentCommand{\mybar}{m}{g(#1)}
-% \NewDocumentCommand{\mybaz}{m}{h(#1)}
-% \numbrdcsnew{{\myfoo}{g[#1]}{\mybaz}}
+% \NewDocumentCommand{\mybar}{m}{g[#1]}
+% \NewDocumentCommand{\mybaz}{m}{h\{#1\}}
+% \numbrdcsnew{{\mybaz}{g[#1]}{\myfoo}}
 % \verb|\ExplSyntaxOn|
 % \\\verb|\exp_last_unbraced:Nx|
 % \\\verb|  \erw_compose_c:nn|
@@ -556,7 +562,6 @@ and the derived files   erw-l3.ins,
 % \section{Acknowledgment} 
 % The idea to create  \pkg{l3erw-numbrdcs} arose while developing \pkg{l3erw-compose} and stumbling upon a problem discussed in \cite{tex.stack:431046}.
 % The use of  \cs{exp_last_unbraced:Nx} originated in \cite{tex.stack:432171}.
-%
 % 
 % % \begin{thebibliography}{1}
 %
@@ -609,7 +614,10 @@ and the derived files   erw-l3.ins,
   {
      #1{##1}#3
   }
-  \erw_map:n{#2} 
+  \exp_args:Nf\erw_map:n
+  {
+  	\tl_reverse:n{#2}
+  }
 }
 \cs_set:Npn \erw_compose:nV #1 #2 
 {
@@ -632,16 +640,6 @@ and the derived files   erw-l3.ins,
   \erw_compose_c:nV{#1}\__erw_compose_tl
   \__erw_compose_tl
 }
-\tl_new:N \__erw_fold_seq_item_tl
-\cs_set:Npn \erw_fold_seq:NV 
-  #1 % fun 
-  #2 % seq
-{
-  \seq_get_right:NN #2 \__erw_fold_seq_item_tl
-  \erw_fold:NV #1 \__erw_fold_seq_item_tl
-  \seq_put_right:No #2 {\__erw_fold_seq_item_tl}
-}
-\cs_generate_variant:Nn \erw_fold_seq:NV {cV}
 \cs_set:Npn \erw_compose_seq:nV #1 #2
 {
   \erw_compose:NnV \erw_fold_seq:NV {#1} #2
@@ -670,6 +668,90 @@ and the derived files   erw-l3.ins,
          {#2}
 }
 %    \end{macrocode}
+% \section{\textsf{csutil}} 
+%    \begin{macrocode}
+\msg_new:nnn
+  {erw_csutil}
+  {generic}
+  {#1}
+\cs_set:Npn \erw_apply:Nn 
+  #1 % fun
+  #2 % tl
+{
+  #1{#2}
+}
+\cs_generate_variant:Nn \erw_apply:Nn {No, Nf, Nx, c}
+\cs_set:Npn \erw_cs_set_eq:NN #1 #2
+{
+  \cs_set:Npn #1 ##1{#2{##1}}
+}
+\cs_generate_variant:Nn \erw_cs_set_eq:NN {cN}
+\cs_set:Npn \erw_cs_set_inline:Nn #1 #2
+{
+  \cs_set:Npn #1 ##1{#2}
+}
+\cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
+\tl_set:Nn \__erw_fold_set_par_tl{\c_novalue_tl}
+\tl_set:Nn \__erw_fold_apply_par_tl{\c_novalue_tl}
+\cs_set:Npn \erw_fold_set_par:n #1
+{
+  \tl_set:Nn \__erw_fold_set_par_tl{#1}
+}
+\cs_set:Npn \erw_fold_apply_par:n #1
+{
+  \tl_set:Nn \__erw_fold_apply_par_tl{#1}  
+}
+\cs_set:Npn \erw_fold:NV 
+  #1 % fun 
+  #2 % var
+{
+  \use:c{tl_set:\__erw_fold_set_par_tl}
+     #2
+    {\use:c{erw_apply:\__erw_fold_apply_par_tl}{#1}{#2}}
+}
+\cs_generate_variant:Nn \erw_fold:NV {cV}
+\tl_new:N \__erw_fold_seq_item_tl
+\cs_set:Npn \erw_fold_seq:NV 
+  #1 % fun 
+  #2 % seq
+{
+  \seq_get_right:NN #2 \__erw_fold_seq_item_tl
+  \erw_fold:NV #1 \__erw_fold_seq_item_tl
+  \seq_put_right:No #2 {\__erw_fold_seq_item_tl}
+}
+\cs_generate_variant:Nn \erw_fold_seq:NV {cV}
+\cs_set:Npn \erw_map:n #1
+{    
+  \__erw_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+}
+\cs_set:Npn \__erw_map:nn #1 #2
+{
+  \quark_if_recursion_tail_stop:n{#1}  
+  \__erw_map:n{#1}  \__erw_map:nn{#2}
+}
+\cs_new:Npn \__erw_map:n #1
+{
+  \msg_error:nnn
+    {erw_csutil}
+    {generic}
+    {__erw_map:n~not~set}
+}
+\cs_set:Npn \erw_map:Nn 
+  #1 % fun 
+  #2 % tl
+{
+  \erw_cs_set_eq:NN \__erw_map:n #1
+  \erw_map:n{#2}  
+}
+\cs_set:Npn \erw_map_inline:nn 
+  #1 % inl 
+  #2 % tl
+{
+  \erw_cs_set_inline:Nn \__erw_map:n {#1}
+  \erw_map:n{#2}
+}
+%    \end{macrocode}
+%
 % \section{\textsf{disambig}} 
 %    \begin{macrocode}
 \tl_new:N \__erw_disambig_tl
@@ -707,79 +789,6 @@ and the derived files   erw-l3.ins,
   }        
 }
 \ProcessKeysPackageOptions{ erw }
-%    \end{macrocode}
-% \section{\textsf{csutil}} 
-%    \begin{macrocode}
-\msg_new:nnn
-  {erw_csutil}
-  {generic}
-  {#1}
-\cs_set:Npn \erw_cs_set_eq:NN #1 #2
-{
-  \cs_set:Npn #1 ##1{#2{##1}}
-}
-\cs_generate_variant:Nn \erw_cs_set_eq:NN {cN}
-\cs_set:Npn \erw_cs_set_inline:Nn #1 #2
-{
-  \cs_set:Npn #1 ##1{#2}
-}
-\cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
-\cs_set:Npn \erw_map:n #1
-{    
-  \__erw_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
-}
-\cs_set:Npn \__erw_map:nn #1 #2
-{
-  \quark_if_recursion_tail_stop:n{#1}  
-  \__erw_map:n{#1}  \__erw_map:nn{#2}
-}
-\cs_new:Npn \__erw_map:n #1
-{
-  \msg_error:nnn
-    {erw_csutil}
-    {generic}
-    {__erw_map:n~not~set}
-}
-\cs_set:Npn \erw_map:Nn 
-  #1 % fun 
-  #2 % tl
-{
-  \erw_cs_set_eq:NN \__erw_map:n #1
-  \erw_map:n{#2}  
-}
-\cs_set:Npn \erw_map_inline:nn 
-  #1 % inl 
-  #2 % tl
-{
-  \erw_cs_set_inline:Nn \__erw_map:n {#1}
-  \erw_map:n{#2}
-}
-\cs_set:Npn \erw_apply:Nn 
-  #1 % fun
-  #2 % tl
-{
-  #1{#2}
-}
-\cs_generate_variant:Nn \erw_apply:Nn {No, Nf, Nx, c}
-\tl_set:Nn \__erw_fold_set_par_tl{\c_novalue_tl}
-\tl_set:Nn \__erw_fold_apply_par_tl{\c_novalue_tl}
-\cs_set:Npn \erw_fold_set_par:n #1
-{
-  \tl_set:Nn \__erw_fold_set_par_tl{#1}
-}
-\cs_set:Npn \erw_fold_apply_par:n #1
-{
-  \tl_set:Nn \__erw_fold_apply_par_tl{#1}  
-}
-\cs_set:Npn \erw_fold:NV 
-  #1 % fun 
-  #2 % var
-{
-  \use:c{tl_set:\__erw_fold_set_par_tl}
-     #2
-    {\use:c{erw_apply:\__erw_fold_apply_par_tl}{#1}{#2}}
-}
-\cs_generate_variant:Nn \erw_fold:NV {cV}
 %    \end{macrocode}
 % \section{\textsf{numbrdcs}} 
 %    \begin{macrocode}

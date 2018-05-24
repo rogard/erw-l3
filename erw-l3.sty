@@ -33,7 +33,10 @@
   {
      #1{##1}#3
   }
-  \erw_map:n{#2}
+  \exp_args:Nf\erw_map:n
+  {
+   \tl_reverse:n{#2}
+  }
 }
 \cs_set:Npn \erw_compose:nV #1 #2
 {
@@ -56,16 +59,6 @@
   \erw_compose_c:nV{#1}\__erw_compose_tl
   \__erw_compose_tl
 }
-\tl_new:N \__erw_fold_seq_item_tl
-\cs_set:Npn \erw_fold_seq:NV
-  #1 % fun
-  #2 % seq
-{
-  \seq_get_right:NN #2 \__erw_fold_seq_item_tl
-  \erw_fold:NV #1 \__erw_fold_seq_item_tl
-  \seq_put_right:No #2 {\__erw_fold_seq_item_tl}
-}
-\cs_generate_variant:Nn \erw_fold_seq:NV {cV}
 \cs_set:Npn \erw_compose_seq:nV #1 #2
 {
   \erw_compose:NnV \erw_fold_seq:NV {#1} #2
@@ -92,6 +85,86 @@
       \erw_compose_c:nn
          {{\erw_numbrd_cs_names_braced:{}}}
          {#2}
+}
+\msg_new:nnn
+  {erw_csutil}
+  {generic}
+  {#1}
+\cs_set:Npn \erw_apply:Nn
+  #1 % fun
+  #2 % tl
+{
+  #1{#2}
+}
+\cs_generate_variant:Nn \erw_apply:Nn {No, Nf, Nx, c}
+\cs_set:Npn \erw_cs_set_eq:NN #1 #2
+{
+  \cs_set:Npn #1 ##1{#2{##1}}
+}
+\cs_generate_variant:Nn \erw_cs_set_eq:NN {cN}
+\cs_set:Npn \erw_cs_set_inline:Nn #1 #2
+{
+  \cs_set:Npn #1 ##1{#2}
+}
+\cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
+\tl_set:Nn \__erw_fold_set_par_tl{\c_novalue_tl}
+\tl_set:Nn \__erw_fold_apply_par_tl{\c_novalue_tl}
+\cs_set:Npn \erw_fold_set_par:n #1
+{
+  \tl_set:Nn \__erw_fold_set_par_tl{#1}
+}
+\cs_set:Npn \erw_fold_apply_par:n #1
+{
+  \tl_set:Nn \__erw_fold_apply_par_tl{#1}
+}
+\cs_set:Npn \erw_fold:NV
+  #1 % fun
+  #2 % var
+{
+  \use:c{tl_set:\__erw_fold_set_par_tl}
+     #2
+    {\use:c{erw_apply:\__erw_fold_apply_par_tl}{#1}{#2}}
+}
+\cs_generate_variant:Nn \erw_fold:NV {cV}
+\tl_new:N \__erw_fold_seq_item_tl
+\cs_set:Npn \erw_fold_seq:NV
+  #1 % fun
+  #2 % seq
+{
+  \seq_get_right:NN #2 \__erw_fold_seq_item_tl
+  \erw_fold:NV #1 \__erw_fold_seq_item_tl
+  \seq_put_right:No #2 {\__erw_fold_seq_item_tl}
+}
+\cs_generate_variant:Nn \erw_fold_seq:NV {cV}
+\cs_set:Npn \erw_map:n #1
+{
+  \__erw_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+}
+\cs_set:Npn \__erw_map:nn #1 #2
+{
+  \quark_if_recursion_tail_stop:n{#1}
+  \__erw_map:n{#1}  \__erw_map:nn{#2}
+}
+\cs_new:Npn \__erw_map:n #1
+{
+  \msg_error:nnn
+    {erw_csutil}
+    {generic}
+    {__erw_map:n~not~set}
+}
+\cs_set:Npn \erw_map:Nn
+  #1 % fun
+  #2 % tl
+{
+  \erw_cs_set_eq:NN \__erw_map:n #1
+  \erw_map:n{#2}
+}
+\cs_set:Npn \erw_map_inline:nn
+  #1 % inl
+  #2 % tl
+{
+  \erw_cs_set_inline:Nn \__erw_map:n {#1}
+  \erw_map:n{#2}
 }
 \tl_new:N \__erw_disambig_tl
 \keys_define:nn { erw }
@@ -128,76 +201,6 @@
   }
 }
 \ProcessKeysPackageOptions{ erw }
-\msg_new:nnn
-  {erw_csutil}
-  {generic}
-  {#1}
-\cs_set:Npn \erw_cs_set_eq:NN #1 #2
-{
-  \cs_set:Npn #1 ##1{#2{##1}}
-}
-\cs_generate_variant:Nn \erw_cs_set_eq:NN {cN}
-\cs_set:Npn \erw_cs_set_inline:Nn #1 #2
-{
-  \cs_set:Npn #1 ##1{#2}
-}
-\cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
-\cs_set:Npn \erw_map:n #1
-{
-  \__erw_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
-}
-\cs_set:Npn \__erw_map:nn #1 #2
-{
-  \quark_if_recursion_tail_stop:n{#1}
-  \__erw_map:n{#1}  \__erw_map:nn{#2}
-}
-\cs_new:Npn \__erw_map:n #1
-{
-  \msg_error:nnn
-    {erw_csutil}
-    {generic}
-    {__erw_map:n~not~set}
-}
-\cs_set:Npn \erw_map:Nn
-  #1 % fun
-  #2 % tl
-{
-  \erw_cs_set_eq:NN \__erw_map:n #1
-  \erw_map:n{#2}
-}
-\cs_set:Npn \erw_map_inline:nn
-  #1 % inl
-  #2 % tl
-{
-  \erw_cs_set_inline:Nn \__erw_map:n {#1}
-  \erw_map:n{#2}
-}
-\cs_set:Npn \erw_apply:Nn
-  #1 % fun
-  #2 % tl
-{
-  #1{#2}
-}
-\cs_generate_variant:Nn \erw_apply:Nn {No, Nf, Nx, c}
-\tl_set:Nn \__erw_fold_set_par_tl{\c_novalue_tl}
-\tl_set:Nn \__erw_fold_apply_par_tl{\c_novalue_tl}
-\cs_set:Npn \erw_fold_set_par:n #1
-{
-  \tl_set:Nn \__erw_fold_set_par_tl{#1}
-}
-\cs_set:Npn \erw_fold_apply_par:n #1
-{
-  \tl_set:Nn \__erw_fold_apply_par_tl{#1}
-}
-\cs_set:Npn \erw_fold:NV
-  #1 % fun
-  #2 % var
-{
-  \use:c{tl_set:\__erw_fold_set_par_tl}
-     #2
-    {\use:c{erw_apply:\__erw_fold_apply_par_tl}{#1}{#2}}
-}
-\cs_generate_variant:Nn \erw_fold:NV {cV}
 \disambignewcmd{numbrdcsnew}{ s m }
 {
 \IfBooleanTF{#1}
