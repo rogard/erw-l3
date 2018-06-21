@@ -110,10 +110,8 @@ and the derived files   erw-l3.ins,
 %
 %\maketitle
 %
-%\begin{abstract}\LaTeX3 package defining commands built around \pkg{expl3}\cite{interface3} and \pkg{xparse}\cite{xparse} 
-% that we call backend and frontend, respectively. 
-% An example of a backend command is \cs{erw_compose} that implements the mathematical concept $f_1 \circ f_2 \dots \circ f_n$. 
-% An example of a frontend command is \cs{disambig} that wraps around \cs{NewDocumentCommand} to prevent name conflicts.
+%\begin{abstract}\LaTeX3 package defining commands built around \pkg{expl3}\cite{interface3}.
+% For example, \cs{erw_compose} implements the mathematical concept $f_1 \circ f_2 \dots \circ f_n$. 
 %\end{abstract}
 %
 % \tableofcontents 
@@ -137,6 +135,8 @@ and the derived files   erw-l3.ins,
 % For example,  \meta{cs} stands for \emph{control sequence}, which is described in \cite[Part~\pkg{l3basics}]{interface3}. 
 %
 % \section{backend}
+%
+% We call `backend' commands that are \pkg{expl3}-like. 
 %
 % \subsection{\textsf{compose}} 
 %
@@ -238,7 +238,7 @@ and the derived files   erw-l3.ins,
 %    \begin{syntax}{\cs{erw_map:Nn}}\meta{cs}\marg{args}
 %     \end{syntax}
 % See Listing~\autoref{listng:map}.
-% Redundant with \cs{tl_map_function:nN} (but I use it to access internals in another package).
+% Redundant with \cs{tl_map_function:nN}
 % \end{function}
 %
 % \begin{function}{\erw_map_inline:nn}
@@ -283,6 +283,9 @@ and the derived files   erw-l3.ins,
 % \end{function}
 %
 % \section{frontend}\label{part:frontend}
+%
+% We call frontend commands created with pkg{xparse}'s\cs{NewDocumentCommand}\cite{xparse} 
+%
 % \subsection{\textsf{disambig}}
 %
 % \begin{function}{\disambignewcmd,\disambignewcmd*}
@@ -665,13 +668,17 @@ and the derived files   erw-l3.ins,
 %
 % The versions showns are of those of the development stage, some may have been skipped in the release.
 %
+% \iffalse 
+%: changes
+% \fi
+%
 % \changes{0.1}{2018/05/20}{Initial version} 
 % \changes{0.1.1}{2018/05/23}{}
 % \changes{0.1.1}{2018/05/23}{Brought all the modules under one file; renamed \pkg{l3erw} to \pkg{erw-l3};}
 % \changes{0.1.1}{2018/05/23}{\pkg{disambig}/backend: changes to the key, added \cs{ProcessPackageKeysOption};}
-% \changes{0.1.1}{2018/05/23}{\pkg{numbrdcs}/frontend: 'new' changed from prefix to suffix, made it `disambiguable';}
+% \changes{0.1.1}{2018/05/23}{\cs{numbrdcsnew} changed to \cs{newnumbrdcs} and made 'disambiguable'}
 % \changes{0.1.2}{2018/06/21}{}
-% \changes{0.1.2}{2018/06/21}{\pkg{compose}/backend: reversed order in which the functions are composed, such that it now conforms to
+% \changes{0.1.2}{2018/06/21}{\cs{erw_compose} reversed order in which the functions are composed, such that it now conforms to
 % the mathematical convention ($g\circ f$ means $f$ comes before $g$)}
 %\changes{0.1.2}{2018/06/21}{Front end cmds no longer generated with module \pkg{disambig}; Option of the same name deleted;}
 %\changes{0.1.2}{2018/06/21}{\pkg{disambig}: pushed the code inside \cs{keys_define};\cs{disambignewcmd} no longer takes a token name as arg, rather a token.}
