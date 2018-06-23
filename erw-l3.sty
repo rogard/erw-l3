@@ -13,8 +13,8 @@
 %% 
 \ProvidesExplPackage
   {erw-l3}              % Package name
-  {2018/6/21}     % Release date
-  {0.1.3}                 % Release version
+  {2018/6/22}     % Release date
+  {0.1.4}                 % Release version
   {Utilities built around expl3} % Description
 \NeedsTeXFormat{LaTeX2e}
 \RequirePackage{expl3}[2018/06/01]
@@ -86,6 +86,10 @@
          {{\erw_numbrd_cs_names_braced:{}}}
          {#2}
 }
+\cs_set:Npn \erw_accum:nn #1 #2
+{
+    {#1{#2}}
+}
 \cs_set:Npn \__erw_cs_name:N #1
 {
     \exp_last_unbraced:Nf \use_i:nnn {\cs_split_function:N #1}
@@ -102,11 +106,21 @@
   \cs_set:Npn #1 ##1{#2{##1}}
 }
 \cs_generate_variant:Nn \erw_cs_set_eq:NN {cN}
+\cs_set:Npn \erw_cs_gset_eq:NN #1 #2
+{
+  \cs_gset:Npn #1 ##1{#2{##1}}
+}
+\cs_generate_variant:Nn \erw_cs_gset_eq:NN {cN}
 \cs_set:Npn \erw_cs_set_inline:Nn #1 #2
 {
   \cs_set:Npn #1 ##1{#2}
 }
 \cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
+\cs_set:Npn \erw_cs_gset_inline:Nn #1 #2
+{
+  \cs_gset:Npn #1 ##1{#2}
+}
+\cs_generate_variant:Nn \erw_cs_gset_inline:Nn {cn}
 \tl_set:Nn \__erw_fold_set_par_tl{\c_novalue_tl}
 \tl_set:Nn \__erw_fold_apply_par_tl{\c_novalue_tl}
 \cs_set:Npn \erw_fold_set_par:n #1
@@ -137,27 +151,19 @@
 }
 \cs_generate_variant:Nn \erw_fold_seq:NV {cV}
 \cs_set:Npn \erw_identity:n #1{#1}
-\cs_set:Npn\__erw_items_to:nnn #1 #2 #3
+\prg_set_conditional:Npnn \erw_is_matrix:n #1 { p, TF }
 {
-    \int_compare:nNnTF
-    {#1}>{#2}
+    \erw_gset_map_inline:n{==\tl_count:n{##1}}
+    \int_compare:nTF
     {
-        \exp_args:Nf \tl_head:n{#3}
-        \__erw_items_to:nnn
-            {#1}
-            {\int_eval:n{#2+1}}
-            {\exp_args:Nf \tl_tail:n{#3}}
+        \exp_args:Nf\tl_count:n{\tl_head:n{#1}}
+        \exp_args:Nf \erw_map:n
+        {
+                \tl_tail:n{#1}
+            }
     }
-    {
-        \exp_args:Nf \tl_head:n{#3}
-    }
-}
-\cs_set:Npn \erw_items_to:nn #1 #2
-{
-    \__erw_items_to:nnn
-        {#1}
-        {1}
-        {#2}
+    {\prg_return_true:}
+    {\prg_return_false:}
 }
 \cs_set:Npn \erw_last_item:n #1
 {
@@ -166,6 +172,10 @@
         {
             \tl_count:n{#1}
         }
+}
+\cs_set:Npn \erw_merge:nn #1 #2
+{
+    {#1#2}
 }
 \cs_set:Npn \erw_repeat:nn #1 #2
 {
@@ -185,6 +195,43 @@
 \cs_set:Npn \erw_split:nn #1 #2
 {
     \erw_split:nnn{#1}{#2}{Nf}
+}
+\cs_set:Npn \__erw_int_range:nnn #1 #2 #3
+{
+    \int_compare:nNnTF
+    {
+            \int_eval:n{#2+1}
+    }>{#3}
+    {
+        {#1}
+    }
+    {
+        \__erw_int_range:nnn
+        {
+            \exp_args:Nx\erw_accum:nn{#1}
+            {
+                \int_eval:n{#2+1}
+            }
+        }
+        {\int_eval:n{#2+1}}
+        {#3}
+    }
+}
+\cs_set:Npn \erw_int_range:nn #1 #2
+{
+    \__erw_int_range:nnn {{#1}}{#1}{#2}
+}
+\cs_set:Npn \erw_int_range:n #1
+{
+    \__erw_int_range:nnn {}{0}{#1}
+}
+\cs_set:Npn \erw_gset_map:N #1
+{
+    \erw_cs_gset_eq:NN \__erw_map:n #1
+}
+\cs_set:Npn \erw_gset_map_inline:n #1
+{
+    \erw_cs_gset_inline:Nn \__erw_map:n {#1}
 }
 \cs_set:Npn \erw_map:n #1
 {
@@ -228,7 +275,6 @@
 {
     #1{#2}{#3}{#4}{#5}
 }
-
 \cs_set:Npn \__erw_map_thread_at:Nnn #1 #2 #3
 {
      \erw_apply:Nn #1
@@ -276,7 +322,6 @@
             {erw_map_thread_at:~count~of~#3~not~withing~1~to~4}
     }
 }
-
 \cs_set:Npn \erw_map_thread:Nn #1 #2
 {
     % TODO check that #2 is a matrix
