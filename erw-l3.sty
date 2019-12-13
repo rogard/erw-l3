@@ -11,13 +11,13 @@
 %% See http://www.latex-project.org/lppl.txt
 %% ----------------------------------------------------------------
 %% 
-\RequirePackage{expl3}[2018/06/01]
 \ProvidesExplPackage
   {erw-l3}              % Package name
-  {2018/6/22}     % Release date
-  {0.1.4}                 % Release version
+  {2019/10/12}     % Release date
+  {0.1.5}                 % Release version
   {Utilities built around expl3} % Description
 \NeedsTeXFormat{LaTeX2e}
+\RequirePackage{expl3}[2018/06/01]
 \RequirePackage{xparse}[2018/02/01]
 \RequirePackage{l3keys2e}
 \ExplSyntaxOn
@@ -369,53 +369,6 @@
 \cs_new:Npn \erw_numbrd_cs_names_braced:
 {
     \erw_numbrd_cs_names_braced:nnn{1}{1}{\__erw_numbrd_cs_int}
-}
-\cs_set:Npn \__erw_disambig:NN #1 #2 {#1{#2}}
-\cs_generate_variant:Nn \__erw_disambig:NN { Nc }
-\NewDocumentCommand{\disambignewcmd}{ s m m m }
-{
-  \msg_error:nnn{erw}{generic}{disambignewcmd~undefined}
-}
-\NewDocumentCommand{\disambignewenv}{ s m m m m }
-{
-  \msg_error:nnn{erw}{generic}{disambignewenv~undefined}
-}
-\keys_define:nn { erw }
-{
-  disambig .code:n =
-  {
-    \RenewDocumentCommand{\disambignewcmd}{ s m m m }
-  {
-      \IfBooleanTF{##1}
-          {\__erw_disambig:Nc{\RenewDocumentCommand}}
-          {\__erw_disambig:Nc{\NewDocumentCommand}}
-        {#1 \__erw_cs_name:N ##2}
-        {##3}
-        {##4}
-  }
-  \RenewDocumentCommand{\disambignewenv}{ s m m m m }
-  {
-      \IfBooleanTF{##1}
-        {\RenewDocumentEnvironment}
-        {\NewDocumentEnvironment}
-      {#1##2}
-      {##3}
-      {##4}
-      {##5}
-  }
-  },
-  disambig .initial:n = \c_empty_tl
-}
-\NewDocumentCommand{\disambigset}{ m }
-{
-    \keys_set:nn { erw }
-    {
-          disambig={#1}
-    }
-}
-\NewDocumentCommand{\disambigunset}{}
-{
-    \disambigset{\c_empty_tl}
 }
 \NewDocumentCommand{\numbrdcsnew}{ s m }
 {

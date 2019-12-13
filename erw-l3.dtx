@@ -6,7 +6,7 @@
 %<*readme>
 ----------------------------------------------------------------
 erw-l3 --- Utilities built around expl3
-Source repository: https://github.com/er-cpp/erw-l3
+Source repository: https://github.com/rogard/erw-l3
 Released under the LaTeX Project Public License v1.3c or later
 See http://www.latex-project.org/lppl.txt
 ----------------------------------------------------------------
@@ -72,8 +72,8 @@ and the derived files   erw-l3.ins,
 %</internal>
 %<package>\ProvidesExplPackage
 %<package>  {erw-l3}              % Package name
-%<package>  {2018/6/22}     % Release date
-%<package>  {0.1.4}                 % Release version
+%<package>  {2019/10/12}     % Release date
+%<package>  {0.1.5}                 % Release version
 %<package>  {Utilities built around expl3} % Description
 %
 %<*driver>
@@ -115,25 +115,26 @@ and the derived files   erw-l3.ins,
 %\end{abstract}
 %
 % \tableofcontents 
-% \section{Preliminaries}
 %
-% See \autoref{part:other}~\autoref{support} on how to get this package. 
-% To use it, make sure the file \file{erw-l3.sty} is in the path of the \LaTeX~engine.
-% In the preamble of your \LaTeX document, put: 
+% \section*{Conventions}
+%
+% The naming conventions are (loosely) those of \LaTeX3.
+% For example,  \meta{cs} stands for \emph{control sequence}, which is described in \cite[Part~\pkg{l3basics}]{interface3}. 
+%
+% \section*{Requirement}
+%
+% Have \file{erw-l3.sty} is in the path of the \LaTeX~engine. 
+%
+% \part{Usage}\label{part:usage}
+%
+% In the preamble of \cs{documentclass}, put: 
 % \begin{center}
 % \cs{usepackage}\oarg{options}|{|\pkg{erw-l3}|}|\linebreak
 % \end{center}
 %
-% \part{Usage}\label{part:usage}
+% \section{\textsf{compose}} 
 %
-% The naming conventions are (loosely) those of \LaTeX3. 
-% For example,  \meta{cs} stands for \emph{control sequence}, which is described in \cite[Part~\pkg{l3basics}]{interface3}. 
-%
-% \section{backend}
-%
-% We call `backend' commands that are \pkg{expl3}-like. 
-%
-% \subsection{\textsf{compose}} 
+% \subsection{\textsf{backend}}
 %
 % \begin{function}{\erw_compose:nV,\erw_compose:nn}
 %   \begin{syntax}
@@ -178,7 +179,9 @@ and the derived files   erw-l3.ins,
 %  {\color{red}Not implemented}
 %  \end{function}
 %
-% \subsection{\textsf{csutil}} 
+% \section{\textsf{csutil}} 
+%
+% \subsection{\textsf{backend}}
 %
 % \begin{function}{\erw_accum:nn}
 %    \begin{syntax}{\cs{erw_accum:nn}}\marg{token list}\marg{item}
@@ -237,7 +240,9 @@ and the derived files   erw-l3.ins,
 %    \end{syntax} See Listing~\autoref{listng:split}
 % \end{function}
 %
-% \subsection{\textsf{int}} 
+% \section{\textsf{int}} 
+%
+% \subsection{\textsf{backend}}
 %
 % \begin{function}{\erw_int_range:nn}
 %    \begin{syntax}{\cs{erw_int_range:nn}}\marg{first}{last}
@@ -249,7 +254,9 @@ and the derived files   erw-l3.ins,
 %     \end{syntax} Returns a range of integers. Implementation different than \cs{int_step_inline}. See Listing~\autoref{listng:int:range}
 % \end{function}
 %
-% \subsection{\textsf{map}} 
+% \section{\textsf{map}} 
+%
+% \subsection{\textsf{backend}}
 %
 % \begin{function}{\erw_set_map:N,\erw_gset_map:N}
 %    \begin{syntax}{\cs{erw_set_map:N}}\meta{cs}
@@ -295,9 +302,9 @@ and the derived files   erw-l3.ins,
 %    \end{syntax}  
 % \end{function}
 %
-% \subsection{\textsf{numbrdcs}}
+% \section{\textsf{numbrdcs}}
 %
-% Part of these commands have a frontend counterpart, see \autoref{usage:frontend:numbrdcs}.
+% \subsection{backend}
 %
 % \begin{function}{\erw_numbrd_cs_reset:}
 %   \begin{syntax}\cs{erw_numbrd_cs_reset:}|{}|
@@ -319,33 +326,7 @@ and the derived files   erw-l3.ins,
 %   \end{syntax}See Listing~\ref{listng:numbrdcs:names}
 % \end{function}
 %
-% \section{frontend}\label{part:frontend}
-%
-% We call frontend commands those created with \pkg{xparse}'s \cs{NewDocumentCommand}\cite{xparse} 
-%
-% \subsection{\textsf{disambig}}
-%
-% \begin{function}{\disambignewcmd,\disambignewcmd*}
-%    \begin{syntax}{\cs{disambignewcmd}}\marg{token}\marg{pars}\marg{code}
-%     \end{syntax}Analogues of \cs{NewDocumentCommand} and \cs{RenewDocumentCommand}. See~Listing~\ref{listng:disambig:cmd}
-% \end{function}
-%
-% \begin{function}{\disambignewenv,\disambignewenv*}
-%    \begin{syntax}{\cs{disambignewenv}}\marg{token}\marg{pars}\marg{code1}\marg{code2}
-%     \end{syntax}Analogues of \cs{NewDocumentEnvironment} and \cs{RenewDocumentEnvironment}. See~Listing~\ref{listng:disambig:env}
-% \end{function}
-%
-% \begin{function}{\disambigset}
-%    \begin{syntax}{\cs{disambigset}}\marg{prefix}
-%     \end{syntax}
-% \end{function}
-%
-% \begin{function}{\disambigunset}
-%    \begin{syntax}{\cs{disambigunset}}|{}|
-%     \end{syntax}
-% \end{function}
-%
-% \subsection{\textsf{numbrdcs}}\label{usage:frontend:numbrdcs}
+% \subsection{frontend}
 %
 % \begin{function}{\numbrdcsnew,\numbrdcsnew*}
 %   \begin{syntax}\cs{numbrdcsnew}\marg{list of cs or code}
@@ -365,9 +346,9 @@ and the derived files   erw-l3.ins,
 % \newfloat{Listing}{H}{lop}
 % \NewDocumentCommand{\erwtab}{O{0.5}}{\tabto{#1\linewidth}}
 %
-% \section{Backend} 
+% \section{compose}
 %
-% \subsection{compose}
+% \subsection{\textsf{backend}}
 %
 % \vspace*{\fill}
 % \begin{Listing}
@@ -457,7 +438,9 @@ and the derived files   erw-l3.ins,
 % \caption{}\label{listng:compose:vers}
 % \end{Listing}
 %
-% \subsection{csutil}
+% \section{csutil}
+%
+% \subsection{\textsf{backend}}
 %
 % \vspace*{\fill}
 % \begin{Listing}
@@ -532,7 +515,9 @@ and the derived files   erw-l3.ins,
 % \caption{ }\label{listng:split}
 % \end{Listing}
 %
-% \subsection{\textsf{int}}
+% \section{\textsf{int}}
+%
+% \subsection{\textsf{backend}}
 %
 % \begin{Listing}
 % \verb|\ExplSyntaxOn|\ExplSyntaxOn
@@ -542,7 +527,9 @@ and the derived files   erw-l3.ins,
 % \caption{ }\label{listng:int:range}
 % \end{Listing}
 %
-% \subsection{\textsf{map}}
+% \section{\textsf{map}}
+%
+% \subsection{\textsf{backend}}
 %
 % \vspace*{\fill}
 % \begin{Listing}
@@ -666,7 +653,9 @@ and the derived files   erw-l3.ins,
 % \caption{Debugging~for~\cs{erw_map_indexed}}\label{listng:mapindexed}
 % \end{Listing}
 %
-% \subsection{\textsf{numbrdcs}}
+% \section{\textsf{numbrdcs}}
+%
+% \subsection{\textsf{backend}}
 %
 % \vspace*{\fill}
 % \begin{Listing}
@@ -692,61 +681,7 @@ and the derived files   erw-l3.ins,
 % \caption{ }\label{listng:numbrdcs:names}
 % \end{Listing}
 %
-% \section{Frontend}
-%
-% ^^A\vspace*{\fill}
-% ^^A\begin{Listing}
-% ^^A\verb|\NewDocumentCommand{\thefoo}{m}{f(#1)}|
-% ^^A\\\verb|\NewDocumentCommand{\thebar}{m}{g[#1]}|
-% ^^A\\\verb|\NewDocumentCommand{\thebaz}{m}{h\{#1\}}|
-% ^^A\caption{Initialization}\label{listng:init:front}
-% ^^A\end{Listing}
-%
-% \subsection{disambig}
-%
-% \begin{Listing}
-% \textbf{Input}
-% \begin{verbatim}
-% \disambigset{my}
-% \disambignewcmd{\foo}{m}{#1~world!}
-% \noindent\myfoo{Hello}
-% \disambignewcmd*{\foo}{m}{#1~universe!}
-% \\\myfoo{Hello}
-% \disambigunset
-% \disambignewcmd{\foo}{m}{#1~world!}
-% \\\foo{Hello}
-% \end{verbatim}
-% \textbf{Output}
-% \\\disambigset{my}
-% \disambignewcmd{\foo}{m}{#1~world!}
-% \noindent\myfoo{Hello}
-% \disambignewcmd*{\foo}{m}{#1~universe!}
-% \\\myfoo{Hello}
-% \disambigunset
-% \disambignewcmd{\foo}{m}{#1~world!}
-% \\\foo{Hello}
-% \caption{}\label{listng:disambig:cmd}
-% \end{Listing}
-%
-% \begin{Listing}
-% \textbf{Input}
-% \begin{verbatim}
-% \disambigset{my}
-% \disambignewenv{bar}{}{H}{!}
-% \noindent\begin{mybar}ello~world\end{mybar}
-% \disambignewenv*{bar}{}{J}{!}
-% \\\begin{mybar}ello~world\end{mybar}
-% \end{verbatim}
-% \textbf{Output}
-% \disambigset{my}
-% \disambignewenv{bar}{}{H}{!}
-% \\\begin{mybar}ello~world\end{mybar}
-% \disambignewenv*{bar}{}{J}{!}
-% \\\begin{mybar}ello~world\end{mybar}
-% \caption{}\label{listng:disambig:env}
-% \end{Listing}
-%
-% \subsection{\textsf{numbrdcs}}
+% \subsection{frontend}
 %
 % \vspace*{\fill}
 % \begin{Listing}
@@ -789,8 +724,8 @@ and the derived files   erw-l3.ins,
 \ExplSyntaxOn
 \msg_new:nnn{erw}{generic}{#1}
 %    \end{macrocode}
-% \section{Back end} 
-% \subsection{\textsf{compose}} 
+% \section{\textsf{compose}} 
+% \subsection{backend} 
 %    \begin{macrocode}
 \cs_set:Npn \erw_compose:NnV 
   #1 % method
@@ -857,7 +792,8 @@ and the derived files   erw-l3.ins,
          {#2}
 }
 %    \end{macrocode}
-% \subsection{\textsf{csutil}} 
+% \section{\textsf{csutil}} 
+% \subsection{\textsf{backend}} 
 %    \begin{macrocode}
 \cs_set:Npn \erw_accum:nn #1 #2
 {
@@ -993,7 +929,8 @@ and the derived files   erw-l3.ins,
     \erw_split:nnn{#1}{#2}{Nf}
 }
 %    \end{macrocode}
-% \subsection{\textsf{map}} 
+% \section{\textsf{map}} 
+% \subsection{\textsf{backend}} 
 %    \begin{macrocode}
 \cs_set:Npn \__erw_int_range:nnn #1 #2 #3
 {
@@ -1027,7 +964,8 @@ and the derived files   erw-l3.ins,
 %    \int_step_inline:nn {#1}{##1}
 }
 %    \end{macrocode}
-% \subsection{\textsf{map}} 
+% \section{\textsf{map}} 
+% \subsection{\textsf{backend}} 
 %    \begin{macrocode}
 \cs_set:Npn \erw_gset_map:N #1
 {
@@ -1138,7 +1076,8 @@ and the derived files   erw-l3.ins,
     }
 }
 %    \end{macrocode}
-% \subsection{\textsf{numbrdcs}}
+% \section{\textsf{numbrdcs}}
+% \subsection{\textsf{backend}} 
 %    \begin{macrocode}
 \int_new:N \__erw_numbrd_cs_int
 \cs_set:Npn \erw_numbrd_cs_name:n #1{__erw_numbrd_cs_\int_to_alph:n{#1}:n}
@@ -1178,58 +1117,7 @@ and the derived files   erw-l3.ins,
     \erw_numbrd_cs_names_braced:nnn{1}{1}{\__erw_numbrd_cs_int}
 }
 %    \end{macrocode}
-% \section{frontend} 
-% \subsection{\textsf{disambig}} 
-%   \begin{macrocode}
-\cs_set:Npn \__erw_disambig:NN #1 #2 {#1{#2}}
-\cs_generate_variant:Nn \__erw_disambig:NN { Nc }
-\NewDocumentCommand{\disambignewcmd}{ s m m m }
-{
-  \msg_error:nnn{erw}{generic}{disambignewcmd~undefined}
-}
-\NewDocumentCommand{\disambignewenv}{ s m m m m }
-{
-  \msg_error:nnn{erw}{generic}{disambignewenv~undefined}
-}
-\keys_define:nn { erw }    
-{
-  disambig .code:n = 
-  {
-    \RenewDocumentCommand{\disambignewcmd}{ s m m m }
-  {
-      \IfBooleanTF{##1}
-          {\__erw_disambig:Nc{\RenewDocumentCommand}}
-          {\__erw_disambig:Nc{\NewDocumentCommand}}
-        {#1 \__erw_cs_name:N ##2}
-        {##3}
-        {##4}
-  }
-  \RenewDocumentCommand{\disambignewenv}{ s m m m m }
-  {
-      \IfBooleanTF{##1}
-        {\RenewDocumentEnvironment}
-        {\NewDocumentEnvironment}
-      {#1##2}
-      {##3}
-      {##4}
-      {##5}
-  }
-  },
-  disambig .initial:n = \c_empty_tl
-}
-\NewDocumentCommand{\disambigset}{ m }
-{
-    \keys_set:nn { erw }
-    {    
-          disambig={#1}
-    }        
-}
-\NewDocumentCommand{\disambigunset}{}
-{
-    \disambigset{\c_empty_tl}
-}
-%    \end{macrocode}
-% \subsection{\textsf{numbrdcs}} 
+% \subsection{\textsf{frontend}} 
 %    \begin{macrocode}
 \NewDocumentCommand{\numbrdcsnew}{ s m }
 {
@@ -1242,12 +1130,14 @@ and the derived files   erw-l3.ins,
 {
     \erw_numbrd_cs:nn{#1}{#2}
 }
+% \ProcessKeysPackageOptions{ erw }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \part{Other}\label{part:other}
 %
 % \section{Support}\label{support}
 %
-% This package is available from \url{https://www.ctan.org/pkg/erw-l3} (release) or \url{https://github.com/er-cpp/erw-l3} (development) where you can report issues. 
+% This package is available from \url{https://www.ctan.org/pkg/erw-l3} (release) or \url{https://github.com/rogard/erw-l3} (development) where you can report issues. 
 %
 % \section{To do}\label{todo}
 %
@@ -1293,6 +1183,10 @@ and the derived files   erw-l3.ins,
 %\changes{0.1.4}{2018/06/22}{Added \cs{erw_set_map}}
 %\changes{0.1.4}{2018/06/22}{Added \cs{erw_set_map_inline}}
 %\changes{0.1.4}{2018/06/22}{Added \cs{erw_is_matrix}}
+%\changes{0.1.5}{2019/12/12}{Modified source repository}
+%\changes{0.1.5}{2019/12/12}{Rearranged frontend/backend sections}
+%\changes{0.1.5}{2019/12/12}{Split Section Preliminaries into Conventions and Requirement.}
+%\changes{0.1.5}{2019/12/12}{Removed \pkg{disambig}}
 % 
 % % \begin{thebibliography}{1}
 %
@@ -1312,10 +1206,6 @@ and the derived files   erw-l3.ins,
 % ^^A \bibitem{tex.stack:432171} \url{https://tex.stackexchange.com/questions/432171/expl3-making-arguments-from-a-loop}
 %
 % \end{thebibliography}
-%    \begin{macrocode}
-% \ProcessKeysPackageOptions{ erw }
-\ExplSyntaxOff
-%    \end{macrocode}
 %
 %
 % \iffalse
