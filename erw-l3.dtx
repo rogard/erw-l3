@@ -70,11 +70,14 @@ and the derived files   erw-l3.ins,
   \expandafter\endgroup
 \fi
 %</internal>
+%<package>\RequirePackage{expl3}[2018/06/01]
+%<package>\RequirePackage{xparse}[2018/02/01]
+%<package>\RequirePackage{l3keys2e}
 %<package>\ProvidesExplPackage
-%<package>  {erw-l3}              % Package name
-%<package>  {2019/10/12}     % Release date
-%<package>  {0.1.5}                 % Release version
-%<package>  {Utilities built around expl3} % Description
+%<package>  {erw-l3}                            % Package name
+%<package>  {2020/02/05}                        % Release date
+%<package>  {0.1.6}                             % Release version
+%<package>  {Utilities built around expl3}      % Description
 %
 %<*driver>
 \documentclass[full]{l3doc}
@@ -718,9 +721,6 @@ and the derived files   erw-l3.ins,
 % \fi
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}
-\RequirePackage{expl3}[2018/06/01]
-\RequirePackage{xparse}[2018/02/01]
-\RequirePackage{l3keys2e}
 \ExplSyntaxOn
 \msg_new:nnn{erw}{generic}{#1}
 %    \end{macrocode}
@@ -1187,6 +1187,7 @@ and the derived files   erw-l3.ins,
 %\changes{0.1.5}{2019/12/12}{Rearranged frontend/backend sections}
 %\changes{0.1.5}{2019/12/12}{Split Section Preliminaries into Conventions and Requirement.}
 %\changes{0.1.5}{2019/12/12}{Removed \pkg{disambig}}
+%\changes{0.1.6}{2020/02/05}{Fixed critical bug preventing \pkg{erw-l3} from working without explicit inclusion of \pkg{expl3}}
 % 
 % % \begin{thebibliography}{1}
 %
