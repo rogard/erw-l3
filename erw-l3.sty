@@ -6,7 +6,7 @@
 %%
 %% erw-l3.dtx  (with options: `package')
 %% ----------------------------------------------------------------------------
-%% erw-l3 --- LaTeX3 utilities.
+%% erw-l3 ---  Utilities using LaTeX3
 %% Released under the LaTeX Project Public License v1.3c or later
 %% See http://www.latex-project.org/lppl.txt
 %% ----------------------------------------------------------------------------
@@ -16,56 +16,84 @@
  \RequirePackage{l3keys2e}[2020/03/06]
  \RequirePackage{xparse}[2020/03/06]
  \ProvidesExplPackage
- {erw-l3}                                                                                 % Package name
- {2020/04/27}                                                                             % Release date
- {0.7}                                                                                    % Release version
- {erw-l3 --- LaTeX3 utilities. }                                                          % Description
-%%   \clearpage
+ {erw-l3}                                                                            % Package name
+ {2020/04/30}                                                                        % Release date
+ {1.8}                                                                               % Release version
+ {erw-l3 --- Utilities using LaTeX3 }                                                % Description
 \ExplSyntaxOn
-\cs_set:Npn \@@_cs_name:N #1
+\cs_set:Nn \@@_cs_name:N
 {
   \exp_last_unbraced:Nf \use_i:nnn {\cs_split_function:N #1}
 }
-\cs_set:Npn \erw_cs_apply:Nnn #1 #2 #3
+\cs_set:Nn \erw_append_arg:nn
 {
-  #1{#2}{#3}
+  {#1{#2}}
 }
-\cs_set:Npn \erw_cs_apply:Nnnn #1 #2 #3 #4
-{
-  #1{#2}{#3}{#4}
-}
-\cs_set:Npn \erw_cs_apply:Nnnnn #1 #2 #3 #4 #5
-{
-  #1{#2}{#3}{#4}{#5}
-}
-\cs_set:Npn \erw_cs_apply:Nn
-#1 % fun
-#2 % tl
+\cs_set:Nn \erw_cs_apply:Nn
 {
   #1{#2}
 }
 \cs_generate_variant:Nn \erw_cs_apply:Nn {No, Nf, Nx, c}
-\cs_set:Npn \erw_cs_set_eq:NN #1 #2
+\cs_set:Nn \erw_cs_apply:Nnn
 {
-  \cs_set:Npn #1 ##1{#2{##1}}
+  #1{#2}{#3}
 }
-\cs_generate_variant:Nn \erw_cs_set_eq:NN {cN}
-\cs_set:Npn \erw_cs_gset_eq:NN #1 #2
+\cs_set:Nn \erw_cs_apply:Nnnn
 {
-  \cs_gset:Npn #1 ##1{#2{##1}}
+  #1{#2}{#3}{#4}
 }
-\cs_generate_variant:Nn \erw_cs_gset_eq:NN {cN}
-\cs_set:Npn \erw_cs_set_inline:Nn #1 #2
+\cs_set:Nn \erw_cs_apply:Nnnnn
+{
+  #1{#2}{#3}{#4}{#5}
+}
+\cs_set:Npn \erw_cs_identity:n #1{#1}
+\cs_set:Nn \erw_cs_set_inline:Nn
 {
   \cs_set:Npn #1 ##1{#2}
 }
 \cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
-\cs_set:Npn \erw_cs_gset_inline:Nn #1 #2
+\cs_set:Nn \erw_cs_gset_inline:Nn
 {
   \cs_gset:Npn #1 ##1{#2}
 }
 \cs_generate_variant:Nn \erw_cs_gset_inline:Nn {cn}
-\cs_set:Npn \erw_identity:n #1{#1}
+\int_new:N \g@@_csint_int
+\tl_set:Nn \g@@_csint_name_tl {\erw_csint_name:n{\g@@_csint_int}}
+\cs_set:Nn \erw_csint:nn
+{
+  \erw_cs_apply:cn{@@_csint_\int_to_alph:n{#1}:n}{#2}
+}
+\cs_set:Nn \erw_csint_name:n {@@_csint_\int_to_alph:n{#1}:n}
+\cs_new:Nn \erw_csint_names:nnn
+{
+  \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_csint_name:n
+}
+\cs_new_protected:Nn \erw_csint_new:n
+{
+  \int_incr:N \g@@_csint_int
+  \erw_cs_set_inline:cn{\g@@_csint_name_tl}
+  {
+    \token_if_cs:NTF
+    {#1}
+    {#1{##1}}
+    {#1}
+  }
+}
+\cs_new:Nn \erw_csint_names_braced:nnn
+{
+  \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_csint_names_braced:n
+  % TODO \tl_range_braced:nnn?
+}
+\cs_set:Nn \erw_csint_names_braced:n {{\erw_csint_name:n{#1}}}
+\cs_new:Nn \erw_csint_names_braced:
+{
+  \erw_csint_names_braced:nnn{1}{1}{\g@@_csint_int}
+}
+\cs_new_protected:Nn \erw_csint_reset:
+{
+  \int_zero:N \g@@_csint_int
+  \tl_set:Nn \@@_csint_ext_tl{}%^^A TODO remove?
+}
 \cs_set:Npn \@@_int_range:nnn #1 #2 #3
 {
   \int_compare:nNnTF
@@ -78,7 +106,7 @@
   {
     \@@_int_range:nnn
     {
-      \exp_args:Nx\erw_accum:nn{#1}
+      \exp_args:Nx\erw_append_arg:nn{#1}
       {
         \int_eval:n{#2+1}
       }
@@ -87,100 +115,111 @@
     {#3}
   }
 }
-\cs_set:Npn \erw_int_range:nn #1 #2
+\cs_set:Nn \erw_int_range:nn
 {
   \@@_int_range:nnn {{#1}}{#1}{#2}
 }
-\cs_set:Npn \erw_int_range:n #1
+\cs_set:Nn \erw_int_range:n
 {
   \@@_int_range:nnn {}{0}{#1}
 }
-\cs_set:Npn \erw_accum:nn #1 #2
+\msg_new:nnn{@@}{generic}{#1}
+\msg_new:nnn{@@}{notdecl}{#1~not~declared}
+\msg_new:nnn{@@}{notset}{#1~not~set}
+\tl_new:N \g@@_compose_tl
+\tl_new:N \g@@_oper_fold_seq_item_tl
+\cs_set:Nn \@@_oper_compose:NnN
 {
-  {#1{#2}}
-}
-\cs_set:Npn \erw_compose:NnV
-#1 % method
-#2 % funs
-#3 % var
-{
-  \erw_cs_set_inline:Nn \@@_map:n
+  \erw_cs_set_inline:Nn \@@_oper_function:n
   {
     #1{##1}#3
   }
-  \exp_args:Nf\erw_map:n
+  \exp_args:Nf\erw_tl_map:n
   {
     \tl_reverse:n{#2}
   }
 }
-\cs_set:Npn \erw_compose:nV #1 #2
+\cs_set:Nn \erw_oper_compose:nN
 {
-  \erw_compose:NnV \erw_fold:NV {#1} #2
+  \@@_oper_compose:NnN \erw_oper_fold:NN {#1} #2
 }
-\cs_set:Npn \erw_compose_c:nV #1 #2
-{
-  \erw_compose:NnV \erw_fold:cV {#1} #2
-}
-\tl_new:N \g@@_compose_tl
-\cs_set:Npn \erw_compose:nn #1 #2
+\cs_set:Nn \erw_oper_compose:nn
 {
   \tl_set:Nn \g@@_compose_tl {#2}
-  \erw_compose:nV{#1}\g@@_compose_tl
+  \erw_oper_compose:nN{#1}\g@@_compose_tl
   \g@@_compose_tl
 }
-\cs_set:Npn \erw_compose_c:nn #1 #2
+\cs_set:Nn \erw_oper_compose_c:nN
+{
+  \@@_oper_compose:NnN \erw_oper_fold:cN {#1} #2
+}
+\cs_set:Nn \erw_oper_compose_c:nn
 {
   \tl_set:Nn \g@@_compose_tl {#2}
-  \erw_compose_c:nV{#1}\g@@_compose_tl
+  \erw_oper_compose_c:nN{#1}\g@@_compose_tl
   \g@@_compose_tl
 }
-\cs_set:Npn \erw_compose_vers:nV #1 #2
+\cs_set:Nn \erw_oper_compose_vers:nN
 {
-  \msg_error:nnn{erw}{generic}{erw_compose_vers:nV~yet-to~be~implemented}
+  \msg_error:nnn{@@}{notdecl}{\erw_oper_compose_vers:nN}
 }
-\cs_set:Npn \erw_compose_vers:nn #1 #2
+\cs_set:Nn \erw_oper_compose_vers:nn
 {
-  \erw_cs_no_reset:{}
-  \tl_map_function:nN{#1}\erw_cs_no_new:n
+  \erw_csint_reset:{}
+  \tl_map_function:nN{#1}\erw_csint_new:n
   \exp_last_unbraced:Nx
-  \erw_compose_c:nn
-  {{\erw_cs_no_names_braced:{}}}
+  \erw_oper_compose_c:nn
+  {{\erw_csint_names_braced:{}}}
   {#2}
 }
-\cs_set:Npn \erw_compose_seq:nV #1 #2
+\cs_set:Nn \erw_oper_compose_seq:nN
 {
-  \erw_compose:NnV \erw_seq_fold:NV {#1} #2
+  \@@_oper_compose:NnN \erw_oper_fold_seq:NN {#1} #2
 }
-\cs_set:Npn \erw_compose_seq_c:nV
-#1 % funs
-#2 % seq
+\cs_set:Nn \erw_oper_compose_seq_c:nN
 {
-  \erw_compose:NnV \erw_seq_fold:cV {#1} #2
+  \@@_oper_compose:NnN \erw_oper_fold_seq:cN {#1} #2
 }
-\cs_set:Npn \erw_compose_seq_vers:nV #1 #2
+\cs_set:Nn \erw_oper_compose_seq_vers:nN
 {
-  \msg_error:nnn{erw}{generic}{erw_compose_seq_vers:nV~yet-to~be~implemented}
+  \msg_error:nnn{@@}{notdecl}{\erw_oper_compose_seq_vers:nN}
 }
-\tl_new:N \g@@_seq_fold_item_tl
-\cs_set:Npn \erw_seq_fold:NV
-#1 % fun
-#2 % seq
+\cs_set:Nn \erw_oper_gset_function:N
 {
-  \seq_get_right:NN #2 \g@@_seq_fold_item_tl
-  \erw_fold:NV #1 \g@@_seq_fold_item_tl
-  \seq_put_right:No #2 {\g@@_seq_fold_item_tl}
+  \erw_cs_gset_eq:NN \@@_oper_function:n #1
 }
-\cs_generate_variant:Nn \erw_seq_fold:NV {cV}
-\cs_set:Npn \erw_fold:NV
-#1 % fun
-#2 % var
+\cs_set:Nn \erw_oper_gset_function:n
 {
-  \use:c{tl_set:\g@@_fold_set_par_tl}
+  \erw_cs_gset_inline:Nn \@@_oper_function:n {#1}
+}
+\keys_define:nn{@@}
+{
+  oper/fold_set_par.tl_gset:N = \g@@_oper_fold_set_par_tl,
+  oper/fold_set_par.value_required:n = true,
+  oper/fold_set_par.default:n = {Nf},
+  oper/fold_set_par.initial:n = {Nf},
+  oper/fold_apply_par.tl_gset:N = \g@@_oper_fold_apply_par_tl,
+  oper/fold_apply_par.value_required:n = true,
+  oper/fold_apply_par.default:n = {Nf},
+  oper/fold_apply_par.initial:n = {Nf}
+}
+\cs_set:Nn \erw_oper_fold:NN
+{
+  \use:c{tl_set:\g@@_oper_fold_set_par_tl}
   #2
-  {\use:c{erw_cs_apply:\g@@_fold_apply_par_tl}{#1}{#2}}
+  {\use:c{erw_cs_apply:\g@@_oper_fold_apply_par_tl}{#1}{#2}}
 }
-\cs_generate_variant:Nn \erw_fold:NV {cV}
-\cs_new:Nn \@@_sys_date:
+\cs_generate_variant:Nn \erw_oper_fold:NN {cN}
+\cs_set:Nn \erw_oper_fold_seq:NN
+{
+  \seq_get_right:NN #2 \g@@_oper_fold_seq_item_tl
+  \erw_oper_fold:NN #1 \g@@_oper_fold_seq_item_tl
+  \seq_put_right:No #2 {\g@@_oper_fold_seq_item_tl}
+}
+\cs_generate_variant:Nn \erw_oper_fold_seq:NN {cN}
+\msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
+\msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
+\cs_new:Nn \@@_timestamp_date_dec:
 {
   \int_eval:n
   {
@@ -189,18 +228,9 @@
     +\c_sys_day_int *  1
   }
 }
-\cs_new:Nn\erw_sys_date:{\@@_sys_date:}
-\cs_new:Nn \@@_sys_date_hex:
-{\int_to_hex:n{\@@_sys_date:}}
-\cs_new:Nn\erw_sys_date_hex:{\@@_sys_date_hex:}
-\cs_new:Nn\@@_sys_filename:
-{
-  \c_sys_jobname_str--
-  \@@_sys_date_hex:--
-  \@@_sys_time_hex:
-}
-\cs_new:Nn\erw_sys_filename:{\@@_sys_filename:}
-\cs_new:Nn \@@_sys_time:
+\cs_new:Nn \@@_timestamp_date:N{\int_to_hex:n{\@@_timestamp_date_dec:}}
+\cs_new:Nn \@@_timestamp_date_hex:{\int_to_hex:n{\@@_timestamp_date_dec:}}
+\cs_new:Nn \@@_timestamp_time_dec:
 {
   \int_eval:n
   {
@@ -208,33 +238,100 @@
     +\c_sys_minute_int * 1
   }
 }
-\cs_new:Nn\erw_sys_time:{\@@_sys_time:}
-\cs_new:Nn\@@_sys_time_hex:
-{\int_to_hex:n{\@@_sys_time:}}
-\cs_new:Nn \erw_sys_time_hex:{\@@_sys_time_hex:}
-\prg_set_conditional:Npnn \erw_is_matrix:n #1 { p, TF }
+\cs_new:Nn\@@_timestamp_time_hex:{\int_to_hex:n{\@@_timestamp_time_dec:}}
+\cs_new:Nn\@@_timestamp_datetime_base:n
 {
-  \erw_gset_map_inline:n{==\tl_count:n{##1}}
-  \int_compare:nTF
+  \int_case:nnTF{#1}
   {
-    \exp_args:Nf\tl_count:n{\tl_head:n{#1}}
-    \exp_args:Nf \erw_map:n
-    {
-      \tl_tail:n{#1}
-    }
+    {10}{dec}
+    {16}{hex}
   }
-  {\prg_return_true:}
-  {\prg_return_false:}
+  {\c_empty_tl}
+  {\msg_error:nnn{@@}{timestamp / base}{\@@_timestamp_datetime_base:n{#1}}}
 }
-\cs_set:Npn \erw_gset_map:N #1
+\cs_new:Nn\@@_timestamp_datetime_join:nnn{#1#2#3}
+\cs_new:Nn\@@_timestamp_datetime_join:nn{\@@_timestamp_datetime_join:nnn{#1}{\g@@_timestamp_delim_str}{#2}}
+\cs_new:Nn\@@_timestamp_datetime_period:n
 {
-  \erw_cs_gset_eq:NN \@@_map:n #1
+  \str_case:nnTF{#1}
+  {
+    {date}{date}
+    {time}{time}
+    {datetime}{datetime}
+  }
+  {\c_empty_tl}
+  {\msg_error:nnn{@@}{ timestamp / period }{\@@_timestamp_datetime_period:n{#1}}}
 }
-\cs_set:Npn \erw_gset_map_inline:n #1
+\cs_new:Nn\@@_timestamp_datetime_dec: {\@@_timestamp_datetime_join:nn{\@@_timestamp_date_dec:}{\@@_timestamp_time_dec:}}
+\cs_new:Nn\@@_timestamp_datetime_hex: {\@@_timestamp_datetime_join:nn{\@@_timestamp_date_hex:}{\@@_timestamp_time_hex:}}
+\cs_new:Nn\@@_timestamp:nn
 {
-  \erw_cs_gset_inline:Nn \@@_map:n {#1}
+  \exp_args:No
+  \use:c{@@_timestamp_\@@_timestamp_datetime_period:n{#1}_\@@_timestamp_datetime_base:n{#2}:}
 }
-\cs_set:Npn \erw_last_item:n #1
+\cs_new_protected:Nn \@@_timestamp_set_delim:nn
+{
+  \use:c{tl_gset:N#1}
+  \g@@_timestamp_delim_str{#2}
+}
+\keys_define:nn{@@}
+{
+  timestamp / delim .code:n =
+  {
+    \exp_last_unbraced:No
+    \@@_timestamp_set_delim:nn{n}{#1}
+  },
+  timestamp / delim  .value_required:n = true,
+  timestamp / delim  .default:n = {-},
+  timestamp / delim  .initial:n = {-}
+}
+\cs_new:Nn\erw_timestamp:nn
+{
+  \@@_timestamp:nn{#1}{#2}
+}
+\cs_new:Nn\erw_timestamp:
+{
+  \@@_timestamp:nn{datetime}{16}
+}
+\cs_new_protected:Nn \@@_oper_function:n
+{
+  \msg_error:nnn
+  {erw}
+  {notset}
+  {\@@_oper_function:n}
+}
+\cs_set_protected:Nn \@@_map:nn
+{
+  \quark_if_recursion_tail_stop:n{#1}
+  \@@_oper_function:n{#1}  \@@_map:nn{#2}
+}
+\cs_set_protected:Nn \@@_map_thread_at:Nnn
+{
+  \erw_cs_apply:Nn #1
+  {\exp_args:Nf\tl_item:nn {#3} {#2} }
+}
+\cs_set_protected:Nn \@@_map_thread_at:Nnnn
+{
+  \erw_cs_apply:Nnn #1
+  {\exp_args:Nf\tl_item:nn {#3} {#2} }
+  {\exp_args:Nf\tl_item:nn {#4} {#2} }
+}
+\cs_set_protected:Nn \@@_map_thread_at:Nnnnn
+{
+  \erw_cs_apply:Nnnn #1
+  {\exp_args:Nf\tl_item:nn {#3} {#2} }
+  {\exp_args:Nf\tl_item:nn {#4} {#2} }
+  {\exp_args:Nf\tl_item:nn {#5} {#2} }
+}
+\cs_set_protected:Nn \@@_map_thread_at:Nnnnnn
+{
+  \erw_cs_apply:Nnnnn #1
+  {\exp_args:Nf\tl_item:nn {#3} {#2} }
+  {\exp_args:Nf\tl_item:nn {#4} {#2} }
+  {\exp_args:Nf\tl_item:nn {#5} {#2} }
+  {\exp_args:Nf\tl_item:nn {#6} {#2} }
+}
+\cs_set:Nn \erw_tl_last_item:n
 {
   \exp_args:Nof \tl_item:nn
   {#1}
@@ -242,45 +339,29 @@
     \tl_count:n{#1}
   }
 }
-\cs_set:Npn \erw_map:n #1
+\cs_set_protected:Nn \erw_tl_map:n
 {
   \@@_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
 }
-\cs_set:Npn \@@_map:nn #1 #2
+\cs_set_protected:Nn \erw_tl_map:Nn
 {
-  \quark_if_recursion_tail_stop:n{#1}
-  \@@_map:n{#1}  \@@_map:nn{#2}
+  \cs_set_eq:NN \@@_oper_function:n #1
+  \erw_tl_map:n{#2}
 }
-\cs_new:Npn \@@_map:n #1
+\cs_set_protected:Nn \erw_tl_map_inline:nn
 {
-  \msg_error:nnn
-  {erw}
-  {generic}
-  {@@_map:n~not~set}
+  \erw_cs_set_inline:Nn \@@_oper_function:n {#1}
+  \erw_tl_map:n{#2}
 }
-\cs_set:Npn \erw_map:Nn
-#1 % fun
-#2 % tl
-{
-  \erw_cs_set_eq:NN \@@_map:n #1
-  \erw_map:n{#2}
-}
-\cs_set:Npn \erw_map_inline:nn
-#1 % inl
-#2 % tl
-{
-  \erw_cs_set_inline:Nn \@@_map:n {#1}
-  \erw_map:n{#2}
-}
-\cs_set:Npn \erw_merge:nn #1 #2
+\cs_set:Nn \erw_tl_merge:nn
 {
   {#1#2}
 }
-\cs_set:Npn \erw_repeat:nn #1 #2
+\cs_set:Nn \erw_tl_repeat:nn
 {
   \int_step_inline:nnnn{1}{1}{#1}{#2}
 }
-\cs_set:Npn \erw_split:nnn #1 #2 #3
+\cs_set_protected:Nn \erw_tl_split:nnn
 {
   \tl_head:n{#1}
   \use:c{exp_args:#3} \tl_map_inline:nn
@@ -291,37 +372,11 @@
     }
   }{#2##1}
 }
-\cs_set:Npn \erw_split:nn #1 #2
+\cs_set_protected:Nn \erw_tl_split:nn
 {
-  \erw_split:nnn{#1}{#2}{Nf}
+  \erw_tl_split:nnn{#1}{#2}{Nf}
 }
-\cs_set:Npn \@@_map_thread_at:Nnn #1 #2 #3
-{
-  \erw_cs_apply:Nn #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-}
-\cs_set:Npn \@@_map_thread_at:Nnnn #1 #2 #3 #4
-{
-  \erw_cs_apply:Nnn #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-  {\exp_args:Nf\tl_item:nn {#4} {#2} }
-}
-\cs_set:Npn \@@_map_thread_at:Nnnnn #1 #2 #3 #4 #5
-{
-  \erw_cs_apply:Nnnn #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-  {\exp_args:Nf\tl_item:nn {#4} {#2} }
-  {\exp_args:Nf\tl_item:nn {#5} {#2} }
-}
-\cs_set:Npn \@@_map_thread_at:Nnnnnn #1 #2 #3 #4 #5 #6
-{
-  \erw_cs_apply:Nnnnn #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-  {\exp_args:Nf\tl_item:nn {#4} {#2} }
-  {\exp_args:Nf\tl_item:nn {#5} {#2} }
-  {\exp_args:Nf\tl_item:nn {#6} {#2} }
-}
-\cs_set:Npn \erw_map_thread_at:Nnn #1 #2 #3
+\cs_set_protected:Nn \erw_tl_map_thread_at:Nnn
 {
   \exp_args:Nf\int_case:nnTF
   {
@@ -337,12 +392,12 @@
     % Do nothing
   }
   {
-    \msg_error:nnn{erw}
+    \msg_error:nnn{@@}
     {generic}
-    {erw_map_thread_at:~count~of~#3~not~withing~1~to~4}
+    {erw_tl_map_thread_at:~count~of~#3~not~withing~1~to~4}
   }
 }
-\cs_set:Npn \erw_map_thread:Nn #1 #2
+\cs_set_protected:Nn \erw_tl_map_thread:Nn
 {
   % TODO check that #2 is a matrix
   \int_step_inline:nn
@@ -350,56 +405,12 @@
     \exp_args:Nf \tl_count:n{ \tl_head:n{#2} }
   }
   {
-    \erw_map_thread_at:Nnn #1 {##1} {#2}
+    \erw_tl_map_thread_at:Nnn #1 {##1} {#2}
   }
 }
-\int_new:N \g@@_cs_no_int
-\cs_set:Npn \erw_cs_no_name:n #1{@@_cs_no_\int_to_alph:n{#1}:n}
-\cs_set:Npn \erw_cs_no_name_braced:n #1{{\erw_cs_no_name:n{#1}}}
-\tl_set:Nn \g@@_cs_no_name_tl {\erw_cs_no_name:n{\g@@_cs_no_int}}
-\cs_set:Npn \erw_cs_no:nn #1 #2
+\cs_new_protected:Nn\erw_option:n
 {
-  \erw_cs_apply:cn{@@_cs_no_\int_to_alph:n{#1}:n}{#2}
-}
-\cs_new_protected:Npn \erw_cs_no_reset:
-{
-  \int_zero:N \g@@_cs_no_int
-  \tl_set:Nn \@@_cs_no_ext_tl{}%^^A remove
-}
-\cs_new_protected:Npn \erw_cs_no_new:n #1
-{
-  \int_incr:N \g@@_cs_no_int
-  \erw_cs_set_inline:cn{\g@@_cs_no_name_tl}
-  {
-    \token_if_cs:NTF
-    {#1}
-    {#1{##1}}
-    {#1}
-  }
-}
-\cs_new:Npn \erw_cs_no_names:nnn #1 #2 #3
-{
-  \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_cs_no_name:n
-}
-\cs_new:Npn \erw_cs_no_names_braced:nnn #1 #2 #3
-{
-  \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_cs_no_name_braced:n
-  % TODO \tl_range_braced:nnn?
-}
-\cs_new:Npn \erw_cs_no_names_braced:
-{
-  \erw_cs_no_names_braced:nnn{1}{1}{\g@@_cs_no_int}
-}
-\keys_define:nn{@@}
-{
-  fold/set_par. tl_set:N = \g@@_fold_set_par_tl,
-  fold/set_par. value_required:n = true,
-  fold/set_par. default:n = Nf,
-  fold/set_par. initial:n = Nf,
-  fold/apply_par. tl_set:N = \g@@_fold_apply_par_tl,
-  fold/apply_par. value_required:n = true,
-  fold/apply_par. default:n = Nf,
-  fold/apply_par. initial:n = Nf
+  \keys_set:nn{@@}{#1}
 }
 \ExplSyntaxOff
 %% 
