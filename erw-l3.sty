@@ -125,8 +125,6 @@
 \msg_new:nnn{@@}{generic}{#1}
 \msg_new:nnn{@@}{notdecl}{#1~not~declared}
 \msg_new:nnn{@@}{notset}{#1~not~set}
-\tl_new:N \g@@_compose_tl
-\tl_new:N \g@@_oper_fold_seq_item_tl
 \cs_set:Nn \@@_oper_compose:NnN
 {
   \erw_cs_set_inline:Nn \@@_tl_function:n
@@ -137,59 +135,6 @@
   {
     \tl_reverse:n{#2}
   }
-}
-\cs_set:Nn \erw_oper_compose:nN
-{
-  \@@_oper_compose:NnN \erw_oper_fold:NN {#1} #2
-}
-\cs_set:Nn \erw_oper_compose:nn
-{
-  \tl_set:Nn \g@@_compose_tl {#2}
-  \erw_oper_compose:nN{#1}\g@@_compose_tl
-  \g@@_compose_tl
-}
-\cs_set:Nn \erw_oper_compose_c:nN
-{
-  \@@_oper_compose:NnN \erw_oper_fold:cN {#1} #2
-}
-\cs_set:Nn \erw_oper_compose_c:nn
-{
-  \tl_set:Nn \g@@_compose_tl {#2}
-  \erw_oper_compose_c:nN{#1}\g@@_compose_tl
-  \g@@_compose_tl
-}
-\cs_set:Nn \erw_oper_compose_vers:nN
-{
-  \msg_error:nnn{@@}{notdecl}{\erw_oper_compose_vers:nN}
-}
-\cs_set:Nn \erw_oper_compose_vers:nn
-{
-  \erw_csint_reset:{}
-  \tl_map_function:nN{#1}\erw_csint_new:n
-  \exp_last_unbraced:Nx
-  \erw_oper_compose_c:nn
-  {{\erw_csint_names_braced:{}}}
-  {#2}
-}
-\cs_set:Nn \erw_oper_compose_seq:nN
-{
-  \@@_oper_compose:NnN \erw_oper_fold_seq:NN {#1} #2
-}
-\cs_set:Nn \erw_oper_compose_seq_c:nN
-{
-  \@@_oper_compose:NnN \erw_oper_fold_seq:cN {#1} #2
-}
-\cs_set:Nn \erw_oper_compose_seq_vers:nN
-{
-  \msg_error:nnn{@@}{notdecl}{\erw_oper_compose_seq_vers:nN}
-}
-\cs_set:Nn \erw_tl_gset_function:N
-{
-  \erw_cs_gset_eq:NN \@@_tl_function:n #1
-}
-\cs_set:Nn \erw_tl_gset_function:n
-{
-  \erw_cs_gset_inline:Nn \@@_tl_function:n {#1}
 }
 \keys_define:nn{@@}
 {
@@ -202,20 +147,26 @@
   oper/fold_apply_par.default:n = {Nf},
   oper/fold_apply_par.initial:n = {Nf}
 }
-\cs_set:Nn \erw_oper_fold:NN
+\tl_new:N \g@@_seq_fold_item_tl
+\cs_set:Nn \erw_seq_compose:nN
 {
-  \use:c{tl_set:\g@@_oper_fold_set_par_tl}
-  #2
-  {\use:c{erw_cs_apply:\g@@_oper_fold_apply_par_tl}{#1}{#2}}
+  \@@_oper_compose:NnN \erw_seq_fold:NN {#1} #2
 }
-\cs_generate_variant:Nn \erw_oper_fold:NN {cN}
-\cs_set:Nn \erw_oper_fold_seq:NN
+\cs_set:Nn \erw_seq_compose_c:nN
 {
-  \seq_get_right:NN #2 \g@@_oper_fold_seq_item_tl
-  \erw_oper_fold:NN #1 \g@@_oper_fold_seq_item_tl
-  \seq_put_right:No #2 {\g@@_oper_fold_seq_item_tl}
+  \@@_oper_compose:NnN \erw_seq_fold:cN {#1} #2
 }
-\cs_generate_variant:Nn \erw_oper_fold_seq:NN {cN}
+\cs_set:Nn \erw_seq_compose_vers:nN
+{
+  \msg_error:nnn{@@}{notdecl}{\erw_seq_compose_vers:nN}
+}
+\cs_set:Nn \erw_seq_fold:NN
+{
+  \seq_get_right:NN #2 \g@@_seq_fold_item_tl
+  \erw_tl_fold:NN #1 \g@@_seq_fold_item_tl
+  \seq_put_right:No #2 {\g@@_seq_fold_item_tl}
+}
+\cs_generate_variant:Nn \erw_seq_fold:NN {cN}
 \msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
 \msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
 \cs_new:Nn \@@_sys_date_dec:
@@ -262,6 +213,24 @@
 }
 \cs_new:Nn\@@_sys_datetime_dec: {\@@_sys_datetime_join:nn{\@@_sys_date_dec:}{\@@_sys_time_dec:}}
 \cs_new:Nn\@@_sys_datetime_hex: {\@@_sys_datetime_join:nn{\@@_sys_date_hex:}{\@@_sys_time_hex:}}
+\cs_new:Nn\@@_sys_jobnametimestamp_prefix:
+{
+  \erw_tl_join:nn
+  {\c_sys_jobname_str}
+  {\g@@_sys_timestamp_delim_str}
+}
+\cs_new:Nn\@@_sys_jobnametimestamp:nn
+{
+  \erw_tl_join:nn
+  {\@@_sys_jobnametimestamp_prefix:}
+  {\erw_sys_timestamp:nn{#1}{#2}}
+}
+\cs_new:Nn\@@_sys_jobnametimestamp:
+{
+  \erw_tl_join:nn
+  {\@@_sys_jobnametimestamp_prefix:}
+  {\erw_sys_timestamp:}
+}
 \cs_new:Nn\@@_sys_timestamp:nn
 {
   \exp_args:No
@@ -283,6 +252,8 @@
   sys / timestamp_delim  .default:n = {-},
   sys / timestamp_delim  .initial:n = {-}
 }
+\cs_new:Nn\erw_sys_jobnametimestamp:nn{\@@_sys_jobnametimestamp:nn{#1}{#2}}
+\cs_new:Nn\erw_sys_jobnametimestamp:{\@@_sys_jobnametimestamp:}
 \cs_new:Nn\erw_sys_timestamp_delimiter:
 {
   \use:N \g@@_sys_timestamp_delim_str
@@ -295,6 +266,7 @@
 {
   \@@_sys_timestamp:nn{datetime}{16}
 }
+\tl_new:N \g@@_tl_compose_tl
 \cs_new_protected:Nn \@@_tl_function:n
 {
   \msg_error:nnn
@@ -337,6 +309,54 @@
 {
   {#1{#2}}
 }
+\cs_set:Nn \erw_tl_compose:nN
+{
+  \@@_oper_compose:NnN \erw_tl_fold:NN {#1} #2
+}
+\cs_set:Nn \erw_tl_compose:nn
+{
+  \tl_set:Nn \g@@_tl_compose_tl {#2}
+  \erw_tl_compose:nN{#1}\g@@_tl_compose_tl
+  \g@@_tl_compose_tl
+}
+\cs_set:Nn \erw_tl_compose_c:nN
+{
+  \@@_oper_compose:NnN \erw_tl_fold:cN {#1} #2
+}
+\cs_set:Nn \erw_tl_compose_c:nn
+{
+  \tl_set:Nn \g@@_tl_compose_tl {#2}
+  \erw_tl_compose_c:nN{#1}\g@@_tl_compose_tl
+  \g@@_tl_compose_tl
+}
+\cs_set:Nn \erw_tl_compose_vers:nN
+{
+  \msg_error:nnn{@@}{notdecl}{\erw_tl_compose_vers:nN}
+}
+\cs_set:Nn \erw_tl_compose_vers:nn
+{
+  \erw_csint_reset:{}
+  \tl_map_function:nN{#1}\erw_csint_new:n
+  \exp_last_unbraced:Nx
+  \erw_tl_compose_c:nn
+  {{\erw_csint_names_braced:{}}}
+  {#2}
+}
+\cs_set:Nn \erw_tl_fold:NN
+{
+  \use:c{tl_set:\g@@_oper_fold_set_par_tl}
+  #2
+  {\use:c{erw_cs_apply:\g@@_oper_fold_apply_par_tl}{#1}{#2}}
+}
+\cs_generate_variant:Nn \erw_tl_fold:NN {cN}
+\cs_set:Nn \erw_tl_gset_function:N
+{
+  \erw_cs_gset_eq:NN \@@_tl_function:n #1
+}
+\cs_set:Nn \erw_tl_gset_function:n
+{
+  \erw_cs_gset_inline:Nn \@@_tl_function:n {#1}
+}
 \cs_set:Nn \erw_tl_last_item:n
 {
   \exp_args:Nof \tl_item:nn
@@ -358,10 +378,6 @@
 {
   \erw_cs_set_inline:Nn \@@_tl_function:n {#1}
   \erw_tl_map:n{#2}
-}
-\cs_set:Nn \erw_tl_merge:nn
-{
-  {#1#2}
 }
 \cs_set:Nn \erw_tl_repeat:nn
 {
