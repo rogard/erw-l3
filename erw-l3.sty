@@ -17,17 +17,12 @@
  \RequirePackage{xparse}[2020/03/06]
  \ProvidesExplPackage
  {erw-l3}                                                                            % Package name
- {2020/04/30}                                                                        % Release date
- {1.8}                                                                               % Release version
+ {2020/05/01}                                                                        % Release date
+ {1.9}                                                                               % Release version
  {erw-l3 --- Utilities using LaTeX3 }                                                % Description
-\ExplSyntaxOn
 \cs_set:Nn \@@_cs_name:N
 {
   \exp_last_unbraced:Nf \use_i:nnn {\cs_split_function:N #1}
-}
-\cs_set:Nn \erw_append_arg:nn
-{
-  {#1{#2}}
 }
 \cs_set:Nn \erw_cs_apply:Nn
 {
@@ -57,6 +52,10 @@
   \cs_gset:Npn #1 ##1{#2}
 }
 \cs_generate_variant:Nn \erw_cs_gset_inline:Nn {cn}
+\cs_new:Nn \erw_tl_join:nn{#1#2}
+\cs_new:Nn \erw_tl_join:nnn{#1#2#3}
+\cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
+\cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
 \int_new:N \g@@_csint_int
 \tl_set:Nn \g@@_csint_name_tl {\erw_csint_name:n{\g@@_csint_int}}
 \cs_set:Nn \erw_csint:nn
@@ -106,7 +105,7 @@
   {
     \@@_int_range:nnn
     {
-      \exp_args:Nx\erw_append_arg:nn{#1}
+      \exp_args:Nx\erw_tl_append_item:nn{#1}
       {
         \int_eval:n{#2+1}
       }
@@ -130,7 +129,7 @@
 \tl_new:N \g@@_oper_fold_seq_item_tl
 \cs_set:Nn \@@_oper_compose:NnN
 {
-  \erw_cs_set_inline:Nn \@@_oper_function:n
+  \erw_cs_set_inline:Nn \@@_tl_function:n
   {
     #1{##1}#3
   }
@@ -184,13 +183,13 @@
 {
   \msg_error:nnn{@@}{notdecl}{\erw_oper_compose_seq_vers:nN}
 }
-\cs_set:Nn \erw_oper_gset_function:N
+\cs_set:Nn \erw_tl_gset_function:N
 {
-  \erw_cs_gset_eq:NN \@@_oper_function:n #1
+  \erw_cs_gset_eq:NN \@@_tl_function:n #1
 }
-\cs_set:Nn \erw_oper_gset_function:n
+\cs_set:Nn \erw_tl_gset_function:n
 {
-  \erw_cs_gset_inline:Nn \@@_oper_function:n {#1}
+  \erw_cs_gset_inline:Nn \@@_tl_function:n {#1}
 }
 \keys_define:nn{@@}
 {
@@ -219,7 +218,7 @@
 \cs_generate_variant:Nn \erw_oper_fold_seq:NN {cN}
 \msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
 \msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
-\cs_new:Nn \@@_timestamp_date_dec:
+\cs_new:Nn \@@_sys_date_dec:
 {
   \int_eval:n
   {
@@ -228,9 +227,9 @@
     +\c_sys_day_int *  1
   }
 }
-\cs_new:Nn \@@_timestamp_date:N{\int_to_hex:n{\@@_timestamp_date_dec:}}
-\cs_new:Nn \@@_timestamp_date_hex:{\int_to_hex:n{\@@_timestamp_date_dec:}}
-\cs_new:Nn \@@_timestamp_time_dec:
+\cs_new:Nn \@@_sys_date:N{\int_to_hex:n{\@@_sys_date_dec:}}
+\cs_new:Nn \@@_sys_date_hex:{\int_to_hex:n{\@@_sys_date_dec:}}
+\cs_new:Nn \@@_sys_time_dec:
 {
   \int_eval:n
   {
@@ -238,8 +237,8 @@
     +\c_sys_minute_int * 1
   }
 }
-\cs_new:Nn\@@_timestamp_time_hex:{\int_to_hex:n{\@@_timestamp_time_dec:}}
-\cs_new:Nn\@@_timestamp_datetime_base:n
+\cs_new:Nn\@@_sys_time_hex:{\int_to_hex:n{\@@_sys_time_dec:}}
+\cs_new:Nn\@@_sys_datetime_base:n
 {
   \int_case:nnTF{#1}
   {
@@ -247,11 +246,10 @@
     {16}{hex}
   }
   {\c_empty_tl}
-  {\msg_error:nnn{@@}{timestamp / base}{\@@_timestamp_datetime_base:n{#1}}}
+  {\msg_error:nnn{@@}{timestamp / base}{\@@_sys_datetime_base:n{#1}}}
 }
-\cs_new:Nn\@@_timestamp_datetime_join:nnn{#1#2#3}
-\cs_new:Nn\@@_timestamp_datetime_join:nn{\@@_timestamp_datetime_join:nnn{#1}{\g@@_timestamp_delim_str}{#2}}
-\cs_new:Nn\@@_timestamp_datetime_period:n
+\cs_new:Nn\@@_sys_datetime_join:nn{\erw_tl_join:nnn{#1}{\g@@_sys_timestamp_delim_str}{#2}}
+\cs_new:Nn\@@_sys_datetime_period:n
 {
   \str_case:nnTF{#1}
   {
@@ -260,50 +258,54 @@
     {datetime}{datetime}
   }
   {\c_empty_tl}
-  {\msg_error:nnn{@@}{ timestamp / period }{\@@_timestamp_datetime_period:n{#1}}}
+  {\msg_error:nnn{@@}{ timestamp / period }{\@@_sys_datetime_period:n{#1}}}
 }
-\cs_new:Nn\@@_timestamp_datetime_dec: {\@@_timestamp_datetime_join:nn{\@@_timestamp_date_dec:}{\@@_timestamp_time_dec:}}
-\cs_new:Nn\@@_timestamp_datetime_hex: {\@@_timestamp_datetime_join:nn{\@@_timestamp_date_hex:}{\@@_timestamp_time_hex:}}
-\cs_new:Nn\@@_timestamp:nn
+\cs_new:Nn\@@_sys_datetime_dec: {\@@_sys_datetime_join:nn{\@@_sys_date_dec:}{\@@_sys_time_dec:}}
+\cs_new:Nn\@@_sys_datetime_hex: {\@@_sys_datetime_join:nn{\@@_sys_date_hex:}{\@@_sys_time_hex:}}
+\cs_new:Nn\@@_sys_timestamp:nn
 {
   \exp_args:No
-  \use:c{@@_timestamp_\@@_timestamp_datetime_period:n{#1}_\@@_timestamp_datetime_base:n{#2}:}
+  \use:c{@@_sys_\@@_sys_datetime_period:n{#1}_\@@_sys_datetime_base:n{#2}:}
 }
-\cs_new_protected:Nn \@@_timestamp_set_delim:nn
+\cs_new_protected:Nn \@@_sys_set_delim:nn
 {
   \use:c{tl_gset:N#1}
-  \g@@_timestamp_delim_str{#2}
+  \g@@_sys_timestamp_delim_str{#2}
 }
 \keys_define:nn{@@}
 {
-  timestamp / delim .code:n =
+  sys / timestamp_delim .code:n =
   {
     \exp_last_unbraced:No
-    \@@_timestamp_set_delim:nn{n}{#1}
+    \@@_sys_set_delim:nn{n}{#1}
   },
-  timestamp / delim  .value_required:n = true,
-  timestamp / delim  .default:n = {-},
-  timestamp / delim  .initial:n = {-}
+  sys / timestamp_delim  .value_required:n = true,
+  sys / timestamp_delim  .default:n = {-},
+  sys / timestamp_delim  .initial:n = {-}
 }
-\cs_new:Nn\erw_timestamp:nn
+\cs_new:Nn\erw_sys_timestamp_delimiter:
 {
-  \@@_timestamp:nn{#1}{#2}
+  \use:N \g@@_sys_timestamp_delim_str
 }
-\cs_new:Nn\erw_timestamp:
+\cs_new:Nn\erw_sys_timestamp:nn
 {
-  \@@_timestamp:nn{datetime}{16}
+  \@@_sys_timestamp:nn{#1}{#2}
 }
-\cs_new_protected:Nn \@@_oper_function:n
+\cs_new:Nn\erw_sys_timestamp:
+{
+  \@@_sys_timestamp:nn{datetime}{16}
+}
+\cs_new_protected:Nn \@@_tl_function:n
 {
   \msg_error:nnn
   {erw}
   {notset}
-  {\@@_oper_function:n}
+  {\@@_tl_function:n}
 }
 \cs_set_protected:Nn \@@_map:nn
 {
   \quark_if_recursion_tail_stop:n{#1}
-  \@@_oper_function:n{#1}  \@@_map:nn{#2}
+  \@@_tl_function:n{#1}  \@@_map:nn{#2}
 }
 \cs_set_protected:Nn \@@_map_thread_at:Nnn
 {
@@ -331,6 +333,10 @@
   {\exp_args:Nf\tl_item:nn {#5} {#2} }
   {\exp_args:Nf\tl_item:nn {#6} {#2} }
 }
+\cs_set:Nn \erw_tl_append_item:nn
+{
+  {#1{#2}}
+}
 \cs_set:Nn \erw_tl_last_item:n
 {
   \exp_args:Nof \tl_item:nn
@@ -345,12 +351,12 @@
 }
 \cs_set_protected:Nn \erw_tl_map:Nn
 {
-  \cs_set_eq:NN \@@_oper_function:n #1
+  \cs_set_eq:NN \@@_tl_function:n #1
   \erw_tl_map:n{#2}
 }
 \cs_set_protected:Nn \erw_tl_map_inline:nn
 {
-  \erw_cs_set_inline:Nn \@@_oper_function:n {#1}
+  \erw_cs_set_inline:Nn \@@_tl_function:n {#1}
   \erw_tl_map:n{#2}
 }
 \cs_set:Nn \erw_tl_merge:nn
@@ -399,7 +405,6 @@
 }
 \cs_set_protected:Nn \erw_tl_map_thread:Nn
 {
-  % TODO check that #2 is a matrix
   \int_step_inline:nn
   {
     \exp_args:Nf \tl_count:n{ \tl_head:n{#2} }

@@ -74,8 +74,8 @@ erw-l3.sty, and erw-l3.pdf.
 %<package> \RequirePackage{xparse}[2020/03/06]
 %<package> \ProvidesExplPackage
 %<package> {erw-l3}                                                                            % Package name
-%<package> {2020/04/30}                                                                        % Release date
-%<package> {1.8}                                                                               % Release version
+%<package> {2020/05/01}                                                                        % Release date
+%<package> {1.9}                                                                               % Release version
 %<package> {erw-l3 --- Utilities using LaTeX3 }                                                % Description
 % 
 %<*driver> 
@@ -94,6 +94,7 @@ erw-l3.sty, and erw-l3.pdf.
 \makeatletter
 \newcommand*{\docsetnameref}{\def\@currentlabelname}%https://tex.stackexchange.com/questions/537751
 \makeatother
+\usepackage{hyperref}
 \ExplSyntaxOn
 \tl_gset:Nn \partname {Part}
 \ExplSyntaxOff
@@ -181,122 +182,143 @@ erw-l3.sty, and erw-l3.pdf.
 %   \part{Usage}\label{part:usage}
 %   ^^A   \VerbatimFootnotes
 %   
-% \leavevmode
-% \refstepcounter{section}
-% \docsetnameref{Loading the package}
-% \label{usage:load} 
-% \addcontentsline{toc}{section}{\protect\numberline{\thesection}Loading the package}   
-% \begin{function}{\usepackage}
-%   \begin{syntax}
-%     \cs{usepackage}\doceval{\pkg{\jobname}}
-%   \end{syntax}
-%   \begin{description}
-%   \item[Requirement]\docfillblank
-%     \begin{enumerate}
-%     \item \file{\jobname.sty} and its dependencies are in the path of the \LaTeX~engine. See \autoref{part:other}, \autoref{other:support}.
-%     \item Goes in the~\docccept{\doccceptpre}
-%     \end{enumerate}
-%   \end{description}  
-% \end{function}
+%   \leavevmode
+%   \refstepcounter{section}
+%   \docsetnameref{Loading the package}
+%   \label{usage:load} 
+%   \addcontentsline{toc}{section}{\protect\numberline{\thesection}Loading the package}   
+%   \begin{function}{\usepackage}
+%     \begin{syntax}
+%       \cs{usepackage}\doceval{\pkg{\jobname}}
+%     \end{syntax}
+%     \begin{description}
+%     \item[Requirement]\docfillblank
+%       \begin{enumerate}
+%       \item \file{\jobname.sty} and its dependencies are in the path of the \LaTeX~engine. See \autoref{part:other}, \autoref{other:support}.
+%       \item Goes in the~\docccept{\doccceptpre}
+%       \end{enumerate}
+%     \end{description}  
+%   \end{function}
+%   
+%   \section{basics}\label{usage:basics}
+%   \begin{function}{\erw_cs_apply:Nn, \erw_cs_apply:No, \erw_cs_apply:Nf, \erw_cs_apply:Nx, \erw_cs_apply:cn, \erw_cs_apply:Nnn, \erw_cs_apply:Nnnn, \erw_cs_apply:Nnnnn}
+%     \begin{syntax}
+%       \cs{erw_cs_apply:Nn} \Arg{\doccceptcs}\Arg{\docccepttl_{1}}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_cs_identity:n}
+%     \begin{syntax}
+%       \cs{erw_cs_identity:n}\Arg{arg}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_cs_set_inline:Nn, \erw_cs_set_inline:cn}
+%     \begin{syntax}
+%       \cs{erw_cs_set_inline:Nn}\Arg{\doccceptcs}\Arg{\doccceptcode}
+%     \end{syntax}
+%   \end{function}
 %
-% \section{basics}\label{usage:basics}
-% \begin{function}{\erw_append_arg:nn}
-%   \begin{syntax}
-%     \cs{erw_cs_apply:Nn}\Arg{arg list}\Arg{arg}
-%   \end{syntax}
-% \end{function}
-% \begin{function}{\erw_cs_apply:Nn, \erw_cs_apply:No, \erw_cs_apply:Nf, \erw_cs_apply:Nx, \erw_cs_apply:cn, \erw_cs_apply:Nnn, \erw_cs_apply:Nnnn, \erw_cs_apply:Nnnnn}
-%   \begin{syntax}
-%     \cs{erw_cs_apply:Nn} \Arg{\doccceptcs}\Arg{\docccepttl_{1}}
-%   \end{syntax}
-% \end{function}
-% \begin{function}{\erw_cs_identity:n}
-%   \begin{syntax}
-%     \cs{erw_cs_identity:n}\Arg{arg}
-%   \end{syntax}
-% \end{function}
-% \begin{function}{\erw_cs_set_inline:Nn, \erw_cs_set_inline:cn}
-%   \begin{syntax}
-%     \cs{erw_cs_set_inline:Nn}\Arg{\doccceptcs}\Arg{\doccceptcode}
-%   \end{syntax}
-% \end{function}
-% \section{\textsf{csint}}
+%   \section{\textsf{csint}}
+%   \begin{function}{\erw_csint:nn}
+%     \begin{syntax}
+%       \cs{erw_csint:nn}\Arg{\doccceptint}\Arg{arg}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_csint_name:n}
+%     \begin{syntax}
+%       \cs{erw_csint_name:n}\Arg{\doccceptint}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_csint_names:nnn}
+%     \begin{syntax}
+%       \cs{erw_csint_names:nnn}\Arg{\doccceptint}\Arg{\doccceptint}\Arg{\doccceptint}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_csint_names_braced:, \erw_csint_names_braced:n, \erw_csint_names_braced:nnn}
+%   \end{function}
+%   \begin{function}{\erw_csint_new:n}
+%     \begin{syntax}
+%       \cs{erw_csint_new:n}\Arg{\doccceptint}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_csint_reset:}
+%     \begin{syntax}
+%       \cs{erw_csint_reset:}
+%     \end{syntax}
+%   \end{function}
 %
-% \begin{function}{\erw_csint:nn}
-%   \begin{syntax}
-%  \cs{erw_csint:nn}\Arg{\doccceptint}\Arg{arg}
-% \end{syntax}
-% \end{function}
-% \begin{function}{\erw_csint_name:n}
-%   \begin{syntax}
-%  \cs{erw_csint_name:n}\Arg{\doccceptint}
-% \end{syntax}
-% \end{function}
-% \begin{function}{\erw_csint_names:nnn}
-%   \begin{syntax}
-%  \cs{erw_csint_names:nnn}\Arg{\doccceptint}\Arg{\doccceptint}\Arg{\doccceptint}
-% \end{syntax}
-% \end{function}
-% \begin{function}{\erw_csint_new:n}
-%   \begin{syntax}
-%  \cs{erw_csint_new:n}\Arg{\doccceptint}
-% \end{syntax}
-% \end{function}
-% \begin{function}{\erw_csint_names_braced:, \erw_csint_names_braced:n, \erw_csint_names_braced:nnn}
-% \end{function}
-% \begin{function}{\erw_csint_reset:}
-% \end{function}
-% \section{\textsf{int}} \label{usage:int}
-% \begin{function}{\erw_int_range:n, \erw_int_range:nn}
-%   \begin{syntax}
-%  \cs{erw_int_range:n}\Arg{\doccceptint}
-% \end{syntax}
-% \end{function}
-% \section{\textsf{oper}}\label{usage:oper}
-% \begin{function}{\erw_oper_compose:nN, \erw_oper_compose:nn}
-%   \begin{syntax}
-%  \cs{erw_oper_compose:nn}\Arg{control sequence list}\Arg{initial value}
-% \end{syntax}
-% \end{function}
-% \begin{function}{\erw_oper_compose_c:nN, \erw_oper_compose_c:nn}
-% \end{function}
-% \begin{function}{\erw_oper_compose_vers:nN, \erw_oper_compose_vers:nn}
-% \end{function}
-% \begin{function}{\erw_oper_compose_seq:nN, \erw_oper_compose_seq_c:nN,  \erw_oper_compose_seq_vers:nN}
-% \end{function}
-% \begin{function}{\erw_oper_fold:NN,  \erw_oper_fold:cN}
-% \end{function}
-% \begin{function}{\erw_oper_gset_function:N, \erw_oper_gset_function:n}
-% \end{function}
-% \begin{function}{\erw_oper_fold_seq:NN, \erw_seq:cN}
-% \end{function}
-% \section{\textsf{timestamp}}\label{usage:timest}
-% \begin{function}{\erw_timestamp:nn,\erw_timestamp:}
-%   \begin{syntax}
-%     \cs{erw_timestamp:nn}\doceval{date\docpipe{}time\docpipe{}datetime}\doceval{10\docpipe{}16}
-%   \end{syntax}
-%   \begin{description}
-%   \item[Semantics] Timestamp in base 10 or 16
-%   \end{description}
-% \end{function}
-% \section{\textsf{tl}}
-% \begin{function}{\erw_tl_last_item:n}
-% \end{function}
-% \begin{function}{\erw_tl_map:n, \erw_tl_map:Nn}
-% \end{function}
-% \begin{function}{\erw_tl_map_inline:nn }
-% \end{function}
-% \begin{function}{\erw_tl_merge:nn}
-% \end{function}
-% \begin{function}{\erw_tl_repeat:nn}
-% \end{function}
-% \begin{function}{\erw_tl_split:nnn, \erw_tl_split:nn}
-% \end{function}
-% \begin{function}{\erw_tl_map_thread_at:Nnn, \erw_tl_map_thread:Nn}
-% \end{function}
-% \section{option}\label{usage:option}
-% \begin{function}{\erw_option:n}
-% \end{function}
+%   \section{\textsf{int}} \label{usage:int}
+%   \begin{function}{\erw_int_range:n, \erw_int_range:nn}
+%     \begin{syntax}
+%       \cs{erw_int_range:n}\Arg{\doccceptint}
+%     \end{syntax}
+%   \end{function}
+%
+%   \section{\textsf{oper}}\label{usage:oper}
+%   \begin{function}{\erw_oper_compose:nN, \erw_oper_compose:nn}
+%     \begin{syntax}
+%       \cs{erw_oper_compose:nn}\Arg{control sequence list}\Arg{initial value}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_oper_compose_c:nN, \erw_oper_compose_c:nn}
+%   \end{function}
+%   \begin{function}{\erw_oper_compose_vers:nN, \erw_oper_compose_vers:nn}
+%   \end{function}
+%   \begin{function}{\erw_oper_compose_seq:nN, \erw_oper_compose_seq_c:nN,  \erw_oper_compose_seq_vers:nN}
+%   \end{function}
+%   \begin{function}{\erw_oper_fold:NN,  \erw_oper_fold:cN}
+%   \end{function}
+%   \begin{function}{\erw_oper_fold_seq:NN, \erw_seq:cN}
+%   \end{function}
+%
+%   \section{\textsf{sys}}\label{usage:sys}
+%   \begin{function}{\erw_sys_timestamp:nn,\erw_sys_timestamp:}
+%     \begin{syntax}
+%       \cs{erw_sys_timestamp:nn}\doceval{date\docpipe{}time\docpipe{}datetime}\doceval{10\docpipe{}16}
+%     \end{syntax}
+%     \begin{description}
+%     \item[Semantics] Timestamp in base 10 or 16
+%     \end{description}
+%   \end{function}
+%   \begin{function}{\erw_sys_timestamp_delimiter:}
+%     \begin{syntax}
+%       \cs{erw_sys_timestamp_delimiter:}
+%     \end{syntax}
+%   \end{function}
+%
+%   \section{\textsf{tl}}
+%   \begin{function}{\erw_tl_append_item:nn}
+%     \begin{syntax}
+%       \cs{erw_tl_append_item:nn}\Arg{arg list}\Arg{arg}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_tl_gset_function:N, \erw_tl_gset_function:n}
+%   \end{function}
+%   \begin{function}{\erw_tl_join:nn, \erw_tl_join:nnn, \erw_tl_join:nnnn, \erw_tl_join:nnnnn}
+%     \begin{syntax}
+%       \cs{erw_tl_join:n}\Arg{\docccepttl_{1}}\Arg{\docccepttl_{2}}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_tl_last_item:n}
+%     \begin{syntax}
+%       \cs{erw_tl_last_time:n}\Arg{\docccepttl}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_tl_map:n, \erw_tl_map:Nn}
+%   \end{function}
+%   \begin{function}{\erw_tl_map_inline:nn }
+%   \end{function}
+%   \begin{function}{\erw_tl_map_thread_at:Nnn, \erw_tl_map_thread:Nn}
+%   \end{function}
+%   \begin{function}{\erw_tl_merge:nn}
+%   \end{function}
+%   \begin{function}{\erw_tl_repeat:nn}
+%   \end{function}
+%   \begin{function}{\erw_tl_split:nnn, \erw_tl_split:nn}
+%   \end{function}
+%
+%   \section{option}\label{usage:option}
+%   \begin{function}{\erw_option:n}
+%   \end{function}
 %   
 %   \clearpage
 %   \part{Listing}\label{part:listing}
@@ -340,15 +362,15 @@ erw-l3.sty, and erw-l3.pdf.
 % \fi
 \begin{listing}[]
   {label=listing:numbrdcs, listing and text}
- \ExplSyntaxOn
- \cs_new:Nn\__foo:n{f(#1)}
- \cs_new:Nn\__baz:n{h\{#1\}}
- \tl_map_function:nN {{\__baz:n}{g[#1]}{\__foo:n}}\erw_csint_new:n
- \exp_last_unbraced:Nx
- \erw_oper_compose_c:nn
- {{\erw_csint_names_braced:nnn{1}{1}{3}}
- {X}}
- \ExplSyntaxOff
+  \ExplSyntaxOn
+  \cs_new:Nn\__foo:n{f(#1)}
+  \cs_new:Nn\__baz:n{h\{#1\}}
+  \tl_map_function:nN {{\__baz:n}{g[#1]}{\__foo:n}}\erw_csint_new:n
+  \exp_last_unbraced:Nx
+  \erw_oper_compose_c:nn
+  {{\erw_csint_names_braced:nnn{1}{1}{3}}
+    {X}}
+  \ExplSyntaxOff
 \end{listing}
 % \iffalse
 %</guardlisting> 
@@ -494,22 +516,22 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % 
-% \section{\textsf{timestamp}}
+% \section{\textsf{sys}}
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:timest:alone}.}
+% {\ref{listing:sys:alone}.}
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:timest:alone, listing and text}
+  {label=listing:sys:alone, listing and text}
   \ExplSyntaxOn
-  \noindent\erw_timestamp:nn{date}{10}{-}
-  \noindent\erw_timestamp:nn{time}{10}\\
-  \noindent\erw_timestamp:nn{datetime}{10}\\
-  \erw_timestamp:nn{date}{16}{\%}
-  \erw_timestamp:nn{time}{16}\\
-  \erw_option:n{ timestamp / delim = {\%} }
-  \erw_timestamp:nn{datetime}{16}\\
+  \noindent\erw_sys_timestamp:nn{date}{10}{-}
+  \noindent\erw_sys_timestamp:nn{time}{10}\\
+  \noindent\erw_sys_timestamp:nn{datetime}{10}\\
+  \erw_sys_timestamp:nn{date}{16}{\%}
+  \erw_sys_timestamp:nn{time}{16}\\
+  \erw_option:n{ sys / timestamp_delim = {\%} }
+  \erw_sys_timestamp:nn{datetime}{16}\\
   \ExplSyntaxOff
 \end{listing}
 % \iffalse
@@ -517,17 +539,17 @@ erw-l3.sty, and erw-l3.pdf.
 % \fi
 % 
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:timest:iow}.}
+% {\ref{listing:sys:iow}.}
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:timest:iow, listing and text}
+  {label=listing:sys:iow, listing and text}
   \ExplSyntaxOn
-  \erw_option:n{ timestamp / delim = \c_empty_tl }
+  \erw_option:n{ sys / timestamp_delim = \c_empty_tl }
   \iow_new:N \foo_iow
-  \tl_set:Nx \foo_dec { \erw_timestamp:nn{datetime}{10} }
-  \tl_set:Nx \foo_hex { \erw_timestamp: }
+  \tl_set:Nx \foo_dec { \erw_sys_timestamp:nn{datetime}{10} }
+  \tl_set:Nx \foo_hex { \erw_sys_timestamp: }
   \iow_open:Nn \foo_iow{\foo_hex}
   \iow_now:Nn\foo_iow{Hello,\ world!}
   \iow_close:N \foo_iow
@@ -653,53 +675,57 @@ erw-l3.sty, and erw-l3.pdf.
 % \bibitem{user-erw} \url{https://tex.stackexchange.com/users/112708/erwann?tab=questions}
 % \end{thebibliography}
 % 
-%  \changes{\docvers{0}{0}}{2018/05/20}{Initial version} 
-%  \changes{\docvers{0}{1}}{2018/05/23}{Brought all the modules under one file; renamed \pkg{l3erw} to \pkg{erw-l3};}
-%  \changes{\docvers{0}{1}}{2018/05/23}{\pkg{disambig}/backend: changes to the key, added \cs{ProcessPackageKeysOption};}
-%  \changes{\docvers{0}{1}}{2018/05/23}{\cs{numbrdcsnew} changed to \cs{newnumbrdcs} and made 'disambiguable'}
-%  \changes{\docvers{0}{2}}{2018/06/21}{}
-%  \changes{\docvers{0}{2}}{2018/06/21}{\cs{erw_compose} reversed order in which the functions are composed, such that it now conforms to
-%  the mathematical convention ($g\circ f$ means $f$ comes before $g$)}
-%  \changes{\docvers{0}{2}}{2018/06/21}{Front end cmds no longer generated with module \pkg{disambig}; Option of the same name deleted;}
-%  \changes{\docvers{0}{2}}{2018/06/21}{\pkg{disambig}: pushed the code inside \cs{keys_define};\cs{disambignewcmd} no longer takes a token name as arg, rather a token.}
-%  \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{erw_repeat}}
-%  \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{erw_split}}
-%  \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{erw_last_item}}
-%  \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{erw_items_to}}
-%  \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{map_thread}}
-%  \changes{\docvers{0}{2}}{2018/06/21}{Re-arrange: the doc to clearly separate frontend from backend}
-%  \changes{\docvers{0}{3}}{2018/06/22}{Replace: versioning, should have been 0.1.2}
-%  \changes{\docvers{0}{4}}{2018/06/22}{Remove: \cs{erw_items_to} (redundant with \cs{tl_range:nnn})}
-%  \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_accum}}
-%  \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_merge}}
-%  \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_int_range}}
-%  \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_set_map}}
-%  \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_set_map_inline}}
-%  \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_is_matrix}}
-%  \changes{\docvers{0}{5}}{2019/12/12}{Modify: source repository}
-%  \changes{\docvers{0}{5}}{2019/12/12}{Rearrange: frontend/backend sections}
-%  \changes{\docvers{0}{5}}{2019/12/12}{Split Section Preliminaries into Conventions and Requirement.}
-%  \changes{\docvers{0}{5}}{2019/12/12}{Remove: \pkg{disambig}}
-%  \changes{\docvers{0}{6}}{2020/02/05}{Fix: critical bug preventing \pkg{erw-l3} from working without explicit inclusion of \pkg{expl3}}
-%  \changes{\docvers{0}{7}}{2020/04/24}{Replace: vers. numb. from 3 to 2 digits}
-%  \changes{\docvers{0}{7}}{2020/04/24}{Rearrange: structure of implementation, e.g. \autoref{impl:oper} }
-%  \changes{\docvers{0}{7}}{2020/04/24}{Add: \nameref{impl:timest}}
-%  \changes{\docvers{0}{7}}{2020/04/24}{Add: \nameref{impl:option}}
-%  \changes{\docvers{0}{7}}{2020/04/24}{Replace: listing's implem with that of \pkg{tocloft}}
-%  \changes{\docvers{0}{7}}{2020/04/24}{Move: \cs{erw_fold_set_par:n}}
-%  \changes{\docvers{0}{7}}{2020/04/24}{Move: \cs{erw_fold_apply_par:n}}
-%  \changes{\docvers{0}{7}}{2020/04/24}{Remove: document level functions,\cs{numbrdcsnew}, \cs{numbrdcs}}
-%  \changes{\docvers{0}{7}}{2020/04/24}{Rename: variables with suffix |tl| }%^^A get prexif |\g@@| in pl. of |\__erw| }
-%  \changes{\docvers{0}{7}}{2020/04/24}{Rename: |numbrd_cs| to |csnum| }
-%  \changes{\docvers{0}{7}}{2020/04/24}{Rename: |csnum| to |csint| }
-%  \changes{\docvers{0}{8}}{2020/04/30}{Remove: \cs{erw_is_matrix:n} (predicate must be expandable)}
-%  \changes{\docvers{0}{8}}{2020/04/30}{Replace: wrong signature |V|, by |N|, in functions such as \cs{erw_oper_compose:NnV} or \cs{erw_seq_fold:cV}}
-%  \changes{\docvers{0}{8}}{2020/04/30}{Rename: all control sequence prefixes to agree with that of the heading under which they come, e.g. \cs{erw_identity:n} by \cs{erw_cs_identity:n} }
-%  \changes{\docvers{0}{8}}{2020/04/30}{Remove: \cs{erw_cs_set_eq:NN} and variants}
-%  \changes{\docvers{0}{8}}{2020/04/30}{Replace: \cs{@@_map:n} by \cs{@@_oper_function:n}}
-%  \changes{\docvers{0}{8}}{2020/04/30}{Replace: \cs{erw_seq_fold:NN} by \cs{erw_oper_fold_seq:NN} and likewise for variants}
-%  \changes{\docvers{0}{7}}{2020/04/24}{Add: \env{function} for all frontend functions.}
-% 
+% \changes{\docvers{0}{0}}{2018/05/20}{Initial version} 
+% \changes{\docvers{0}{1}}{2018/05/23}{Brought all the modules under one file; renamed \pkg{l3erw} to \pkg{erw-l3};}
+% \changes{\docvers{0}{1}}{2018/05/23}{\pkg{disambig}/backend: changes to the key, added \cs{ProcessPackageKeysOption};}
+% \changes{\docvers{0}{1}}{2018/05/23}{\cs{numbrdcsnew} changed to \cs{newnumbrdcs} and made 'disambiguable'}
+% \changes{\docvers{0}{2}}{2018/06/21}{}
+% \changes{\docvers{0}{2}}{2018/06/21}{\cs{erw_compose} reversed order in which the functions are composed, such that it now conforms to
+% the mathematical convention ($g\circ f$ means $f$ comes before $g$)}
+% \changes{\docvers{0}{2}}{2018/06/21}{Front end cmds no longer generated with module \pkg{disambig}; Option of the same name deleted;}
+% \changes{\docvers{0}{2}}{2018/06/21}{\pkg{disambig}: pushed the code inside \cs{keys_define};\cs{disambignewcmd} no longer takes a token name as arg, rather a token.}
+% \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{erw_repeat}}
+% \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{erw_split}}
+% \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{erw_last_item}}
+% \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{erw_items_to}}
+% \changes{\docvers{0}{2}}{2018/06/21}{Add: \cs{map_thread}}
+% \changes{\docvers{0}{2}}{2018/06/21}{Re-arrange: the doc to clearly separate frontend from backend}
+% \changes{\docvers{0}{3}}{2018/06/22}{Replace: versioning, should have been 0.1.2}
+% \changes{\docvers{0}{4}}{2018/06/22}{Remove: \cs{erw_items_to} (redundant with \cs{tl_range:nnn})}
+% \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_accum}}
+% \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_merge}}
+% \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_int_range}}
+% \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_set_map}}
+% \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_set_map_inline}}
+% \changes{\docvers{0}{4}}{2018/06/22}{Add: \cs{erw_is_matrix} (to check arg of \cs{erw_tl_map_thread:Nn})}
+% \changes{\docvers{0}{5}}{2019/12/12}{Modify: source repository}
+% \changes{\docvers{0}{5}}{2019/12/12}{Rearrange: frontend/backend sections}
+% \changes{\docvers{0}{5}}{2019/12/12}{Split Section Preliminaries into Conventions and Requirement.}
+% \changes{\docvers{0}{5}}{2019/12/12}{Remove: \pkg{disambig}}
+% \changes{\docvers{0}{6}}{2020/02/05}{Fix: critical bug preventing \pkg{erw-l3} from working without explicit inclusion of \pkg{expl3}}
+% \changes{\docvers{0}{7}}{2020/04/24}{Replace: vers. numb. from 3 to 2 digits}
+% \changes{\docvers{0}{7}}{2020/04/24}{Rearrange: structure of implementation, e.g. \autoref{impl:oper} }
+% \changes{\docvers{0}{7}}{2020/04/24}{Add: \nameref{impl:sys}}
+% \changes{\docvers{0}{7}}{2020/04/24}{Add: \nameref{impl:option}}
+% \changes{\docvers{0}{7}}{2020/04/24}{Replace: listing's implem with that of \pkg{tocloft}}
+% \changes{\docvers{0}{7}}{2020/04/24}{Move: \cs{erw_fold_set_par:n}}
+% \changes{\docvers{0}{7}}{2020/04/24}{Move: \cs{erw_fold_apply_par:n}}
+% \changes{\docvers{0}{7}}{2020/04/24}{Remove: document level functions,\cs{numbrdcsnew}, \cs{numbrdcs}}
+% \changes{\docvers{0}{7}}{2020/04/24}{Rename: variables with suffix |tl| get 'private mode' prexif in pl. of |\__erw| }
+% \changes{\docvers{0}{7}}{2020/04/24}{Rename: |numbrd_cs| to |csnum| }
+% \changes{\docvers{0}{7}}{2020/04/24}{Rename: |csnum| to |csint| }
+% \changes{\docvers{0}{8}}{2020/04/30}{Remove: \cs{erw_is_matrix:n} (predicate must be expandable)}
+% \changes{\docvers{0}{8}}{2020/04/30}{Replace: wrong signature |V|, by |N|, in functions such as \cs{erw_oper_compose:NnV} or \cs{erw_seq_fold:cV}}
+% \changes{\docvers{0}{8}}{2020/04/30}{Rename: all cs prefixes to agree with heading under which they come, e.g. \cs{erw_identity:n} by \cs{erw_cs_identity:n} }
+% \changes{\docvers{0}{8}}{2020/04/30}{Remove: \cs{erw_cs_set_eq:NN} and variants}
+% \changes{\docvers{0}{8}}{2020/04/30}{Replace: \cs{@@_map:n} by \cs{@@_oper_function:n}}
+% \changes{\docvers{0}{8}}{2020/04/30}{Replace: \cs{erw_seq_fold:NN} by \cs{erw_oper_fold_seq:NN} and likewise for variants}
+% \changes{\docvers{0}{8}}{2020/04/24}{Add: \env{function} for all frontend functions.}
+% \changes{\docvers{0}{9}}{2020/05/01}{Add: \cs{erw_tl_join:nn} and variants}
+% \changes{\docvers{0}{9}}{2020/05/01}{Add: \cs{erw_sys_timestamp_delimiter:}}
+% \changes{\docvers{0}{9}}{2020/05/01}{Rename: \cs{erw_oper_gset_function:N} to \cs{erw_tl_gset_function:N} (and variants)}
+% \changes{\docvers{0}{9}}{2020/05/01}{Rename: prefix |timestamp| by |sys|}
+% \changes{\docvers{0}{9}}{2020/05/01}{Rename: \cs{erw_append_arg:nn} to \cs{erw_tl_append_item:nn}}
 % \PrintChanges
 % \PrintIndex
 % \clearpage
@@ -716,10 +742,11 @@ erw-l3.sty, and erw-l3.pdf.
 %   \fi
 %   \section{Opening}
 %    \begin{macrocode}
-%<@@=erw>      
-\ExplSyntaxOn
+%<@@=erw>
+% \ExplSyntaxOn
 %    \end{macrocode}
-% \section{basics}\label{impl:basics}
+% \section{basics}
+% \label{impl:basics}
 % \subsection{backend}
 %    \begin{macrocode}
 \cs_set:Nn \@@_cs_name:N
@@ -729,10 +756,6 @@ erw-l3.sty, and erw-l3.pdf.
 %    \end{macrocode}
 % \subsection{frontend}\label{basics:frontend}
 %    \begin{macrocode}
-\cs_set:Nn \erw_append_arg:nn
-{
-  {#1{#2}}
-}
 \cs_set:Nn \erw_cs_apply:Nn 
 {
   #1{#2}
@@ -761,8 +784,13 @@ erw-l3.sty, and erw-l3.pdf.
   \cs_gset:Npn #1 ##1{#2}
 }
 \cs_generate_variant:Nn \erw_cs_gset_inline:Nn {cn}
+\cs_new:Nn \erw_tl_join:nn{#1#2}
+\cs_new:Nn \erw_tl_join:nnn{#1#2#3}
+\cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
+\cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
 %    \end{macrocode}
 % \section{\textsf{csint}}
+% \label{impl:csint}
 % \subsection{backend}
 %    \begin{macrocode}
 \int_new:N \g@@_csint_int
@@ -806,7 +834,8 @@ erw-l3.sty, and erw-l3.pdf.
   \tl_set:Nn \@@_csint_ext_tl{}%^^A TODO remove?
 }
 %    \end{macrocode}
-% \section{\textsf{int}} \label{impl:int}
+% \section{\textsf{int}}
+% \label{impl:int}
 % \subsection{backend}
 %    \begin{macrocode}
 \cs_set:Npn \@@_int_range:nnn #1 #2 #3
@@ -821,7 +850,7 @@ erw-l3.sty, and erw-l3.pdf.
   {
     \@@_int_range:nnn
     {
-      \exp_args:Nx\erw_append_arg:nn{#1}
+      \exp_args:Nx\erw_tl_append_item:nn{#1}
       {
         \int_eval:n{#2+1}
       }
@@ -844,21 +873,23 @@ erw-l3.sty, and erw-l3.pdf.
 % ^^A    \int_step_inline:nn {#1}{##1}
 }
 %    \end{macrocode}
-% \section{\textsf{msg}} \label{impl:msg}
+% \section{\textsf{msg}}
+% \label{impl:msg}
 % \subsection{backend}
 %    \begin{macrocode}
 \msg_new:nnn{@@}{generic}{#1}
 \msg_new:nnn{@@}{notdecl}{#1~not~declared}
 \msg_new:nnn{@@}{notset}{#1~not~set}
-%\end{macrocode}
-% \section{\textsf{oper}}\label{impl:oper}
+%    \end{macrocode}
+% \section{\textsf{oper}}
+% \label{impl:oper}
 % \subsection{backend}
 %    \begin{macrocode}
 \tl_new:N \g@@_compose_tl
 \tl_new:N \g@@_oper_fold_seq_item_tl
 \cs_set:Nn \@@_oper_compose:NnN 
 {
-  \erw_cs_set_inline:Nn \@@_oper_function:n
+  \erw_cs_set_inline:Nn \@@_tl_function:n
   {
     #1{##1}#3
   }
@@ -915,13 +946,13 @@ erw-l3.sty, and erw-l3.pdf.
 {
   \msg_error:nnn{@@}{notdecl}{\erw_oper_compose_seq_vers:nN}
 }
-\cs_set:Nn \erw_oper_gset_function:N
+\cs_set:Nn \erw_tl_gset_function:N
 {
-  \erw_cs_gset_eq:NN \@@_oper_function:n #1
+  \erw_cs_gset_eq:NN \@@_tl_function:n #1
 }
-\cs_set:Nn \erw_oper_gset_function:n
+\cs_set:Nn \erw_tl_gset_function:n
 {
-  \erw_cs_gset_inline:Nn \@@_oper_function:n {#1}
+  \erw_cs_gset_inline:Nn \@@_tl_function:n {#1}
 }
 \keys_define:nn{@@}
 {
@@ -949,15 +980,16 @@ erw-l3.sty, and erw-l3.pdf.
 }
 \cs_generate_variant:Nn \erw_oper_fold_seq:NN {cN}
 %    \end{macrocode}
-% \section{\textsf{timestamp}}\label{impl:timest}
+% \section{\textsf{sys}}
+% \label{impl:sys}
 % \subsection{backend}
 %    \begin{macrocode}
 \msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
 \msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
 %    \end{macrocode}
-% \begin{macro}{\@@_timestamp_date:N, \@@_timestamp_date_dec:, \@@_timestamp_date_hex:}
+% \begin{macro}{\@@_sys_date:N, \@@_sys_date_dec:, \@@_sys_date_hex:}
 %    \begin{macrocode}
-\cs_new:Nn \@@_timestamp_date_dec:
+\cs_new:Nn \@@_sys_date_dec:
 {
   \int_eval:n
   {
@@ -966,13 +998,13 @@ erw-l3.sty, and erw-l3.pdf.
     +\c_sys_day_int *  1
   }
 }
-\cs_new:Nn \@@_timestamp_date:N{\int_to_hex:n{\@@_timestamp_date_dec:}}
-\cs_new:Nn \@@_timestamp_date_hex:{\int_to_hex:n{\@@_timestamp_date_dec:}}
+\cs_new:Nn \@@_sys_date:N{\int_to_hex:n{\@@_sys_date_dec:}}
+\cs_new:Nn \@@_sys_date_hex:{\int_to_hex:n{\@@_sys_date_dec:}}
 %    \end{macrocode}
 % \end{macro}
-% \begin{macro}{\@@_timestamp_time_dec:, \@@_timestamp_time_hex}
+% \begin{macro}{\@@_sys_time_dec:, \@@_sys_time_hex}
 %    \begin{macrocode}
-\cs_new:Nn \@@_timestamp_time_dec:
+\cs_new:Nn \@@_sys_time_dec:
 {
   \int_eval:n
   {
@@ -980,12 +1012,12 @@ erw-l3.sty, and erw-l3.pdf.
     +\c_sys_minute_int * 1 
   }
 }
-\cs_new:Nn\@@_timestamp_time_hex:{\int_to_hex:n{\@@_timestamp_time_dec:}}
+\cs_new:Nn\@@_sys_time_hex:{\int_to_hex:n{\@@_sys_time_dec:}}
 %    \end{macrocode}
 % \end{macro}
-% \begin{macro}{\@@_timestamp_datetime_base:n,  \@@_timestamp_datetime_dec:n, \@@_timestamp_datetime_join:nn, \@@_timestamp_datetime_hex:n, \@@_timestamp_datetime_period:n }
+% \begin{macro}{\@@_sys_datetime_base:n,  \@@_sys_datetime_dec:n, \@@_sys_datetime_join:nn, \@@_sys_datetime_hex:n, \@@_sys_datetime_period:n }
 %    \begin{macrocode}
-\cs_new:Nn\@@_timestamp_datetime_base:n
+\cs_new:Nn\@@_sys_datetime_base:n
 {
   \int_case:nnTF{#1}
   {
@@ -993,11 +1025,10 @@ erw-l3.sty, and erw-l3.pdf.
     {16}{hex}
   }
   {\c_empty_tl}
-  {\msg_error:nnn{@@}{timestamp / base}{\@@_timestamp_datetime_base:n{#1}}}
+  {\msg_error:nnn{@@}{timestamp / base}{\@@_sys_datetime_base:n{#1}}}
 }
-\cs_new:Nn\@@_timestamp_datetime_join:nnn{#1#2#3}
-\cs_new:Nn\@@_timestamp_datetime_join:nn{\@@_timestamp_datetime_join:nnn{#1}{\g@@_timestamp_delim_str}{#2}}
-\cs_new:Nn\@@_timestamp_datetime_period:n
+\cs_new:Nn\@@_sys_datetime_join:nn{\erw_tl_join:nnn{#1}{\g@@_sys_timestamp_delim_str}{#2}}
+\cs_new:Nn\@@_sys_datetime_period:n
 {
   \str_case:nnTF{#1}
   {
@@ -1006,60 +1037,65 @@ erw-l3.sty, and erw-l3.pdf.
     {datetime}{datetime}
   }
   {\c_empty_tl}
-  {\msg_error:nnn{@@}{ timestamp / period }{\@@_timestamp_datetime_period:n{#1}}}
+  {\msg_error:nnn{@@}{ timestamp / period }{\@@_sys_datetime_period:n{#1}}}
 }
-\cs_new:Nn\@@_timestamp_datetime_dec: {\@@_timestamp_datetime_join:nn{\@@_timestamp_date_dec:}{\@@_timestamp_time_dec:}}
-\cs_new:Nn\@@_timestamp_datetime_hex: {\@@_timestamp_datetime_join:nn{\@@_timestamp_date_hex:}{\@@_timestamp_time_hex:}}
+\cs_new:Nn\@@_sys_datetime_dec: {\@@_sys_datetime_join:nn{\@@_sys_date_dec:}{\@@_sys_time_dec:}}
+\cs_new:Nn\@@_sys_datetime_hex: {\@@_sys_datetime_join:nn{\@@_sys_date_hex:}{\@@_sys_time_hex:}}
 %    \end{macrocode}
 % \end{macro}
-% \begin{macro}{\@@_timestamp:nn}
+% \begin{macro}{\@@_sys_timestamp:nn}
 %    \begin{macrocode}
-\cs_new:Nn\@@_timestamp:nn
+\cs_new:Nn\@@_sys_timestamp:nn
 {
   \exp_args:No
-  \use:c{@@_timestamp_\@@_timestamp_datetime_period:n{#1}_\@@_timestamp_datetime_base:n{#2}:}
+  \use:c{@@_sys_\@@_sys_datetime_period:n{#1}_\@@_sys_datetime_base:n{#2}:}
 }
-\cs_new_protected:Nn \@@_timestamp_set_delim:nn
+\cs_new_protected:Nn \@@_sys_set_delim:nn
 {
   \use:c{tl_gset:N#1}
-  \g@@_timestamp_delim_str{#2}
+  \g@@_sys_timestamp_delim_str{#2}
 }
 %    \end{macrocode}
 % \end{macro}
 %    \begin{macrocode}
 \keys_define:nn{@@}
 {  
-  timestamp / delim .code:n =
+  sys / timestamp_delim .code:n =
   {
     \exp_last_unbraced:No
-    \@@_timestamp_set_delim:nn{n}{#1}
+    \@@_sys_set_delim:nn{n}{#1}
   },
-  timestamp / delim  .value_required:n = true,
-  timestamp / delim  .default:n = {-},
-  timestamp / delim  .initial:n = {-}
+  sys / timestamp_delim  .value_required:n = true,
+  sys / timestamp_delim  .default:n = {-},
+  sys / timestamp_delim  .initial:n = {-}
 }
 %    \end{macrocode}
 % \subsection{frontend}
 %    \begin{macrocode}
-\cs_new:Nn\erw_timestamp:nn
+\cs_new:Nn\erw_sys_timestamp_delimiter:
 {
-  \@@_timestamp:nn{#1}{#2}
+  \use:N \g@@_sys_timestamp_delim_str
 }
-\cs_new:Nn\erw_timestamp:
+\cs_new:Nn\erw_sys_timestamp:nn
 {
-  \@@_timestamp:nn{datetime}{16}
+  \@@_sys_timestamp:nn{#1}{#2}
+}
+\cs_new:Nn\erw_sys_timestamp:
+{
+  \@@_sys_timestamp:nn{datetime}{16}
 }
 %    \end{macrocode}
 % \section{\textsf{tl}}
+% \label{impl:tl}
 % \subsection{backend}
-% \begin{macro}{\@@_oper_function:n}
+% \begin{macro}{\@@_tl_function:n}
 %    \begin{macrocode}
-\cs_new_protected:Nn \@@_oper_function:n
+\cs_new_protected:Nn \@@_tl_function:n
 {
   \msg_error:nnn
   {erw}
   {notset}
-  {\@@_oper_function:n}
+  {\@@_tl_function:n}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -1068,7 +1104,7 @@ erw-l3.sty, and erw-l3.pdf.
 \cs_set_protected:Nn \@@_map:nn
 {
   \quark_if_recursion_tail_stop:n{#1}  
-  \@@_oper_function:n{#1}  \@@_map:nn{#2}
+  \@@_tl_function:n{#1}  \@@_map:nn{#2}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -1104,6 +1140,10 @@ erw-l3.sty, and erw-l3.pdf.
 % \end{macro}
 % \subsection{frontend}
 %    \begin{macrocode}
+\cs_set:Nn \erw_tl_append_item:nn
+{
+  {#1{#2}}
+}
 \cs_set:Nn \erw_tl_last_item:n
 {
   \exp_args:Nof \tl_item:nn
@@ -1118,12 +1158,12 @@ erw-l3.sty, and erw-l3.pdf.
 }
 \cs_set_protected:Nn \erw_tl_map:Nn 
 {
-  \cs_set_eq:NN \@@_oper_function:n #1
+  \cs_set_eq:NN \@@_tl_function:n #1
   \erw_tl_map:n{#2}  
 }
 \cs_set_protected:Nn \erw_tl_map_inline:nn 
 {
-  \erw_cs_set_inline:Nn \@@_oper_function:n {#1}
+  \erw_cs_set_inline:Nn \@@_tl_function:n {#1}
   \erw_tl_map:n{#2}
 }
 \cs_set:Nn \erw_tl_merge:nn
@@ -1172,7 +1212,6 @@ erw-l3.sty, and erw-l3.pdf.
 }
 \cs_set_protected:Nn \erw_tl_map_thread:Nn
 {
-  % TODO check that #2 is a matrix
   \int_step_inline:nn
   { 
     \exp_args:Nf \tl_count:n{ \tl_head:n{#2} } 
@@ -1182,7 +1221,8 @@ erw-l3.sty, and erw-l3.pdf.
   }
 }
 %    \end{macrocode}
-% \section{option}\label{impl:option}
+% \section{option}
+% \label{impl:option}
 %    \begin{macrocode}
 \cs_new_protected:Nn\erw_option:n
 {
@@ -1190,11 +1230,11 @@ erw-l3.sty, and erw-l3.pdf.
 }
 %    \end{macrocode}
 % \section{Closing}
+% \label{impl:option}
 %    \begin{macrocode}
 \ExplSyntaxOff
 %    \end{macrocode}
 % \end{implementation}
-% 
 % \iffalse
 %</package> 
 % \fi
