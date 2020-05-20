@@ -5,7 +5,7 @@
 %</internal> 
 %<*readme> 
 -----------------------------------------------------------------
-##### erw-l3 ---  Utilities using LaTeX3
+##### erw-l3 --- Utilities for LaTeX3 programming
 - Source repository: https://github.com/rogard/erw-l3
 - Released under the LaTeX Project Public License v1.3c or later
 - See http://www.latex-project.org/lppl.txt
@@ -25,7 +25,7 @@
 \askforoverwritefalse
 \preamble
 ----------------------------------------------------------------------------
-erw-l3 ---  Utilities using LaTeX3
+erw-l3 --- Utilities for LaTeX3 programming
 Released under the LaTeX Project Public License v1.3c or later
 See http://www.latex-project.org/lppl.txt
 ----------------------------------------------------------------------------
@@ -74,9 +74,9 @@ erw-l3.sty, and erw-l3.pdf.
 %<package> \RequirePackage{xparse}[2020/03/06]
 %<package> \ProvidesExplPackage
 %<package> {erw-l3}                                                                            % Package name
-%<package> {2020/05/01}                                                                        % Release date
-%<package> {1.9}                                                                               % Release version
-%<package> {erw-l3 --- Utilities using LaTeX3 }                                                % Description
+%<package> {2020/05/18}                                                                        % Release date
+%<package> {2.2}                                                                               % Release version
+%<package> {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 % 
 %<*driver> 
 \documentclass[full]{l3doc}
@@ -91,69 +91,110 @@ erw-l3.sty, and erw-l3.pdf.
 \usepackage{tabto}
 \usepackage{tcolorbox}
 \tcbuselibrary{listings, breakable}
-\makeatletter
-\newcommand*{\docsetnameref}{\def\@currentlabelname}%https://tex.stackexchange.com/questions/537751
-\makeatother
 \usepackage{hyperref}
-\ExplSyntaxOn
-\tl_gset:Nn \partname {Part}
-\ExplSyntaxOff
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
-% ^^A\AtEndDocument { \PrintChanges \PrintIndex }
+%^^A\AtEndDocument { \PrintChanges \PrintIndex }
+\makeatletter
+\newcommand*{\docsetnameref}{\def\@currentlabelname}%https://tex.stackexchange.com/questions/537751
+\makeatother
 \ExplSyntaxOn
+\tl_gset:Nn \partname {Part}
+\newenvironment{docabstract}[1]%https://latex.org/forum/viewtopic.php?t=12156
+{\renewcommand{\abstractname}{#1}\begin{abstract}}
+  {\end{abstract}} 
+\providecommand\docphsection[3]
+{
+  \leavevmode
+  \refstepcounter{#1}
+  \addcontentsline{toc}{#1}{\protect\numberline{\use:c{the#1}}#2}
+  \docsetnameref{#2}
+  \label{#3}
+}
+\providecommand\docU[1]{\exp_args:Nx \__erw_docu:n{#1}}
+\ExplSyntaxOff
+%^^A Sort--->
 \providecommand\docarg[1]{\texttt{#1}} % fun[param] (macro) vs fun[arg] (eval)
 \providecommand\docargnoval{\c_novalue_tl}
 \providecommand\docassign[2]{#1~$\leftarrow$~#2}
 \providecommand\docccept[1]{\textit{#1}}
 \providecommand\doccceptargspec{arg~spec}
 \providecommand\doccceptbool{boolean}
-\providecommand\doccceptcode{code}
 \providecommand\doccceptclist{clist}
-\providecommand\doccceptcs{cs}
-\providecommand\doccceptcsorcode{cs~or~code}
+\providecommand\doccceptcode{code}
 \providecommand\doccceptcsname{cs name}
+\providecommand\doccceptcsorcode{cs~or~code}
+\providecommand\doccceptcs{cs}
 \providecommand\doccceptempty{empty}
+\providecommand\doccceptgroup{local~group}
 \providecommand\doccceptint{integer}
 \providecommand\doccceptitems{items}
-\providecommand\doccceptgroup{local~group}
 \providecommand\doccceptkey{key}
 \providecommand\doccceptkvl{keyval~list}
 \providecommand\doccceptopt{option}
 \providecommand\doccceptpath{path}
+\providecommand\doccceptplaceh{placeholder}
 \providecommand\doccceptpre{preamble}
 \providecommand\doccceptprop{prop}
+\providecommand\doccceptsep{separators}
 \providecommand\doccceptseq{seq}
 \providecommand\docccepttlvar{tl~var}
-\providecommand\docccepttok{token}
 \providecommand\docccepttl{token~list}
+\providecommand\docccepttok{token}
 \providecommand\doccceptval{val}
 \providecommand\docconv[1]{convention~\autoref{conv:#1}}
-\providecommand\docenvdoc{\env{document}}
 \providecommand\docdefaultfor{default~for~}
+\providecommand\docenvdoc{\env{document}}
 \providecommand\doceval[1]{\texttt{\char`\{}#1\texttt{\char`\}}}
+\providecommand\docexpand[2]{#1~$\rightarrow$~#2}
 \providecommand\docfillblank{\begin{minipage}[t]{\linewidth}\end{minipage}}
-\providecommand\docissuedo{Do: }
 \providecommand\docissuedont{Don't: }
+\providecommand\docissuedo{Do: }
 \providecommand\docissuesymp{Symptom: }
 \providecommand\doclist[1]{Listing~\ref{listing:#1}}
-\providecommand\docopto[1]{\texttt{[}#1\texttt{]}}
-\providecommand\docopte[2]{\texttt{#1}\doceval{#2}}
+\providecommand\docnb{\noindent\textbf{NB}:~}
 \providecommand\docoptd[1]{\texttt{\textless}#1\texttt{\textgreater}}
+\providecommand\docopte[2]{\texttt{#1}\doceval{#2}}
+\providecommand\docopto[1]{\texttt{[}#1\texttt{]}}
 \providecommand\docpipe{\textbar}
-\cs_new:Nn \__erw_docu:n{\MakeUppercase #1}
-\providecommand\docstep[1]{step~\ref{step:#1}}
+\providecommand\docreflist[1]{Listing~\ref{listing:#1}}
 \providecommand\docsee{See:~}
-\providecommand\docccepttl{token~list}
+\providecommand\docstep[1]{step~\ref{step:#1}}
 \providecommand\doctip{\noindent\textbf{Tip}:~}
-\providecommand\docU[1]{\exp_args:Nx \__erw_docu:n{#1}}
 \providecommand\docvers[2]{v#1.#2}
 \providecommand\docwarn{\noindent\textbf{Warning}:~}
-\newenvironment{docabstract}[1]%https://latex.org/forum/viewtopic.php?t=12156
-{\renewcommand{\abstractname}{#1}\begin{abstract}}
-  {\end{abstract}} 
-\ExplSyntaxOff
+\providecommand\docxparsed[1][~argument]{`d'-type~#1}
+\providecommand\docxparsee[1][~argument]{`e'-type~#1}
+\providecommand\docxparsem[1][~argument]{`m'-type~#1}
+\providecommand\docxparseo[1][~argument]{`o'-type~#1}
+\providecommand\pkgkey{key$_{i}$}
+\providecommand\pkgobj[1]{object identified by #1}
+\providecommand\pkgoptex{\docarg{Expans}}
+\providecommand\pkgoptfi{\docarg{File}}
+\providecommand\pkgoptin{\docarg{Inner}}
+\providecommand\pkgoptions{kvl0}
+\providecommand\pkgoptou{\docarg{Outer}}
+\providecommand\pkgoptpad{\docarg{Default}}%default
+\providecommand\pkgoptpa{\docarg{Param}}
+\providecommand\pkgoptse{\docarg{Separ}}
+\providecommand\pkgoptwr{\docarg{Write}}
+\providecommand\pkgparap{\texttt{+}}%append
+\providecommand\pkgparex{\texttt{*}}%expand
+\providecommand\pkgparhe{tl$_{1}$}%head
+\providecommand\pkgparin{code$_{1}$}%inner
+\providecommand\pkgparkvlnxt{kvl$_{2}$}
+\providecommand\pkgparkvl{kvl$_{1}$}
+\providecommand\pkgparou{code$_{2}$}%outer
+\providecommand\pkgparpa{tl$_{2}$}%param
+\providecommand\pkgparsiii{tl$_{5}$}
+\providecommand\pkgparsii{tl$_{4}$}
+\providecommand\pkgparsi{tl$_{3}$}
+\providecommand\pkgpars{\Arg{\pkgparsi}\docpipe\Arg{\pkgparsi}\Arg{\pkgparsii}\docpipe\Arg{\pkgparsi}\Arg{\pkgparsii}\Arg{\pkgparsiii}}%separ
+\providecommand\pkgparta{tl$_{6}$}%tail
+\providecommand\pkgsep[1]{\Arg{#1}}
+\providecommand\pkgval{val$_{i}$}
+%^^A Sort<---
 \begin{document}
 \DocInput{\jobname.dtx}
 \end{document}
@@ -174,14 +215,14 @@ erw-l3.sty, and erw-l3.pdf.
 %   \begingroup
 %   \selectlanguage{english}
 %   \begin{docabstract}{Abstract}
-%     Utilities based on \pkg{expl3}\cite{interface3}.
+%     Utilities like \pkg{expl3}\cite{interface3}.
 %   \end{docabstract}
 %   \endgroup
 %   
 %   \begingroup
 %   \selectlanguage{french}
 %   \begin{docabstract}{Résumé}
-%     Utilitaies de type \pkg{expl3}\cite{interface3}.
+%     Utilitaires de type \pkg{expl3}\cite{interface3}.
 %   \end{docabstract}
 %   \endgroup
 %   ^^A   \selectlanguage{english}
@@ -190,12 +231,8 @@ erw-l3.sty, and erw-l3.pdf.
 %   
 %   \part{Usage}\label{part:usage}
 %   ^^A   \VerbatimFootnotes
-%   
-%   \leavevmode
-%   \refstepcounter{section}
-%   \docsetnameref{Loading the package}
-%   \label{usage:load} 
-%   \addcontentsline{toc}{section}{\protect\numberline{\thesection}Loading the package}   
+%
+%   \docphsection{section}{Loading the package}{usage:load}
 %   \begin{function}{\usepackage}
 %     \begin{syntax}
 %       \cs{usepackage}\doceval{\pkg{\jobname}}
@@ -262,6 +299,17 @@ erw-l3.sty, and erw-l3.pdf.
 %     \end{syntax}
 %   \end{function}
 %   
+%   \section{option}\label{usage:option}
+%   \begin{function}{\erw_option:n}
+%     \begin{syntax}
+%       \cs{erw_option:n}\Arg{\doccceptkvl}
+%     \end{syntax}
+%   \end{function}
+%   
+%   \DescribeOption{oper / fold_set_par}
+%   \DescribeOption{oper / fold_apply_par}
+%   \DescribeOption{sys / timestamp_delim}
+%
 %   \section{\textsf{prop}}\label{usage:prop}
 %   All functions that modify a \meta{\doccceptprop} check it exists, if not make sure it does.
 %   
@@ -272,12 +320,12 @@ erw-l3.sty, and erw-l3.pdf.
 %   \end{function}
 %   \begin{function}{\erw_prop_put:Nnn}
 %     \begin{syntax}
-%       \cs{erw_prop_put:NN}\meta{\doccceptprop}\meta{\doccceptkey}\meta{\doccceptval}
+%       \cs{erw_prop_put:Nnn}\meta{\doccceptprop}\Arg{\doccceptkey}\Arg{\doccceptval}
 %     \end{syntax}
 %   \end{function}
 %   \begin{function}{\erw_prop_to_clist:Nn}
 %     \begin{syntax}
-%       \cs{erw_prop_put:NN}\meta{\doccceptprop}\doceval{\meta{\doccceptkey_1},\dots}
+%       \cs{erw_prop_to_clist:Nn}\meta{\doccceptprop}\doceval{\meta{\doccceptkey_1},\dots}
 %     \end{syntax}
 %   \end{function}
 %   
@@ -311,6 +359,11 @@ erw-l3.sty, and erw-l3.pdf.
 %   \begin{function}{\erw_seq_put_right:Nn}
 %     \begin{syntax}
 %       \cs{erw_seq_put_right:Nn}\meta{\doccceptseq}\Arg{\docccepttl}
+%     \end{syntax}
+%   \end{function}
+%   \begin{function}{\erw_seq_use:Nn}
+%     \begin{syntax}
+%       \cs{erw_seq_use:Nn}\meta{\doccceptseq}\Arg{\doccceptitems}
 %     \end{syntax}
 %   \end{function}
 %   
@@ -361,10 +414,7 @@ erw-l3.sty, and erw-l3.pdf.
 %       \cs{erw_tl_fold:NN}\meta{\doccceptcs}\meta{\docccepttlvar}
 %     \end{syntax}
 %   \end{function}
-%   \leavevmode
-%   \refstepcounter{section}
-%   \docsetnameref{\cs{erw_tl_gset_function:n}}
-%   \label{usage:tl:function}
+%  \docphsection{section}{\cs{erw_tl_gset_function:n}}{usage:tl:function}
 %   \begin{function}{\erw_tl_gset_function:N, \erw_tl_gset_function:n}
 %     \begin{syntax}
 %       \cs{erw_tl_gset_function:n}\Arg{\doccceptcode}
@@ -377,7 +427,7 @@ erw-l3.sty, and erw-l3.pdf.
 %   \end{function}
 %   \begin{function}{\erw_tl_last_item:n}
 %     \begin{syntax}
-%       \cs{erw_tl_last_time:n}\Arg{\docccepttl}
+%       \cs{erw_tl_last_item:n}\Arg{\docccepttl}
 %     \end{syntax}
 %   \end{function}
 %   \begin{function}{\erw_tl_map:n, \erw_tl_map:Nn}
@@ -413,18 +463,11 @@ erw-l3.sty, and erw-l3.pdf.
 %       \cs{erw_tl_split:nn}\Arg{\doccceptitems}\Arg{delimiter}
 %     \end{syntax}
 %   \end{function}
-%   
-%   \section{option}\label{usage:option}
-%   \begin{function}{\erw_option:n}
+%   \begin{function}{\erw_tl_separators:n}
 %     \begin{syntax}
-%       \cs{erw_option:n}\Arg{\doccceptkvl}
+%       \cs{erw_tl_separators:n}\Arg{items}
 %     \end{syntax}
 %   \end{function}
-%   
-%   \DescribeOption{oper / fold_set_par}
-%   \DescribeOption{oper / fold_apply_par}
-%   \DescribeOption{sys / timestamp_delim}
-%   
 %   \clearpage
 %   \part{Listing}\label{part:listing}
 %   
@@ -442,7 +485,23 @@ erw-l3.sty, and erw-l3.pdf.
 %   boxrule=1pt,
 %   listing and text,
 %   #2}
-%   
+%
+% \section{\textsf{constants}}
+% \phantomsection\addcontentsline{toc}{subsection}
+% {\ref{listing:const}.}
+% \iffalse
+%<*guardlisting> 
+% \fi
+\begin{listing}[]
+  {label=listing:const, listing and text}
+  \ExplSyntaxOn
+  \seq_const_from_clist:Nn \foo_seq{ A, B, C } 
+  \prop_const_from_keyval:Nn \foo_prop{ A = a, B = b, C = c }
+  \ExplSyntaxOff
+\end{listing}
+% \iffalse
+%</guardlisting> 
+% \fi
 %   \section{\textsf{basics}}
 %   \phantomsection\addcontentsline{toc}{subsection}
 %   {\ref{listing:apply}. }
@@ -497,19 +556,6 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % \section{\textsf{prop}}
-% \phantomsection\addcontentsline{toc}{subsection}{\ref{listing:prop:foo}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[Global]
-  {label=listing:prop:foo, listing and text}
-  \ExplSyntaxOn
-  \prop_const_from_keyval:Nn \foo_prop{ A = a, B = b, C = c }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
 % \phantomsection\addcontentsline{toc}{subsection}
 % {\ref{listing:prop:append}.}
 % \iffalse
@@ -589,21 +635,6 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:seq:clist}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:seq:clist, listing and text}
-  \ExplSyntaxOn
-  \erw_seq_from_clist:Nn \foo_seq{ A, B, C }
-  \seq_use:Nn\foo_seq{,}
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
 % {\ref{listing:seq:prop}.}
 % \iffalse
 %<*guardlisting> 
@@ -611,8 +642,24 @@ erw-l3.sty, and erw-l3.pdf.
 \begin{listing}[]
   {label=listing:seq:prop, listing and text}
   \ExplSyntaxOn
-  \erw_seq_from_prop:NNn \foo_seq\foo_prop{ A, B, C }
-  \seq_use:Nn\foo_seq{,}
+  \erw_seq_from_prop:NNn \bar_seq\foo_prop{ A, B, C }
+  \seq_use:Nn\bar_seq{,}
+  \ExplSyntaxOff
+\end{listing}
+% \iffalse
+%</guardlisting> 
+% \fi
+% \phantomsection\addcontentsline{toc}{subsection}
+% {\ref{listing:seq:use}. }
+% \iffalse
+%<*guardlisting> 
+% \fi
+\begin{listing}[]
+  {label=listing:seq:use, listing and text}
+  \ExplSyntaxOn
+  \erw_seq_use:Nn \foo_seq{{~and~}}\\
+  \erw_seq_use:Nn \foo_seq{{,\ }{and~}}\\
+  \erw_seq_use:Nn \foo_seq{{~and~}{,\ }{,\ and~}}
   \ExplSyntaxOff
 \end{listing}
 % \iffalse
@@ -665,12 +712,12 @@ erw-l3.sty, and erw-l3.pdf.
 % \fi
 % \section{\textsf{tl}}
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:compose}. }
+% {\ref{listing:tl:compose}. }
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:compose, listing and text}
+  {label=listing:tl:compose, listing and text}
   \ExplSyntaxOn
   \cs_set:Nn \__foo:n {f(#1)}
   \cs_set:Nn \__bar:n {g[#1]}
@@ -686,12 +733,12 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:compose:c}.}
+% {\ref{listing:tl:compose:c}.}
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:compose:c, listing and text}
+  {label=listing:tl:compose:c, listing and text}
   \ExplSyntaxOn
   \cs_set:Nn \__foo:n  {f(#1)}
   \cs_set:Nn \__bar:n  {g[#1]}
@@ -709,7 +756,7 @@ erw-l3.sty, and erw-l3.pdf.
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:compose:vers, listing and text}
+  {label=listing:tl:compose:vers, listing and text}
   \ExplSyntaxOn
   \cs_set:Npn \__foo #1 {f(#1)}
   \cs_set:Npn \__bar #1 {g[#1]}
@@ -721,12 +768,12 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:fold}. }
+% {\ref{listing:tl:fold}. }
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:fold, listing and text}
+  {label=listing:tl:fold, listing and text}
   \ExplSyntaxOn
   \cs_set:Nn \__foo:n {f(#1)}
   \tl_set:Nn \l_tmpa_tl{X}
@@ -741,12 +788,30 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:repeat}. }
+% {\ref{listing:tl:separ}. }
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:repeat, listing and text}
+  {label=listing:tl:separ, listing and text}
+  \ExplSyntaxOn
+%^^A  \erw_seq_use:Nn \foo_seq{{~and~}}
+  \seq_use:Nn\foo_seq{,}
+%^^A  \erw_tl_separators:n{{~and~}}\\
+%^^A  \erw_tl_separators:n{{\ ,}{~and~}}\\
+%^^A  \erw_tl_separators:n{{~and~}{\ ,}{~and~}}
+  \ExplSyntaxOff
+\end{listing}
+% \iffalse
+%</guardlisting> 
+% \fi
+% \phantomsection\addcontentsline{toc}{subsection}
+% {\ref{listing:tl:repeat}. }
+% \iffalse
+%<*guardlisting> 
+% \fi
+\begin{listing}[]
+  {label=listing:tl:repeat, listing and text}
   \ExplSyntaxOn
   \erw_tl_repeat:nn{3}{x}
   \ExplSyntaxOff
@@ -755,12 +820,12 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:split}. }
+% {\ref{listing:tl:split}. }
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:split, listing and text}
+  {label=listing:tl:split, listing and text}
   \ExplSyntaxOn
   \erw_tl_split:nn{{a}{b}{c}}{==}
   \ExplSyntaxOff
@@ -769,12 +834,12 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:map}.}
+% {\ref{listing:tl:map}.}
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:map, listing and text}
+  {label=listing:tl:map, listing and text}
   \ExplSyntaxOn
   \cs_set:Nn \__foo:n {(#1)}
   \erw_tl_map:Nn \__foo:n{{a}{b}{c}}
@@ -784,12 +849,12 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:map:thread}. }
+% {\ref{listing:tl:map:thread}. }
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:map:thread, listing and text}
+  {label=listing:tl:map:thread, listing and text}
   \ExplSyntaxOn
   \cs_set:Nn \__foo:n {(#1)}
   \erw_tl_map_thread:Nn \__foo:n
@@ -823,12 +888,12 @@ erw-l3.sty, and erw-l3.pdf.
 %</guardlisting> 
 % \fi
 % \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:map:thread:at}. }
+% {\ref{listing:tl:map:thread:at}. }
 % \iffalse
 %<*guardlisting> 
 % \fi
 \begin{listing}[]
-  {label=listing:map:thread:at, listing and text}
+  {label=listing:tl:map:thread:at, listing and text}
   \ExplSyntaxOn
   \cs_set:Nn\__foo:nn {(#1+#2)}
   \erw_tl_map_thread_at:Nnn \__foo:nn{2}
@@ -898,19 +963,14 @@ erw-l3.sty, and erw-l3.pdf.
 % \begin{enumerate}[label=\emph{\arabic*)}]
 % \item \pkg{\jobname} \docvers{2}{0} compiles satisfactorily on platform \ref{plat:lin} and engines \ref{eng:tlxx:pdf},  \ref{eng:tlxx:lua}, and \ref{eng:tlxx:xe}
 % \end{enumerate}
-% 
-% \leavevmode
-% \refstepcounter{section}
-% \docsetnameref{References}
-% \label{other:bib}
-% \phantomsection\addcontentsline{toc}{section}{References}
+%
+%  \docphsection{section}{References}{other:bib}
 % \begin{thebibliography}{1}
 % \bibitem{interface3} The \LaTeX3 Project Team {\em The \LaTeX3 interfaces}, 2019,
 %   \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3kernel/interface3.pdf}
 % \bibitem{user-erw} \url{https://tex.stackexchange.com/users/112708/erwann?tab=questions}
 % \end{thebibliography}
-% 
-% \changes{\docvers{1}{0}}{2018/05/20}{Initial version} 
+%
 % \changes{\docvers{1}{1}}{2018/05/23}{Brought all the modules under one file; renamed \pkg{l3erw} to \pkg{erw-l3};}
 % \changes{\docvers{1}{1}}{2018/05/23}{\pkg{disambig}/backend: changes to the key, added \cs{ProcessPackageKeysOption};}
 % \changes{\docvers{1}{1}}{2018/05/23}{\cs{numbrdcsnew} changed to \cs{newnumbrdcs} and made 'disambiguable'}
@@ -968,6 +1028,9 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{2}{1}}{2020/05/09}{Add: \cs{erw_prop_to_clist:Nn}, \cs{erw_prop_put:NN}, and \cs{erw_prop_put:Nnn}}
 % \changes{\docvers{2}{1}}{2020/05/09}{Add: \cs{erw_seq_from_clist:Nn}, \cs{erw_seq_from_prop:NNn}, and \cs{erw_seq_put_right:Nn}}
 % \changes{\docvers{2}{1}}{2020/05/09}{Replace: \cs{erw_seq_fold:NN} by \cs{__erw_seq_fold:NN}}
+% \changes{\docvers{2}{2}}{2020/05/18}{Add: \cs{erw_tl_separators:n}}
+% \changes{\docvers{2}{2}}{2020/05/18}{Add: \cs{erw_seq_use:Nn}}
+% 
 % \PrintChanges
 % \PrintIndex
 % \clearpage
@@ -1273,6 +1336,12 @@ erw-l3.sty, and erw-l3.pdf.
   \seq_put_right:No #2 {\g@@_seq_fold_item_tl}
 }
 \cs_generate_variant:Nn \@@_seq_fold:NN {cN}
+\cs_new:Nn \erw_seq_use:Nn
+{
+  \exp_last_unbraced:NNf
+  \seq_use:Nnnn #1
+  \erw_tl_separators:n{#2}
+}
 %    \end{macrocode}
 % \section{\textsf{sys}}
 % \label{impl:sys}
@@ -1460,6 +1529,37 @@ erw-l3.sty, and erw-l3.pdf.
 }
 %    \end{macrocode}
 % \end{macro}
+% \begin{macro}{\@@_tl_separators:nn}
+%   \begin{arguments}
+%   \item \meta{ int }
+%   \item \meta{ items }
+%   \end{arguments}
+%    \begin{macrocode}
+\cs_new:Nn \@@_tl_separators:nn
+{
+  \int_case:nnTF {#1}
+  {
+    {1}
+    { \prg_replicate:nn{ 3 }{#2} }
+    {2}
+    {
+      { \use_ii:nn #2 }
+      { \use_i:nn #2 }
+      { \use_i:nn #2\use_ii:nn #2 }
+    }
+    {3}{#2}
+  }
+  { \c_empty_tl }
+  {
+    \msg_error:nnnn { @@ }
+    { separ }
+    { \exp_not:N \_@@_tl_separators:nn }
+    {#2}
+  }
+}
+\cs_generate_variant:Nn \@@_tl_separators:nn { e }
+%    \end{macrocode}
+% \end{macro}
 % \subsection{frontend}
 %    \begin{macrocode}
 \cs_new:Nn \erw_tl_append_item:nn
@@ -1586,6 +1686,10 @@ erw-l3.sty, and erw-l3.pdf.
     \erw_tl_map_thread_at:Nnn #1 {##1} {#2}
   }
 }
+\cs_new:Nn \erw_tl_separators:n
+{
+  \@@_tl_separators:en{ \tl_count:n{#1} }{#1}
+}
 %    \end{macrocode}
 % \section{option}
 % \label{impl:option}
@@ -1596,11 +1700,12 @@ erw-l3.sty, and erw-l3.pdf.
 }
 %    \end{macrocode}
 % \section{Closing}
-% \label{impl:option}
+% \label{impl:closing}
 %    \begin{macrocode}
 \ExplSyntaxOff
 %    \end{macrocode}
 % \end{implementation}
+% 
 % \iffalse
 %</package> 
 % \fi

@@ -6,7 +6,7 @@
 %%
 %% erw-l3.dtx  (with options: `package')
 %% ----------------------------------------------------------------------------
-%% erw-l3 ---  Utilities using LaTeX3
+%% erw-l3 --- Utilities for LaTeX3 programming
 %% Released under the LaTeX Project Public License v1.3c or later
 %% See http://www.latex-project.org/lppl.txt
 %% ----------------------------------------------------------------------------
@@ -17,9 +17,9 @@
  \RequirePackage{xparse}[2020/03/06]
  \ProvidesExplPackage
  {erw-l3}                                                                            % Package name
- {2020/05/01}                                                                        % Release date
- {1.9}                                                                               % Release version
- {erw-l3 --- Utilities using LaTeX3 }                                                % Description
+ {2020/05/18}                                                                        % Release date
+ {2.2}                                                                               % Release version
+ {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 \cs_new:Nn \@@_cs_name:N
 {
   \exp_last_unbraced:Nf \use_i:nnn {\cs_split_function:N #1}
@@ -247,6 +247,12 @@
   \seq_put_right:No #2 {\g@@_seq_fold_item_tl}
 }
 \cs_generate_variant:Nn \@@_seq_fold:NN {cN}
+\cs_new:Nn \erw_seq_use:Nn
+{
+  \exp_last_unbraced:NNf
+  \seq_use:Nnnn #1
+  \erw_tl_separators:n{#2}
+}
 \msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
 \msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
 \cs_new:Nn \@@_sys_date_dec:
@@ -385,6 +391,29 @@
   {\exp_args:Nf\tl_item:nn {#5} {#2} }
   {\exp_args:Nf\tl_item:nn {#6} {#2} }
 }
+\cs_new:Nn \@@_tl_separators:nn
+{
+  \int_case:nnTF {#1}
+  {
+    {1}
+    { \prg_replicate:nn{ 3 }{#2} }
+    {2}
+    {
+      { \use_ii:nn #2 }
+      { \use_i:nn #2 }
+      { \use_i:nn #2\use_ii:nn #2 }
+    }
+    {3}{#2}
+  }
+  { \c_empty_tl }
+  {
+    \msg_error:nnnn { @@ }
+    { separ }
+    { \exp_not:N \_@@_tl_separators:nn }
+    {#2}
+  }
+}
+\cs_generate_variant:Nn \@@_tl_separators:nn { e }
 \cs_new:Nn \erw_tl_append_item:nn
 {
   {#1{#2}}
@@ -508,6 +537,10 @@
   {
     \erw_tl_map_thread_at:Nnn #1 {##1} {#2}
   }
+}
+\cs_new:Nn \erw_tl_separators:n
+{
+  \@@_tl_separators:en{ \tl_count:n{#1} }{#1}
 }
 \cs_new_protected:Nn\erw_option:n
 {
