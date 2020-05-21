@@ -17,10 +17,10 @@
  \RequirePackage{xparse}[2020/03/06]
  \ProvidesExplPackage
  {erw-l3}                                                                            % Package name
- {2020/05/18}                                                                        % Release date
- {2.2}                                                                               % Release version
+ {2020/05/20}                                                                        % Release date
+ {2.3}                                                                               % Release version
  {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
-\cs_new:Nn \@@_cs_name:N
+\cs_new:Nn \__erw_cs_name:N
 {
   \exp_last_unbraced:Nf \use_i:nnn {\cs_split_function:N #1}
 }
@@ -56,21 +56,21 @@
 \cs_new:Nn \erw_tl_join:nnn{#1#2#3}
 \cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
 \cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
-\int_new:N \g@@_csint_int
-\tl_set:Nn \g@@_csint_name_tl {\erw_csint_name:n{\g@@_csint_int}}
+\int_new:N \g__erw_csint_int
+\tl_set:Nn \g__erw_csint_name_tl {\erw_csint_name:n{\g__erw_csint_int}}
 \cs_new:Nn \erw_csint:nn
 {
-  \erw_cs_apply:cn{@@_csint_\int_to_alph:n{#1}:n}{#2}
+  \erw_cs_apply:cn{__erw_csint_\int_to_alph:n{#1}:n}{#2}
 }
-\cs_new:Nn \erw_csint_name:n {@@_csint_\int_to_alph:n{#1}:n}
+\cs_new:Nn \erw_csint_name:n {__erw_csint_\int_to_alph:n{#1}:n}
 \cs_new:Nn \erw_csint_names:nnn
 {
   \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_csint_name:n
 }
 \cs_new_protected:Nn \erw_csint_new:n
 {
-  \int_incr:N \g@@_csint_int
-  \erw_cs_set_inline:cn{\g@@_csint_name_tl}
+  \int_incr:N \g__erw_csint_int
+  \erw_cs_set_inline:cn{\g__erw_csint_name_tl}
   {
     \token_if_cs:NTF
     {#1}
@@ -86,14 +86,14 @@
 \cs_new:Nn \erw_csint_names_braced:n {{\erw_csint_name:n{#1}}}
 \cs_new:Nn \erw_csint_names_braced:
 {
-  \erw_csint_names_braced:nnn{1}{1}{\g@@_csint_int}
+  \erw_csint_names_braced:nnn{1}{1}{\g__erw_csint_int}
 }
 \cs_new_protected:Nn \erw_csint_reset:
 {
-  \int_zero:N \g@@_csint_int
-  \tl_set:Nn \@@_csint_ext_tl{}%^^A TODO remove?
+  \int_zero:N \g__erw_csint_int
+  \tl_set:Nn \__erw_csint_ext_tl{}%^^A TODO remove?
 }
-\cs_set:Npn \@@_int_range:nnn #1 #2 #3
+\cs_set:Npn \__erw_int_range:nnn #1 #2 #3
 {
   \int_compare:nNnTF
   {
@@ -103,7 +103,7 @@
     {#1}
   }
   {
-    \@@_int_range:nnn
+    \__erw_int_range:nnn
     {
       \exp_args:Nx\erw_tl_append_item:nn{#1}
       {
@@ -116,29 +116,31 @@
 }
 \cs_new:Nn \erw_int_range:nn
 {
-  \@@_int_range:nnn {{#1}}{#1}{#2}
+  \__erw_int_range:nnn {{#1}}{#1}{#2}
 }
 \cs_new:Nn \erw_int_range:n
 {
-  \@@_int_range:nnn {}{0}{#1}
+  \__erw_int_range:nnn {}{0}{#1}
 }
-\msg_new:nnn{@@}{keyval/keyonly}{passed~key~#1~val~#2~where~keyonly}
-\msg_new:nnn{@@}{keyval/mandatval}{key~#1~has~no~matching~val}
 \cs_new:Nn \erw_keyval_keyonly:nn
 {
-  \msg_error:nnn{@@}{keyval/keyonly}{#1}{#2}
+  \msg_error:nnn{erw}{keyval/keyonly}{#1}{#2}
 }
-\msg_new:nnn{@@}{generic}{#1}
-\msg_new:nnn{@@}{notdecl}{#1~not~declared}
-\msg_new:nnn{@@}{notset}{#1~not~set}
+\msg_new:nnn{__erw}{generic}{#1}
+\msg_new:nnn{__erw}{separ}{#1~expects~1~to~3~items,~#2}
+\msg_new:nnn{__erw}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
+\msg_new:nnn{__erw}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
+\msg_new:nnn{erw}{csnset}{#1~not~set}
+\msg_new:nnn{erw}{keyval/keyonly}{passed~key~#1~val~#2~where~keyonly}
+\msg_new:nnn{erw}{keyval/mandatval}{key~#1~has~no~matching~val}
 \cs_new_protected:Nn \erw_prop_to_clist:Nn
 {
-  \cs_set:Nn \@@_keyval_function:n {,\prop_item:Nn#1{##1}}
+  \cs_set:Nn \__erw_keyval_function:n {,\prop_item:Nn#1{##1}}
   \exp_args:Nf
   \tl_tail:n
   {
     \keyval_parse:NNn
-    \@@_keyval_function:n
+    \__erw_keyval_function:n
     \erw_keyval_keyonly:nn
     {#2}
   }
@@ -147,11 +149,11 @@
 
 \cs_new_protected:Nn \erw_prop_put:NN
 {
-  \cs_set:Nn \@@_prop_append:nn
+  \cs_set:Nn \__erw_prop_append:nn
   {
     \prop_gput:Nnx #1 {##1}{ \prop_item:Nn #2{##1} }
   }
-  \prop_map_function:NN #2 \@@_prop_append:nn
+  \prop_map_function:NN #2 \__erw_prop_append:nn
 }
 \cs_generate_variant:Nn \erw_prop_put:NN { cc }
 \cs_new_protected:Nn\erw_prop_put:Nnn
@@ -166,9 +168,9 @@
   }
 }
 \cs_generate_variant:Nn \erw_prop_put:Nnn { c }
-\cs_new:Nn \@@_oper_compose:NnN
+\cs_new:Nn \__erw_oper_compose:NnN
 {
-  \erw_cs_set_inline:Nn \g@@_tl_function:n
+  \erw_cs_set_inline:Nn \g__erw_tl_function:n
   {
     #1{##1}#3
   }
@@ -177,59 +179,59 @@
     \tl_reverse:n{#2}
   }
 }
-\keys_define:nn{@@}
+\keys_define:nn{__erw}
 {
-  oper/fold_set_par.tl_gset:N = \g@@_oper_fold_set_par_tl,
+  oper/fold_set_par.tl_gset:N = \g__erw_oper_fold_set_par_tl,
   oper/fold_set_par.value_required:n = true,
   oper/fold_set_par.default:n = {Nf},
   oper/fold_set_par.initial:n = {Nf},
-  oper/fold_apply_par.tl_gset:N = \g@@_oper_fold_apply_par_tl,
+  oper/fold_apply_par.tl_gset:N = \g__erw_oper_fold_apply_par_tl,
   oper/fold_apply_par.value_required:n = true,
   oper/fold_apply_par.default:n = {Nf},
   oper/fold_apply_par.initial:n = {Nf}
 }
-\tl_new:N \g@@_seq_fold_item_tl
-\cs_new_protected:Nn\@@_seq_set_from_clist:Nn
+\tl_new:N \g__erw_seq_fold_item_tl
+\cs_new_protected:Nn\__erw_seq_set_from_clist:Nn
 {
-  \cs_set_protected:Nn \@@_function:n
+  \cs_set_protected:Nn \__erw_function:n
   {
     \seq_put_right:Nn #1{##1}
   }
   \keyval_parse:NNn
-  \@@_function:n
+  \__erw_function:n
   \erw_keyval_keyonly:nn
   {#2}
 }
-\cs_generate_variant:Nn \@@_seq_set_from_clist:Nn { c }
-\cs_new_protected:Nn\@@_seq_set_from_prop:NNn
+\cs_generate_variant:Nn \__erw_seq_set_from_clist:Nn { c }
+\cs_new_protected:Nn\__erw_seq_set_from_prop:NNn
 {
-  \@@_seq_set_from_clist:Nn #1
+  \__erw_seq_set_from_clist:Nn #1
   {\erw_prop_to_clist:Nn #2 {#3}}
 }
-\cs_generate_variant:Nn \@@_seq_set_from_prop:NNn { cc }
+\cs_generate_variant:Nn \__erw_seq_set_from_prop:NNn { cc }
 \cs_new:Nn \erw_seq_compose:nN
 {
-  \@@_oper_compose:NnN \@@_seq_fold:NN {#1} #2
+  \__erw_oper_compose:NnN \__erw_seq_fold:NN {#1} #2
 }
 \cs_new:Nn \erw_seq_compose_c:nN
 {
-  \@@_oper_compose:NnN \@@_seq_fold:cN {#1} #2
+  \__erw_oper_compose:NnN \__erw_seq_fold:cN {#1} #2
 }
 \cs_new:Nn \erw_seq_compose_vers:nN
 {
-  \msg_error:nnn{@@}{notdecl}{\erw_seq_compose_vers:nN}
+  \msg_error:nnn{__erw}{csnset}{\erw_seq_compose_vers:nN}
 }
 \cs_new_protected:Nn\erw_seq_from_clist:Nn
 {
   \seq_if_exist:NTF#1
-  {\@@_seq_set_from_clist:Nn#1{#2}}
+  {\__erw_seq_set_from_clist:Nn#1{#2}}
   {\seq_new:N#1\erw_seq_from_clist:Nn#1{#2}}
 }
 \cs_generate_variant:Nn \erw_seq_from_clist:Nn { c }
 \cs_new_protected:Nn\erw_seq_from_prop:NNn
 {
   \seq_if_exist:NTF#1
-  {\@@_seq_set_from_prop:NNn#1#2{#3}}
+  {\__erw_seq_set_from_prop:NNn#1#2{#3}}
   {\seq_new:N#1\erw_seq_from_prop:NNn#1#2{#3}}
 }
 \cs_generate_variant:Nn \erw_seq_from_prop:NNn { cc }
@@ -240,22 +242,20 @@
   {\seq_new:N#1\erw_seq_put_right:Nn #1{#2}}
 }
 \cs_generate_variant:Nn\erw_seq_put_right:Nn { c }
-\cs_new:Nn \@@_seq_fold:NN
+\cs_new:Nn \__erw_seq_fold:NN
 {
-  \seq_get_right:NN #2 \g@@_seq_fold_item_tl
-  \erw_tl_fold:NN #1 \g@@_seq_fold_item_tl
-  \seq_put_right:No #2 {\g@@_seq_fold_item_tl}
+  \seq_get_right:NN #2 \g__erw_seq_fold_item_tl
+  \erw_tl_fold:NN #1 \g__erw_seq_fold_item_tl
+  \seq_put_right:No #2 {\g__erw_seq_fold_item_tl}
 }
-\cs_generate_variant:Nn \@@_seq_fold:NN {cN}
+\cs_generate_variant:Nn \__erw_seq_fold:NN {cN}
 \cs_new:Nn \erw_seq_use:Nn
 {
   \exp_last_unbraced:NNf
   \seq_use:Nnnn #1
   \erw_tl_separators:n{#2}
 }
-\msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
-\msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
-\cs_new:Nn \@@_sys_date_dec:
+\cs_new:Nn \__erw_sys_date_dec:
 {
   \int_eval:n
   {
@@ -264,9 +264,9 @@
     +\c_sys_day_int *  1
   }
 }
-\cs_new:Nn \@@_sys_date:N{\int_to_hex:n{\@@_sys_date_dec:}}
-\cs_new:Nn \@@_sys_date_hex:{\int_to_hex:n{\@@_sys_date_dec:}}
-\cs_new:Nn \@@_sys_time_dec:
+\cs_new:Nn \__erw_sys_date:N{\int_to_hex:n{\__erw_sys_date_dec:}}
+\cs_new:Nn \__erw_sys_date_hex:{\int_to_hex:n{\__erw_sys_date_dec:}}
+\cs_new:Nn \__erw_sys_time_dec:
 {
   \int_eval:n
   {
@@ -274,8 +274,8 @@
     +\c_sys_minute_int * 1
   }
 }
-\cs_new:Nn\@@_sys_time_hex:{\int_to_hex:n{\@@_sys_time_dec:}}
-\cs_new:Nn\@@_sys_datetime_base:n
+\cs_new:Nn\__erw_sys_time_hex:{\int_to_hex:n{\__erw_sys_time_dec:}}
+\cs_new:Nn\__erw_sys_datetime_base:n
 {
   \int_case:nnTF{#1}
   {
@@ -283,10 +283,10 @@
     {16}{hex}
   }
   {\c_empty_tl}
-  {\msg_error:nnn{@@}{timestamp / base}{\@@_sys_datetime_base:n{#1}}}
+  {\msg_error:nnn{__erw}{timestamp / base}{\__erw_sys_datetime_base:n{#1}}}
 }
-\cs_new:Nn\@@_sys_datetime_join:nn{\erw_tl_join:nnn{#1}{\g@@_sys_timestamp_delim_str}{#2}}
-\cs_new:Nn\@@_sys_datetime_period:n
+\cs_new:Nn\__erw_sys_datetime_join:nn{\erw_tl_join:nnn{#1}{\g__erw_sys_timestamp_delim_str}{#2}}
+\cs_new:Nn\__erw_sys_datetime_period:n
 {
   \str_case:nnTF{#1}
   {
@@ -295,95 +295,95 @@
     {datetime}{datetime}
   }
   {\c_empty_tl}
-  {\msg_error:nnn{@@}{ timestamp / period }{\@@_sys_datetime_period:n{#1}}}
+  {\msg_error:nnn{__erw}{ timestamp / period }{\__erw_sys_datetime_period:n{#1}}}
 }
-\cs_new:Nn\@@_sys_datetime_dec: {\@@_sys_datetime_join:nn{\@@_sys_date_dec:}{\@@_sys_time_dec:}}
-\cs_new:Nn\@@_sys_datetime_hex: {\@@_sys_datetime_join:nn{\@@_sys_date_hex:}{\@@_sys_time_hex:}}
-\cs_new:Nn\@@_sys_jobnametimestamp_prefix:
+\cs_new:Nn\__erw_sys_datetime_dec: {\__erw_sys_datetime_join:nn{\__erw_sys_date_dec:}{\__erw_sys_time_dec:}}
+\cs_new:Nn\__erw_sys_datetime_hex: {\__erw_sys_datetime_join:nn{\__erw_sys_date_hex:}{\__erw_sys_time_hex:}}
+\cs_new:Nn\__erw_sys_jobnametimestamp_prefix:
 {
   \erw_tl_join:nn
   {\c_sys_jobname_str}
-  {\g@@_sys_timestamp_delim_str}
+  {\g__erw_sys_timestamp_delim_str}
 }
-\cs_new:Nn\@@_sys_jobnametimestamp:nn
+\cs_new:Nn\__erw_sys_jobnametimestamp:nn
 {
   \erw_tl_join:nn
-  {\@@_sys_jobnametimestamp_prefix:}
+  {\__erw_sys_jobnametimestamp_prefix:}
   {\erw_sys_timestamp:nn{#1}{#2}}
 }
-\cs_new:Nn\@@_sys_jobnametimestamp:
+\cs_new:Nn\__erw_sys_jobnametimestamp:
 {
   \erw_tl_join:nn
-  {\@@_sys_jobnametimestamp_prefix:}
+  {\__erw_sys_jobnametimestamp_prefix:}
   {\erw_sys_timestamp:}
 }
-\cs_new:Nn\@@_sys_timestamp:nn
+\cs_new:Nn\__erw_sys_timestamp:nn
 {
   \exp_args:No
-  \use:c{@@_sys_\@@_sys_datetime_period:n{#1}_\@@_sys_datetime_base:n{#2}:}
+  \use:c{__erw_sys_\__erw_sys_datetime_period:n{#1}_\__erw_sys_datetime_base:n{#2}:}
 }
-\cs_new_protected:Nn \@@_sys_set_delim:nn
+\cs_new_protected:Nn \__erw_sys_set_delim:nn
 {
   \use:c{tl_gset:N#1}
-  \g@@_sys_timestamp_delim_str{#2}
+  \g__erw_sys_timestamp_delim_str{#2}
 }
-\keys_define:nn{@@}
+\keys_define:nn{__erw}
 {
   sys / timestamp_delim .code:n =
   {
     \exp_last_unbraced:No
-    \@@_sys_set_delim:nn{n}{#1}
+    \__erw_sys_set_delim:nn{n}{#1}
   },
   sys / timestamp_delim  .value_required:n = true,
   sys / timestamp_delim  .default:n = {-},
   sys / timestamp_delim  .initial:n = {-}
 }
-\cs_new:Nn\erw_sys_jobnametimestamp:nn{\@@_sys_jobnametimestamp:nn{#1}{#2}}
-\cs_new:Nn\erw_sys_jobnametimestamp:{\@@_sys_jobnametimestamp:}
+\cs_new:Nn\erw_sys_jobnametimestamp:nn{\__erw_sys_jobnametimestamp:nn{#1}{#2}}
+\cs_new:Nn\erw_sys_jobnametimestamp:{\__erw_sys_jobnametimestamp:}
 \cs_new:Nn\erw_sys_timestamp_delimiter:
 {
-  \use:N \g@@_sys_timestamp_delim_str
+  \use:N \g__erw_sys_timestamp_delim_str
 }
 \cs_new:Nn\erw_sys_timestamp:nn
 {
-  \@@_sys_timestamp:nn{#1}{#2}
+  \__erw_sys_timestamp:nn{#1}{#2}
 }
 \cs_new:Nn\erw_sys_timestamp:
 {
-  \@@_sys_timestamp:nn{datetime}{16}
+  \__erw_sys_timestamp:nn{datetime}{16}
 }
-\tl_new:N \g@@_tl_compose_tl
-\cs_new_protected:Nn \g@@_tl_function:n
+\tl_new:N \g__erw_tl_compose_tl
+\cs_new_protected:Nn \g__erw_tl_function:n
 {
   \msg_error:nnn
   {erw}
-  {notset}
-  {\g@@_tl_function:n}
+  {csnset}
+  {\g__erw_tl_function:n}
 }
-\cs_set_protected:Nn \@@_map:nn
+\cs_set_protected:Nn \__erw_map:nn
 {
   \quark_if_recursion_tail_stop:n{#1}
-  \g@@_tl_function:n{#1}  \@@_map:nn{#2}
+  \g__erw_tl_function:n{#1}  \__erw_map:nn{#2}
 }
-\cs_set_protected:Nn \@@_tl_map_thread_at:Nnn
+\cs_set_protected:Nn \__erw_tl_map_thread_at:Nnn
 {
   \erw_cs_apply:Nn #1
   {\exp_args:Nf\tl_item:nn {#3} {#2} }
 }
-\cs_set_protected:Nn \@@_tl_map_thread_at:Nnnn
+\cs_set_protected:Nn \__erw_tl_map_thread_at:Nnnn
 {
   \erw_cs_apply:Nnn #1
   {\exp_args:Nf\tl_item:nn {#3} {#2} }
   {\exp_args:Nf\tl_item:nn {#4} {#2} }
 }
-\cs_set_protected:Nn \@@_tl_map_thread_at:Nnnnn
+\cs_set_protected:Nn \__erw_tl_map_thread_at:Nnnnn
 {
   \erw_cs_apply:Nnnn #1
   {\exp_args:Nf\tl_item:nn {#3} {#2} }
   {\exp_args:Nf\tl_item:nn {#4} {#2} }
   {\exp_args:Nf\tl_item:nn {#5} {#2} }
 }
-\cs_set_protected:Nn \@@_tl_map_thread_at:Nnnnnn
+\cs_set_protected:Nn \__erw_tl_map_thread_at:Nnnnnn
 {
   \erw_cs_apply:Nnnnn #1
   {\exp_args:Nf\tl_item:nn {#3} {#2} }
@@ -391,7 +391,7 @@
   {\exp_args:Nf\tl_item:nn {#5} {#2} }
   {\exp_args:Nf\tl_item:nn {#6} {#2} }
 }
-\cs_new:Nn \@@_tl_separators:nn
+\cs_new:Nn \__erw_tl_separators:nn
 {
   \int_case:nnTF {#1}
   {
@@ -401,46 +401,46 @@
     {
       { \use_ii:nn #2 }
       { \use_i:nn #2 }
-      { \use_i:nn #2\use_ii:nn #2 }
+      { \use_i:nn #2 \use_ii:nn #2 }
     }
     {3}{#2}
   }
   { \c_empty_tl }
   {
-    \msg_error:nnnn { @@ }
+    \msg_error:nnnn { __erw }
     { separ }
-    { \exp_not:N \_@@_tl_separators:nn }
+    { \exp_not:N \__erw_tl_separators:nn }
     {#2}
   }
 }
-\cs_generate_variant:Nn \@@_tl_separators:nn { e }
+\cs_generate_variant:Nn \__erw_tl_separators:nn { e }
 \cs_new:Nn \erw_tl_append_item:nn
 {
   {#1{#2}}
 }
 \cs_new:Nn \erw_tl_compose:nN
 {
-  \@@_oper_compose:NnN \erw_tl_fold:NN {#1} #2
+  \__erw_oper_compose:NnN \erw_tl_fold:NN {#1} #2
 }
 \cs_new:Nn \erw_tl_compose:nn
 {
-  \tl_set:Nn \g@@_tl_compose_tl {#2}
-  \erw_tl_compose:nN{#1}\g@@_tl_compose_tl
-  \g@@_tl_compose_tl
+  \tl_set:Nn \g__erw_tl_compose_tl {#2}
+  \erw_tl_compose:nN{#1}\g__erw_tl_compose_tl
+  \g__erw_tl_compose_tl
 }
 \cs_new:Nn \erw_tl_compose_c:nN
 {
-  \@@_oper_compose:NnN \erw_tl_fold:cN {#1} #2
+  \__erw_oper_compose:NnN \erw_tl_fold:cN {#1} #2
 }
 \cs_new:Nn \erw_tl_compose_c:nn
 {
-  \tl_set:Nn \g@@_tl_compose_tl {#2}
-  \erw_tl_compose_c:nN{#1}\g@@_tl_compose_tl
-  \g@@_tl_compose_tl
+  \tl_set:Nn \g__erw_tl_compose_tl {#2}
+  \erw_tl_compose_c:nN{#1}\g__erw_tl_compose_tl
+  \g__erw_tl_compose_tl
 }
 \cs_new:Nn \erw_tl_compose_vers:nN
 {
-  \msg_error:nnn{@@}{notdecl}{\erw_tl_compose_vers:nN}
+  \msg_error:nnn{__erw}{csnset}{\erw_tl_compose_vers:nN}
 }
 \cs_new:Nn \erw_tl_compose_vers:nn
 {
@@ -453,18 +453,18 @@
 }
 \cs_new:Nn \erw_tl_fold:NN
 {
-  \use:c{tl_set:\g@@_oper_fold_set_par_tl}
+  \use:c{tl_set:\g__erw_oper_fold_set_par_tl}
   #2
-  {\use:c{erw_cs_apply:\g@@_oper_fold_apply_par_tl}{#1}{#2}}
+  {\use:c{erw_cs_apply:\g__erw_oper_fold_apply_par_tl}{#1}{#2}}
 }
 \cs_generate_variant:Nn \erw_tl_fold:NN {cN}
 \cs_new:Nn \erw_tl_gset_function:N
 {
-  \erw_cs_gset_eq:NN \g@@_tl_function:n #1
+  \erw_cs_gset_eq:NN \g__erw_tl_function:n #1
 }
 \cs_new:Nn \erw_tl_gset_function:n
 {
-  \erw_cs_gset_inline:Nn \g@@_tl_function:n {#1}
+  \erw_cs_gset_inline:Nn \g__erw_tl_function:n {#1}
 }
 \cs_new:Nn \erw_tl_last_item:n
 {
@@ -476,16 +476,16 @@
 }
 \cs_new_protected:Nn \erw_tl_map:n
 {
-  \@@_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+  \__erw_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
 }
 \cs_new_protected:Nn \erw_tl_map:Nn
 {
-  \cs_set_eq:NN \g@@_tl_function:n #1
+  \cs_set_eq:NN \g__erw_tl_function:n #1
   \erw_tl_map:n{#2}
 }
 \cs_new_protected:Nn \erw_tl_map_inline:nn
 {
-  \erw_cs_set_inline:Nn \g@@_tl_function:n {#1}
+  \erw_cs_set_inline:Nn \g__erw_tl_function:n {#1}
   \erw_tl_map:n{#2}
 }
 \cs_new:Nn \erw_tl_repeat:nn
@@ -514,16 +514,16 @@
     \tl_count:n{#3}
   }
   {
-    {1}{ \@@_tl_map_thread_at:Nnn #1{#2}#3 }
-    {2}{ \@@_tl_map_thread_at:Nnnn #1{#2}#3 }
-    {3}{ \@@_tl_map_thread_at:Nnnnn #1{#2}#3 }
-    {4}{ \@@_tl_map_thread_at:Nnnnnn #1{#2}#3 }
+    {1}{ \__erw_tl_map_thread_at:Nnn #1{#2}#3 }
+    {2}{ \__erw_tl_map_thread_at:Nnnn #1{#2}#3 }
+    {3}{ \__erw_tl_map_thread_at:Nnnnn #1{#2}#3 }
+    {4}{ \__erw_tl_map_thread_at:Nnnnnn #1{#2}#3 }
   }
   {
     % Do nothing
   }
   {
-    \msg_error:nnn{@@}
+    \msg_error:nnn{__erw}
     {generic}
     {erw_tl_map_thread_at:~count~of~#3~not~withing~1~to~4}
   }
@@ -540,11 +540,11 @@
 }
 \cs_new:Nn \erw_tl_separators:n
 {
-  \@@_tl_separators:en{ \tl_count:n{#1} }{#1}
+  \__erw_tl_separators:en{ \tl_count:n{#1} }{#1}
 }
 \cs_new_protected:Nn\erw_option:n
 {
-  \keys_set:nn{@@}{#1}
+  \keys_set:nn{__erw}{#1}
 }
 \ExplSyntaxOff
 %% 

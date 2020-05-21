@@ -20,7 +20,7 @@
 \fi
 %</internal> 
 %<*install> 
-\input docstrip.tex
+\input l3docstrip.tex
 \keepsilent
 \askforoverwritefalse
 \preamble
@@ -74,8 +74,8 @@ erw-l3.sty, and erw-l3.pdf.
 %<package> \RequirePackage{xparse}[2020/03/06]
 %<package> \ProvidesExplPackage
 %<package> {erw-l3}                                                                            % Package name
-%<package> {2020/05/18}                                                                        % Release date
-%<package> {2.2}                                                                               % Release version
+%<package> {2020/05/20}                                                                        % Release date
+%<package> {2.3}                                                                               % Release version
 %<package> {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 % 
 %<*driver> 
@@ -95,7 +95,7 @@ erw-l3.sty, and erw-l3.pdf.
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
-%^^A\AtEndDocument { \PrintChanges \PrintIndex }
+% ^^A\AtEndDocument { \PrintChanges \PrintIndex }
 \makeatletter
 \newcommand*{\docsetnameref}{\def\@currentlabelname}%https://tex.stackexchange.com/questions/537751
 \makeatother
@@ -114,7 +114,7 @@ erw-l3.sty, and erw-l3.pdf.
 }
 \providecommand\docU[1]{\exp_args:Nx \__erw_docu:n{#1}}
 \ExplSyntaxOff
-%^^A Sort--->
+% ^^A Sort--->
 \providecommand\docarg[1]{\texttt{#1}} % fun[param] (macro) vs fun[arg] (eval)
 \providecommand\docargnoval{\c_novalue_tl}
 \providecommand\docassign[2]{#1~$\leftarrow$~#2}
@@ -194,7 +194,7 @@ erw-l3.sty, and erw-l3.pdf.
 \providecommand\pkgparta{tl$_{6}$}%tail
 \providecommand\pkgsep[1]{\Arg{#1}}
 \providecommand\pkgval{val$_{i}$}
-%^^A Sort<---
+% ^^A Sort<---
 \begin{document}
 \DocInput{\jobname.dtx}
 \end{document}
@@ -231,7 +231,7 @@ erw-l3.sty, and erw-l3.pdf.
 %   
 %   \part{Usage}\label{part:usage}
 %   ^^A   \VerbatimFootnotes
-%
+%   
 %   \docphsection{section}{Loading the package}{usage:load}
 %   \begin{function}{\usepackage}
 %     \begin{syntax}
@@ -309,7 +309,7 @@ erw-l3.sty, and erw-l3.pdf.
 %   \DescribeOption{oper / fold_set_par}
 %   \DescribeOption{oper / fold_apply_par}
 %   \DescribeOption{sys / timestamp_delim}
-%
+%   
 %   \section{\textsf{prop}}\label{usage:prop}
 %   All functions that modify a \meta{\doccceptprop} check it exists, if not make sure it does.
 %   
@@ -414,7 +414,7 @@ erw-l3.sty, and erw-l3.pdf.
 %       \cs{erw_tl_fold:NN}\meta{\doccceptcs}\meta{\docccepttlvar}
 %     \end{syntax}
 %   \end{function}
-%  \docphsection{section}{\cs{erw_tl_gset_function:n}}{usage:tl:function}
+%   \docphsection{section}{\cs{erw_tl_gset_function:n}}{usage:tl:function}
 %   \begin{function}{\erw_tl_gset_function:N, \erw_tl_gset_function:n}
 %     \begin{syntax}
 %       \cs{erw_tl_gset_function:n}\Arg{\doccceptcode}
@@ -485,13 +485,13 @@ erw-l3.sty, and erw-l3.pdf.
 %   boxrule=1pt,
 %   listing and text,
 %   #2}
-%
-% \section{\textsf{constants}}
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:const}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
+%   
+%   \section{\textsf{constants}}
+%   \phantomsection\addcontentsline{toc}{subsection}
+%   {\ref{listing:const}.}
+%   \iffalse
+%<*guardlisting>   
+%   \fi
 \begin{listing}[]
   {label=listing:const, listing and text}
   \ExplSyntaxOn
@@ -502,12 +502,12 @@ erw-l3.sty, and erw-l3.pdf.
 % \iffalse
 %</guardlisting> 
 % \fi
-%   \section{\textsf{basics}}
-%   \phantomsection\addcontentsline{toc}{subsection}
-%   {\ref{listing:apply}. }
-%   \iffalse
-%<*guardlisting>   
-%   \fi
+% \section{\textsf{basics}}
+% \phantomsection\addcontentsline{toc}{subsection}
+% {\ref{listing:apply}. }
+% \iffalse
+%<*guardlisting> 
+% \fi
 \begin{listing}[]
   {label=listing:apply, listing and text}
   \ExplSyntaxOn
@@ -657,9 +657,15 @@ erw-l3.sty, and erw-l3.pdf.
 \begin{listing}[]
   {label=listing:seq:use, listing and text}
   \ExplSyntaxOn
-  \erw_seq_use:Nn \foo_seq{{~and~}}\\
-  \erw_seq_use:Nn \foo_seq{{,\ }{and~}}\\
-  \erw_seq_use:Nn \foo_seq{{~and~}{,\ }{,\ and~}}
+  \seq_put_right:Nn\l_tmpa_seq{ A }
+  \seq_put_right:Nn\l_tmpa_seq{ B }
+  \erw_seq_use:Nn \l_tmpa_seq{{~and~}}\\
+  \erw_seq_use:Nn \l_tmpa_seq{{,\ }{~and~}}\\
+  \erw_seq_use:Nn \l_tmpa_seq{{~and~}{,\ }{,~and~}}\\[1em]
+  \seq_put_right:Nn\l_tmpa_seq{ C }
+  \erw_seq_use:Nn \l_tmpa_seq{{~and~}}\\
+  \erw_seq_use:Nn \l_tmpa_seq{{,\ }{and~}}\\
+  \erw_seq_use:Nn \l_tmpa_seq{{~and~}{,\ }{,~and~}}\\
   \ExplSyntaxOff
 \end{listing}
 % \iffalse
@@ -782,24 +788,6 @@ erw-l3.sty, and erw-l3.pdf.
   \cs_set:Nn \__bar:n {g[#1]}
   \erw_tl_fold:cN {__bar:n}\l_tmpa_tl
   \l_tmpa_tl
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:tl:separ}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:tl:separ, listing and text}
-  \ExplSyntaxOn
-%^^A  \erw_seq_use:Nn \foo_seq{{~and~}}
-  \seq_use:Nn\foo_seq{,}
-%^^A  \erw_tl_separators:n{{~and~}}\\
-%^^A  \erw_tl_separators:n{{\ ,}{~and~}}\\
-%^^A  \erw_tl_separators:n{{~and~}{\ ,}{~and~}}
   \ExplSyntaxOff
 \end{listing}
 % \iffalse
@@ -963,14 +951,14 @@ erw-l3.sty, and erw-l3.pdf.
 % \begin{enumerate}[label=\emph{\arabic*)}]
 % \item \pkg{\jobname} \docvers{2}{0} compiles satisfactorily on platform \ref{plat:lin} and engines \ref{eng:tlxx:pdf},  \ref{eng:tlxx:lua}, and \ref{eng:tlxx:xe}
 % \end{enumerate}
-%
-%  \docphsection{section}{References}{other:bib}
+% 
+% \docphsection{section}{References}{other:bib}
 % \begin{thebibliography}{1}
 % \bibitem{interface3} The \LaTeX3 Project Team {\em The \LaTeX3 interfaces}, 2019,
 %   \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3kernel/interface3.pdf}
 % \bibitem{user-erw} \url{https://tex.stackexchange.com/users/112708/erwann?tab=questions}
 % \end{thebibliography}
-%
+% 
 % \changes{\docvers{1}{1}}{2018/05/23}{Brought all the modules under one file; renamed \pkg{l3erw} to \pkg{erw-l3};}
 % \changes{\docvers{1}{1}}{2018/05/23}{\pkg{disambig}/backend: changes to the key, added \cs{ProcessPackageKeysOption};}
 % \changes{\docvers{1}{1}}{2018/05/23}{\cs{numbrdcsnew} changed to \cs{newnumbrdcs} and made 'disambiguable'}
@@ -1030,7 +1018,12 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{2}{1}}{2020/05/09}{Replace: \cs{erw_seq_fold:NN} by \cs{__erw_seq_fold:NN}}
 % \changes{\docvers{2}{2}}{2020/05/18}{Add: \cs{erw_tl_separators:n}}
 % \changes{\docvers{2}{2}}{2020/05/18}{Add: \cs{erw_seq_use:Nn}}
-% 
+% \changes{\docvers{2}{3}}{2020/05/20}{Move: all \cs{msg_new:Nnnn} statements under same heading}
+% \changes{\docvers{2}{3}}{2020/05/20}{Fix: 'mark as private code' (hiherto unnoticed)}
+% \changes{\docvers{2}{3}}{2020/05/20}{Modify: behavior of \cs{erw_seq_use:Nn}}
+% \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}, module \texttt{erw}, messages: \texttt{csnset}}
+% \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}, module \texttt{erw}, messages: \texttt{keyval/\dots}}
+%
 % \PrintChanges
 % \PrintIndex
 % \clearpage
@@ -1042,11 +1035,12 @@ erw-l3.sty, and erw-l3.pdf.
 % \begin{implementation}
 %   \part{Implementation}\label{part:impl}
 %   
-%   \iffalse
-%<*package>   
-%   \fi
+%   ^^A%   \iffalse
+%   ^^A%<*package>   
+%   ^^A%   \fi
 %   \section{Opening}
 %    \begin{macrocode}
+%<*package>      
 %<@@=erw>      
 %      \ExplSyntaxOn
 %    \end{macrocode}
@@ -1183,11 +1177,9 @@ erw-l3.sty, and erw-l3.pdf.
 %    \end{macrocode}
 % \section{\textsf{keyval}}
 %    \begin{macrocode}
-\msg_new:nnn{@@}{keyval/keyonly}{passed~key~#1~val~#2~where~keyonly}
-\msg_new:nnn{@@}{keyval/mandatval}{key~#1~has~no~matching~val}
 \cs_new:Nn \erw_keyval_keyonly:nn
 {
-  \msg_error:nnn{@@}{keyval/keyonly}{#1}{#2}
+  \msg_error:nnn{erw}{keyval/keyonly}{#1}{#2}
 }
 %    \end{macrocode}
 % \section{\textsf{msg}}
@@ -1195,8 +1187,15 @@ erw-l3.sty, and erw-l3.pdf.
 % \subsection{backend}
 %    \begin{macrocode}
 \msg_new:nnn{@@}{generic}{#1}
-\msg_new:nnn{@@}{notdecl}{#1~not~declared}
-\msg_new:nnn{@@}{notset}{#1~not~set}
+\msg_new:nnn{@@}{separ}{#1~expects~1~to~3~items,~#2}
+\msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
+\msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
+%    \end{macrocode}
+% \subsection{frontend}
+%    \begin{macrocode}
+\msg_new:nnn{erw}{csnset}{#1~not~set}
+\msg_new:nnn{erw}{keyval/keyonly}{passed~key~#1~val~#2~where~keyonly}
+\msg_new:nnn{erw}{keyval/mandatval}{key~#1~has~no~matching~val}
 %    \end{macrocode}
 % \section{\textsf{prop}}
 % \subsection{backend}
@@ -1306,7 +1305,7 @@ erw-l3.sty, and erw-l3.pdf.
 }
 \cs_new:Nn \erw_seq_compose_vers:nN
 {
-  \msg_error:nnn{@@}{notdecl}{\erw_seq_compose_vers:nN}
+  \msg_error:nnn{@@}{csnset}{\erw_seq_compose_vers:nN}
 }
 \cs_new_protected:Nn\erw_seq_from_clist:Nn
 {
@@ -1347,8 +1346,6 @@ erw-l3.sty, and erw-l3.pdf.
 % \label{impl:sys}
 % \subsection{backend}
 %    \begin{macrocode}
-\msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
-\msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
 %    \end{macrocode}
 % \begin{macro}{\@@_sys_date:N, \@@_sys_date_dec:, \@@_sys_date_hex:}
 %    \begin{macrocode}
@@ -1485,7 +1482,7 @@ erw-l3.sty, and erw-l3.pdf.
 {
   \msg_error:nnn
   {erw}
-  {notset}
+  {csnset}
   {\g@@_tl_function:n}
 }
 %    \end{macrocode}
@@ -1545,7 +1542,7 @@ erw-l3.sty, and erw-l3.pdf.
     {
       { \use_ii:nn #2 }
       { \use_i:nn #2 }
-      { \use_i:nn #2\use_ii:nn #2 }
+      { \use_i:nn #2 \use_ii:nn #2 }
     }
     {3}{#2}
   }
@@ -1588,7 +1585,7 @@ erw-l3.sty, and erw-l3.pdf.
 }
 \cs_new:Nn \erw_tl_compose_vers:nN
 {
-  \msg_error:nnn{@@}{notdecl}{\erw_tl_compose_vers:nN}
+  \msg_error:nnn{@@}{csnset}{\erw_tl_compose_vers:nN}
 }
 \cs_new:Nn \erw_tl_compose_vers:nn
 {
@@ -1701,13 +1698,15 @@ erw-l3.sty, and erw-l3.pdf.
 %    \end{macrocode}
 % \section{Closing}
 % \label{impl:closing}
+% 
 %    \begin{macrocode}
 \ExplSyntaxOff
+%</package>      
 %    \end{macrocode}
+%
 % \end{implementation}
-% 
-% \iffalse
-%</package> 
-% \fi
+% ^^A% \iffalse
+% ^^A%</package> 
+% ^^A% \fi
 % \Finale
 \endinput
