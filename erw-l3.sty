@@ -17,8 +17,8 @@
  \RequirePackage{xparse}[2020/03/06]
  \ProvidesExplPackage
  {erw-l3}                                                                            % Package name
- {2020/05/21}                                                                        % Release date
- {2.4}                                                                               % Release version
+ {2020/05/22}                                                                        % Release date
+ {2.5}                                                                               % Release version
  {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 \cs_new:Nn \__erw_cs_name:N
 {
@@ -122,6 +122,10 @@
 {
   \__erw_int_range:nnn {}{0}{#1}
 }
+\cs_new:Nn \erw_keyval_keyval:n
+{
+  \msg_error:nnn{erw}{keyval/keyval}{#1}
+}
 \cs_new:Nn \erw_keyval_keyonly:nn
 {
   \msg_error:nnn{erw}{keyval/keyonly}{#1}{#2}
@@ -139,6 +143,7 @@
 \msg_new:nnn{__erw}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
 \msg_new:nnn{__erw}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
 \msg_new:nnn{erw}{csnset}{#1~not~set}
+\msg_new:nnn{erw}{keyval/keyval}{passed~key~#1~without~a~val}
 \msg_new:nnn{erw}{keyval/keyonly}{passed~key~#1~val~#2~where~keyonly}
 \msg_new:nnn{erw}{keyval/mandatval}{key~#1~has~no~matching~val}
 \cs_new_protected:Nn \erw_prop_to_clist:Nn
@@ -176,6 +181,22 @@
   }
 }
 \cs_generate_variant:Nn \erw_prop_put:Nnn { c }
+\cs_new_protected:Nn\erw_prop_put_keyval:Nn
+{
+  \cs_set:Nn \__erw_keyval_function:nn {\prop_put:Nnn #1{##1}{##2}}
+  \prop_if_exist:NTF#1
+  {
+    \keyval_parse:NNn
+    \erw_keyval_ignorekey:n
+    \__erw_keyval_function:nn
+    {#2}
+  }
+  {
+    \prop_new:N #1
+    \erw_prop_put:Nn #1{#2}
+  }
+}
+\cs_generate_variant:Nn \erw_prop_put_keyval:Nn { c }
 \cs_new:Nn \__erw_oper_compose:NnN
 {
   \erw_cs_set_inline:Nn \g__erw_tl_function:n
