@@ -74,8 +74,8 @@ erw-l3.sty, and erw-l3.pdf.
 %<package> \RequirePackage{xparse}[2020/03/06]
 %<package> \ProvidesExplPackage
 %<package> {erw-l3}                                                                            % Package name
-%<package> {2020/05/20}                                                                        % Release date
-%<package> {2.3}                                                                               % Release version
+%<package> {2020/05/21}                                                                        % Release date
+%<package> {2.4}                                                                               % Release version
 %<package> {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 % 
 %<*driver> 
@@ -84,13 +84,14 @@ erw-l3.sty, and erw-l3.pdf.
 \usepackage[english,french]{babel}
 \AtBeginDocument{\selectlanguage{english}}
 \usepackage{bookmark}
-\usepackage{nolbreaks}
 \usepackage{fvextra}% csquotes should be loaded after fvextra
 \usepackage[T1]{fontenc}
 \usepackage{erw-l3}
+\usepackage{nolbreaks}
 \usepackage{tabto}
 \usepackage{tcolorbox}
 \tcbuselibrary{listings, breakable}
+\usepackage{xparse}
 \usepackage{hyperref}
 \EnableCrossrefs
 \CodelineIndex
@@ -103,14 +104,18 @@ erw-l3.sty, and erw-l3.pdf.
 \tl_gset:Nn \partname {Part}
 \newenvironment{docabstract}[1]%https://latex.org/forum/viewtopic.php?t=12156
 {\renewcommand{\abstractname}{#1}\begin{abstract}}
-  {\end{abstract}} 
-\providecommand\docphsection[3]
+  {\end{abstract}}
+\cs_new:Nn \__erw_docu:n{\MakeUppercase #1}
+\ProvideDocumentCommand\DocPhantomSection{smmm}
 {
   \leavevmode
-  \refstepcounter{#1}
-  \addcontentsline{toc}{#1}{\protect\numberline{\use:c{the#1}}#2}
-  \docsetnameref{#2}
-  \label{#3}
+  \refstepcounter{#2}
+  \IfBooleanT{#1}
+  {
+    \addcontentsline{toc}{#2}{\protect\numberline{\use:c{the#2}}#3}
+  }
+  \docsetnameref{#3}
+  \label{#4}
 }
 \providecommand\docU[1]{\exp_args:Nx \__erw_docu:n{#1}}
 \ExplSyntaxOff
@@ -232,7 +237,7 @@ erw-l3.sty, and erw-l3.pdf.
 %   \part{Usage}\label{part:usage}
 %   ^^A   \VerbatimFootnotes
 %   
-%   \docphsection{section}{Loading the package}{usage:load}
+%   \DocPhantomSection*{section}{Loading the package}{usage:load}
 %   \begin{function}{\usepackage}
 %     \begin{syntax}
 %       \cs{usepackage}\doceval{\pkg{\jobname}}
@@ -299,6 +304,13 @@ erw-l3.sty, and erw-l3.pdf.
 %     \end{syntax}
 %   \end{function}
 %   
+%   \section{\textsf{lambda}} \label{usage:lambda}
+%   \begin{function}{\erw_lambda:nnn}
+%     \begin{syntax}
+%       \cs{erw_lambda:nnn}\meta{\docccepttok}\Arg{\doccceptargspec}\Arg{\doccceptcode}
+%     \end{syntax}
+%   \end{function}
+%
 %   \section{option}\label{usage:option}
 %   \begin{function}{\erw_option:n}
 %     \begin{syntax}
@@ -365,6 +377,10 @@ erw-l3.sty, and erw-l3.pdf.
 %     \begin{syntax}
 %       \cs{erw_seq_use:Nn}\meta{\doccceptseq}\Arg{\doccceptitems}
 %     \end{syntax}
+%     \begin{description}
+%     \item[Also see] \cite[Section 8 of \pkg{l3seq}]{interface3}
+%     \item[Semantics] \cs{seq_use:Nnnn}\meta{\doccceptseq}\nameref{usage:tl:sep}\Arg{\doccceptitems}
+%     \end{description}
 %   \end{function}
 %   
 %   \section{\textsf{sys}}\label{usage:sys}
@@ -414,7 +430,7 @@ erw-l3.sty, and erw-l3.pdf.
 %       \cs{erw_tl_fold:NN}\meta{\doccceptcs}\meta{\docccepttlvar}
 %     \end{syntax}
 %   \end{function}
-%   \docphsection{section}{\cs{erw_tl_gset_function:n}}{usage:tl:function}
+%   \DocPhantomSection{subsection}{\cs{erw_tl_gset_function:n}}{usage:tl:function}
 %   \begin{function}{\erw_tl_gset_function:N, \erw_tl_gset_function:n}
 %     \begin{syntax}
 %       \cs{erw_tl_gset_function:n}\Arg{\doccceptcode}
@@ -435,7 +451,7 @@ erw-l3.sty, and erw-l3.pdf.
 %       \cs{erw_tl_map:n}\Arg{\doccceptitems}
 %     \end{syntax}
 %     \begin{description}
-%     \item[Semantics] Maps over \meta{items} using the internal function set by \nameref{usage:tl:function}
+%     \item[Semantics] Maps over \meta{\doccceptitems} using the internal function set by \nameref{usage:tl:function}
 %     \end{description}
 %   \end{function}
 %   \begin{function}{\erw_tl_map_inline:nn }
@@ -463,10 +479,19 @@ erw-l3.sty, and erw-l3.pdf.
 %       \cs{erw_tl_split:nn}\Arg{\doccceptitems}\Arg{delimiter}
 %     \end{syntax}
 %   \end{function}
+%   \DocPhantomSection{subsection}{\cs{erw_tl_separators:n}}{usage:tl:sep}
 %   \begin{function}{\erw_tl_separators:n}
 %     \begin{syntax}
-%       \cs{erw_tl_separators:n}\Arg{items}
+%       \cs{erw_tl_separators:n}\Arg{\doccceptitems}
 %     \end{syntax}
+%     \begin{description}
+%     \item[Semantics] According to the count of \meta{\doccceptitems}:
+%       \begin{enumerate}[label=\emph{\arabic*)}]
+%       \item \Arg{\docccepttl_1}\Arg{\docccepttl_1}\Arg{\docccepttl_1}
+%       \item \Arg{\docccepttl_1}\Arg{\docccepttl_2}\Arg{\docccepttl_1\docccepttl_2}
+%       \item \Arg{\docccepttl_1}\Arg{\docccepttl_2}\Arg{\docccepttl_3}
+%       \end{enumerate}
+%     \end{description}
 %   \end{function}
 %   \clearpage
 %   \part{Listing}\label{part:listing}
@@ -550,6 +575,25 @@ erw-l3.sty, and erw-l3.pdf.
   \ExplSyntaxOn
   \erw_int_range:nn{2}{5}\\
   \erw_int_range:n{5}
+  \ExplSyntaxOff
+\end{listing}
+% \iffalse
+%</guardlisting> 
+% \fi
+% \section{\textsf{lambda}}
+% \phantomsection\addcontentsline{toc}{subsection}
+% {\ref{listing:lambda}.}
+% \iffalse
+%<*guardlisting> 
+% \fi
+\begin{listing}[]
+  {label=listing:lambda, listing and text}
+  \ExplSyntaxOn
+  \tl_set:Nn \l_tmpa_tl
+  {
+    \erw_lambda:nnn \DeclareDocumentCommand{m}{Hello,~#1!}
+  }
+  \l_tmpa_tl{world}
   \ExplSyntaxOff
 \end{listing}
 % \iffalse
@@ -900,7 +944,7 @@ erw-l3.sty, and erw-l3.pdf.
 % 
 % \section{Acknowledgment}\label{other:acknowl} 
 % 
-% This work has benefited from Q\&A's from the \LaTeX community\cite{user-erw}
+% This work has benefited from Q\&A's from the \LaTeX community\cite{user-erw}. \nameref{usage:lambda} originally appeared in \cite{a-188053}.
 % 
 % \section{Install}\label{other:install}
 % \begin{enumerate}[label=\emph{\arabic*)}]
@@ -952,10 +996,12 @@ erw-l3.sty, and erw-l3.pdf.
 % \item \pkg{\jobname} \docvers{2}{0} compiles satisfactorily on platform \ref{plat:lin} and engines \ref{eng:tlxx:pdf},  \ref{eng:tlxx:lua}, and \ref{eng:tlxx:xe}
 % \end{enumerate}
 % 
-% \docphsection{section}{References}{other:bib}
+% \DocPhantomSection*{section}{References}{other:bib}
 % \begin{thebibliography}{1}
 % \bibitem{interface3} The \LaTeX3 Project Team {\em The \LaTeX3 interfaces}, 2019,
 %   \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3kernel/interface3.pdf}
+% \bibitem{a-188053} \href{https://tex.stackexchange.com/users/17423/sean-allred}{@{}sean-allred}'s answer to
+%   ``How to create lambda expressions?'', \url{https://tex.stackexchange.com/a/188053/112708}
 % \bibitem{user-erw} \url{https://tex.stackexchange.com/users/112708/erwann?tab=questions}
 % \end{thebibliography}
 % 
@@ -1023,6 +1069,7 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{2}{3}}{2020/05/20}{Modify: behavior of \cs{erw_seq_use:Nn}}
 % \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}, module \texttt{erw}, messages: \texttt{csnset}}
 % \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}, module \texttt{erw}, messages: \texttt{keyval/\dots}}
+% \changes{\docvers{2}{4}}{2020/05/21}{Add: \cs{erw_lambda:nnn}}
 %
 % \PrintChanges
 % \PrintIndex
@@ -1182,6 +1229,19 @@ erw-l3.sty, and erw-l3.pdf.
   \msg_error:nnn{erw}{keyval/keyonly}{#1}{#2}
 }
 %    \end{macrocode}
+% \section{\texttt{lambda}}
+% \begin{macro}{\erw_lambda:nnn}
+%    \begin{macrocode}
+\cs_new_protected:Npn \erw_lambda:nnn #1 #2 #3
+{
+  \exp_args:NNx 
+  #1 \@@_lambda_expression 
+  {#2}
+  {#3}
+  \@@_lambda_expression
+}
+%    \end{macrocode}
+% \end{macro}
 % \section{\textsf{msg}}
 % \label{impl:msg}
 % \subsection{backend}

@@ -17,8 +17,8 @@
  \RequirePackage{xparse}[2020/03/06]
  \ProvidesExplPackage
  {erw-l3}                                                                            % Package name
- {2020/05/20}                                                                        % Release date
- {2.3}                                                                               % Release version
+ {2020/05/21}                                                                        % Release date
+ {2.4}                                                                               % Release version
  {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 \cs_new:Nn \__erw_cs_name:N
 {
@@ -125,6 +125,14 @@
 \cs_new:Nn \erw_keyval_keyonly:nn
 {
   \msg_error:nnn{erw}{keyval/keyonly}{#1}{#2}
+}
+\cs_new_protected:Npn \erw_lambda:nnn #1 #2 #3
+{
+  \exp_args:NNx
+  #1 \__erw_lambda_expression
+  {#2}
+  {#3}
+  \__erw_lambda_expression
 }
 \msg_new:nnn{__erw}{generic}{#1}
 \msg_new:nnn{__erw}{separ}{#1~expects~1~to~3~items,~#2}
