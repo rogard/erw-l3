@@ -18,7 +18,7 @@
  \ProvidesExplPackage
  {erw-l3}                                                                            % Package name
  {2020/05/23}                                                                        % Release date
- {2.7}                                                                               % Release version
+ {2.8}                                                                               % Release version
  {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 \cs_new:Nn \__erw_cs_name:N
 {
@@ -35,10 +35,6 @@
   \cs_gset:Npn #1 ##1{#2}
 }
 \cs_generate_variant:Nn \erw_cs_gset_inline:Nn {cn}
-\cs_new:Nn \erw_tl_join:nn{#1#2}
-\cs_new:Nn \erw_tl_join:nnn{#1#2#3}
-\cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
-\cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
 \int_new:N \g__erw_csint_int
 \tl_set:Nn \g__erw_csint_name_tl {\erw_csint_name:n{\g__erw_csint_int}}
 \cs_new:Nn \erw_csint:nn
@@ -105,8 +101,8 @@
 {
   \__erw_int_range:nnn {}{0}{#1}
 }
-\cs_new:Nn \erw_keyval_error:Nn{\msg_error{__erw}{generic}{unary~function~not~allowed}}
-\cs_new:Nn \erw_keyval_error:Nnn{\msg_error{__erw}{generic}{binary~function~not~allowed}}
+\cs_new:Nn \erw_keyval_error:Nn{\msg_error:nnnnn{__erw}{keyval/n}{\erw_keyval_error:Nn}{#1}{#2}}
+\cs_new:Nn \erw_keyval_error:Nnn{\msg_error:nnnnnn{__erw}{keyval/nn}{\erw_keyval_error:Nnn}{#1}{#2}{#3}}
 \cs_new_protected:Nn\erw_keyval_parse:NNNn
 {
   \cs_set_protected:Nn \__erw_keyval_function:n {#2 #1{##1}}
@@ -125,11 +121,12 @@
   \__erw_lambda_expression
 }
 \msg_new:nnn{__erw}{generic}{#1}
+\msg_new:nnn{__erw}{keyval/nn}{#1#2{#3}{#4};~encountered~key=val~where~only~key~required}
+\msg_new:nnn{__erw}{keyval/n}{#1#2{#3};~encountered~key~~where~only~key=val~required}
 \msg_new:nnn{__erw}{separ}{#1~expects~1~to~3~items,~#2}
 \msg_new:nnn{__erw}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
 \msg_new:nnn{__erw}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
-\msg_new:nnn{erw}{csnset}{#1~not~set}
-\msg_new:nnn{erw}{varnset}{#1~not~set}
+\msg_new:nnn{erw}{notset}{#1~not~set}
 \cs_new_protected:Nn \__erw_prop_map_item:NNN
 {
   \cs_set_protected:Nn \__erw_function:nn
@@ -191,6 +188,10 @@
   oper/fold_apply_par.default:n = {Nf},
   oper/fold_apply_par.initial:n = {Nf}
 }
+\cs_new_protected:Nn\erw_option:n
+{
+  \keys_set:nn{__erw}{#1}
+}
 \tl_new:N \g__erw_seq_fold_item_tl
 \cs_new_protected:Nn\__erw_seq_put_right_clist:Nn
 {
@@ -220,7 +221,7 @@
 }
 \cs_new:Nn \erw_seq_compose_vers:nN
 {
-  \msg_error:nnn{__erw}{csnset}{\erw_seq_compose_vers:nN}
+  \msg_error:nnn{__erw}{notset}{\erw_seq_compose_vers:nN}
 }
 \cs_new_protected:Nn\erw_seq_put_right_clist:Nn
 {
@@ -351,7 +352,7 @@
 {
   \msg_error:nnn
   {erw}
-  {csnset}
+  {notset}
   {\g__erw_tl_function:n}
 }
 \cs_set_protected:Nn \__erw_tl_map:nn
@@ -434,7 +435,7 @@
 }
 \cs_new:Nn \erw_tl_compose_vers:nN
 {
-  \msg_error:nnn{__erw}{csnset}{\erw_tl_compose_vers:nN}
+  \msg_error:nnn{__erw}{notset}{\erw_tl_compose_vers:nN}
 }
 \cs_new:Nn \erw_tl_compose_vers:nn
 {
@@ -470,6 +471,10 @@
     \tl_count:n{#1}
   }
 }
+\cs_new:Nn \erw_tl_join:nn{#1#2}
+\cs_new:Nn \erw_tl_join:nnn{#1#2#3}
+\cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
+\cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
 \cs_new_protected:Nn \erw_tl_map:n
 {
   \__erw_tl_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
@@ -537,10 +542,6 @@
 \cs_new:Nn \erw_tl_separators:n
 {
   \__erw_tl_separators:en{ \tl_count:n{#1} }{#1}
-}
-\cs_new_protected:Nn\erw_option:n
-{
-  \keys_set:nn{__erw}{#1}
 }
 \ExplSyntaxOff
 %% 

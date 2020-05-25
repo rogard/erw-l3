@@ -75,7 +75,7 @@ erw-l3.sty, and erw-l3.pdf.
 %<package> \ProvidesExplPackage
 %<package> {erw-l3}                                                                            % Package name
 %<package> {2020/05/23}                                                                        % Release date
-%<package> {2.7}                                                                               % Release version
+%<package> {2.8}                                                                               % Release version
 %<package> {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 % 
 %<*driver> 
@@ -257,7 +257,7 @@ erw-l3.sty, and erw-l3.pdf.
 %       \cs{erw_cs_identity:n}\Arg{arg}
 %     \end{syntax}
 %   \end{function}
-%   \begin{function}{\erw_cs_set_inline:Nn, \erw_cs_set_inline:cn}
+%   \begin{function}{\erw_cs_set_inline:Nn, \erw_cs_set_inline:cn, \erw_cs_gset_inline:Nn, \erw_cs_set_inline:cn}
 %     \begin{syntax}
 %       \cs{erw_cs_set_inline:Nn}\meta{\doccceptcs}\Arg{\doccceptcode}
 %     \end{syntax}
@@ -306,7 +306,7 @@ erw-l3.sty, and erw-l3.pdf.
 %       \cs{erw_keyval_error:Nnn}\meta{\docccepttok}\Arg{\doccceptclist}
 %     \end{syntax}
 %   \end{function}
-%
+%   
 %   \section{\textsf{lambda}} \label{usage:lambda}
 %   \begin{function}{\erw_lambda:nnn}
 %     \begin{syntax}
@@ -493,6 +493,7 @@ erw-l3.sty, and erw-l3.pdf.
 %     \end{description}
 %   \end{function}
 %   \clearpage
+%
 %   \part{Listing}\label{part:listing}
 %   
 %   \newtcblisting[auto counter]
@@ -1065,8 +1066,8 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{2}{1}}{2020/05/09}{Replace: \cs{erw_seq_fold:NN} by \cs{__erw_seq_fold:NN}}
 % \changes{\docvers{2}{2}}{2020/05/18}{Add: \cs{erw_seq_use:Nn}}
 % \changes{\docvers{2}{2}}{2020/05/18}{Add: \cs{erw_tl_separators:n}}
-% \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}, module \texttt{erw}, messages: \texttt{csnset}}
-% \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}, module \texttt{erw}, messages: \texttt{keyval/\dots}}
+% \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{csnset}}
+% \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{keyval/\dots}}
 % \changes{\docvers{2}{3}}{2020/05/20}{Fix: 'mark as private code' (hiherto unnoticed)}
 % \changes{\docvers{2}{3}}{2020/05/20}{Modify: behavior of \cs{erw_seq_use:Nn}}
 % \changes{\docvers{2}{3}}{2020/05/20}{Move: all \cs{msg_new:Nnnn} statements under same heading}
@@ -1077,7 +1078,7 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{erw_cs_error:n}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{erw_prop_keyval_parse:NNNn}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{erw_prop_map_item:NNN} }
-% \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{msg_new:nnn}, module \texttt{erw}, messages: \texttt{varnset}}
+% \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{varnset}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Remove: \cs{erw_cs_apply}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Remove: \cs{erw_prop_put:NN} }
 % \changes{\docvers{2}{6}}{2020/05/23}{Remove: \cs{erw_prop_put_keyval:Nn} }
@@ -1089,6 +1090,9 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{2}{7}}{2020/05/23}{Remove: \cs{erw_cs_error:nn} }
 % \changes{\docvers{2}{7}}{2020/05/23}{Add: \cs{erw_keyval_error:Nn} }
 % \changes{\docvers{2}{7}}{2020/05/23}{Add: \cs{erw_keyval_error:Nnn} }
+% \changes{\docvers{2}{8}}{2020/05/24}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{notset}}
+% \changes{\docvers{2}{8}}{2020/05/24}{Remove: \cs{msg_new:nnn}\doceval{erw}\doceval{csnset}}
+% \changes{\docvers{2}{8}}{2020/05/24}{Remove: \cs{msg_new:nnn}\doceval{erw}\doceval{varnset}}
 % \PrintChanges
 % \PrintIndex
 % \clearpage
@@ -1100,9 +1104,6 @@ erw-l3.sty, and erw-l3.pdf.
 % \begin{implementation}
 %   \part{Implementation}\label{part:impl}
 %   
-%   ^^A%   \iffalse
-%   ^^A%<*package>   
-%   ^^A%   \fi
 %   \section{Opening}
 %    \begin{macrocode}
 %<*package>      
@@ -1119,26 +1120,29 @@ erw-l3.sty, and erw-l3.pdf.
 }
 %    \end{macrocode}
 % \subsection{frontend}\label{basics:frontend}
+% \begin{macro}{\erw_cs_identity:n}
 %    \begin{macrocode}
 \cs_set:Npn \erw_cs_identity:n #1{#1}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_cs_set_inline:Nn, \erw_cs_gset_inline:Nn}
+%    \begin{macrocode}
 \cs_new:Nn \erw_cs_set_inline:Nn
 {
   \cs_set:Npn #1 ##1{#2}
 }
 \cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_cs_gset_inline:Nn}
+%    \begin{macrocode}
 \cs_new:Nn \erw_cs_gset_inline:Nn
 {
   \cs_gset:Npn #1 ##1{#2}
 }
 \cs_generate_variant:Nn \erw_cs_gset_inline:Nn {cn}
-\cs_new:Nn \erw_tl_join:nn{#1#2}
-\cs_new:Nn \erw_tl_join:nnn{#1#2#3}
-\cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
-\cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
 %    \end{macrocode}
-% \section{\textsf{clist}}\label{impl:clist}
-% \subsection{backend}
-% \subsection{frontend}
+% \end{macro}
 % \section{\textsf{csint}}
 % \label{impl:csint}
 % \subsection{backend}
@@ -1147,16 +1151,29 @@ erw-l3.sty, and erw-l3.pdf.
 \tl_set:Nn \g@@_csint_name_tl {\erw_csint_name:n{\g@@_csint_int}}
 %    \end{macrocode}
 % \subsection{frontend}
+% \begin{macro}{\erw_csint:nn}
 %    \begin{macrocode}
 \cs_new:Nn \erw_csint:nn
 {
   \use:c{@@_csint_\int_to_alph:n{#1}:n}{#2}
 }
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_csint_name:n}
+%    \begin{macrocode}
 \cs_new:Nn \erw_csint_name:n {@@_csint_\int_to_alph:n{#1}:n}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_csint_names:nnn}
+%    \begin{macrocode}
 \cs_new:Nn \erw_csint_names:nnn
 {
   \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_csint_name:n
 }
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_csint_new:n}
+%    \begin{macrocode}
 \cs_new_protected:Nn \erw_csint_new:n
 { 
   \int_incr:N \g@@_csint_int
@@ -1168,6 +1185,10 @@ erw-l3.sty, and erw-l3.pdf.
     {#1}
   }
 }
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_csint_names_braced:nnn,\erw_csint_names_braced:n,\erw_csint_names_braced:}
+%    \begin{macrocode}
 \cs_new:Nn \erw_csint_names_braced:nnn
 {
   \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_csint_names_braced:n
@@ -1178,12 +1199,17 @@ erw-l3.sty, and erw-l3.pdf.
 {
   \erw_csint_names_braced:nnn{1}{1}{\g@@_csint_int}
 }
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_csint_reset:}
+%    \begin{macrocode}
 \cs_new_protected:Nn \erw_csint_reset: 
 {
   \int_zero:N \g@@_csint_int
   \tl_set:Nn \@@_csint_ext_tl{}%^^A TODO remove?
 }
 %    \end{macrocode}
+% \end{macro}
 % \section{\textsf{int}}
 % \label{impl:int}
 % \subsection{backend}
@@ -1211,6 +1237,7 @@ erw-l3.sty, and erw-l3.pdf.
 }
 %    \end{macrocode}
 % \subsection{frontend}
+% \begin{macro}{\erw_int_range:nn, \erw_int_range:n }
 %    \begin{macrocode}
 \cs_new:Nn \erw_int_range:nn
 {
@@ -1223,11 +1250,17 @@ erw-l3.sty, and erw-l3.pdf.
 % ^^A    \int_step_inline:nn {#1}{##1}
 }
 %    \end{macrocode}
+% \end{macro}
 % \section{\textsf{keys}}
 % \subsection{frontend}
+% \begin{macro}{\erw_keyval_error:Nn,\erw_keyval_error:Nnn}
 %    \begin{macrocode}
-\cs_new:Nn \erw_keyval_error:Nn{\msg_error{@@}{generic}{unary~function~not~allowed}}
-\cs_new:Nn \erw_keyval_error:Nnn{\msg_error{@@}{generic}{binary~function~not~allowed}}
+\cs_new:Nn \erw_keyval_error:Nn{\msg_error:nnnnn{@@}{keyval/n}{\erw_keyval_error:Nn}{#1}{#2}}
+\cs_new:Nn \erw_keyval_error:Nnn{\msg_error:nnnnnn{@@}{keyval/nn}{\erw_keyval_error:Nnn}{#1}{#2}{#3}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_keyval_parse:NNNn}
+%    \begin{macrocode}
 \cs_new_protected:Nn\erw_keyval_parse:NNNn
 {
   \cs_set_protected:Nn \@@_keyval_function:n {#2 #1{##1}}
@@ -1238,6 +1271,7 @@ erw-l3.sty, and erw-l3.pdf.
   {#4}
 }
 %    \end{macrocode}
+% \end{macro}
 % \section{\texttt{lambda}}
 % \begin{macro}{\erw_lambda:nnn}
 %    \begin{macrocode}
@@ -1256,14 +1290,15 @@ erw-l3.sty, and erw-l3.pdf.
 % \subsection{backend}
 %    \begin{macrocode}
 \msg_new:nnn{@@}{generic}{#1}
+\msg_new:nnn{@@}{keyval/nn}{#1#2{#3}{#4};~encountered~key=val~where~only~key~required}
+\msg_new:nnn{@@}{keyval/n}{#1#2{#3};~encountered~key~~where~only~key=val~required}
 \msg_new:nnn{@@}{separ}{#1~expects~1~to~3~items,~#2}
 \msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
 \msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
 %    \end{macrocode}
 % \subsection{frontend}
 %    \begin{macrocode}
-\msg_new:nnn{erw}{csnset}{#1~not~set}
-\msg_new:nnn{erw}{varnset}{#1~not~set}
+\msg_new:nnn{erw}{notset}{#1~not~set}
 %    \end{macrocode}
 % \section{\textsf{prop}}
 % \subsection{backend}
@@ -1278,6 +1313,7 @@ erw-l3.sty, and erw-l3.pdf.
 }
 %    \end{macrocode}
 % \subsection{frontend}
+% \begin{macro}{\erw_prop_to_clist:Nn}
 %    \begin{macrocode}
 \cs_new_protected:Nn \erw_prop_to_clist:Nn
 {
@@ -1292,6 +1328,10 @@ erw-l3.sty, and erw-l3.pdf.
   }
 }
 \cs_generate_variant:Nn \erw_prop_to_clist:Nn { c }
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_prop_map_item:NNN}
+%    \begin{macrocode}
 \cs_new_protected:Nn \erw_prop_map_item:NNN
 {
   \prop_if_exist:NTF #2
@@ -1301,43 +1341,10 @@ erw-l3.sty, and erw-l3.pdf.
     \erw_prop_map_item:NNN #1#2#3
   }
 }
-% ^^A\cs_new_protected:Nn \erw_prop_put:NN
-% ^^A{
-% ^^A  \cs_set:Nn \@@_prop_append:nn
-% ^^A  {
-% ^^A    \prop_gput:Nnx #1 {##1}{ \prop_item:Nn #2{##1} }
-% ^^A  }
-% ^^A  \prop_map_function:NN #2 \@@_prop_append:nn
-% ^^A}
-% ^^A\cs_generate_variant:Nn \erw_prop_put:NN { cc }
-% ^^A\cs_new_protected:Nn\erw_prop_put:Nnn
-% ^^A{
-% ^^A  \prop_if_exist:NTF#1
-% ^^A  {
-% ^^A    \prop_put:Nnn #1 {#2}{#3}
-% ^^A  }
-% ^^A  {
-% ^^A    \prop_new:N #1 
-% ^^A    \erw_prop_put:Nnn #1{#2}{#3}
-% ^^A  }
-% ^^A}
-% ^^A\cs_generate_variant:Nn \erw_prop_put:Nnn { c }
-% ^^A\cs_new_protected:Nn\erw_prop_keyval_parse_key:Nnn
-% ^^A{
-% ^^A  \@@_prop_keyval_parse:NNNn
-% ^^A  #1
-% ^^A  #2
-% ^^A  \erw_keyval_keyonly:nn
-% ^^A  {#3}
-% ^^A}
-% ^^A\cs_new_protected:Nn \erw_prop_keyval_parse:NNn
-% ^^A{
-% ^^A  \@@_prop_keyval_parse:NNNn
-% ^^A  #1
-% ^^A  \erw_keyval_error:n
-% ^^A  #2
-% ^^A  {#3}
-% ^^A}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\erw_prop_keyval_parse:NNNn}
+%    \begin{macrocode}
 \cs_new_protected:Nn\erw_prop_keyval_parse:NNNn
 {
   \prop_if_exist:NTF#1
@@ -1347,33 +1354,8 @@ erw-l3.sty, and erw-l3.pdf.
     \erw_prop_keyval_parse:NNNn#1#2#3{#4}
   }
 }  
-% ^^A  \cs_set_protected:Nn \@@_keyval_function:n {#2 #1{##1}}
-% ^^A  \cs_set_protected:Nn \@@_keyval_function:nn {#3 #1{##1}{##2}}
-% ^^A  \prop_if_exist:NTF#1
-% ^^A  {
-% ^^A    \keyval_parse:NNn
-% ^^A    \@@_keyval_function:n
-% ^^A    \@@_keyval_function:nn
-% ^^A    {#4}
-% ^^A  }
-% ^^A  {
-% ^^A    \prop_new:N #1 
-% ^^A    \@@_prop_fun_keyval:NNNn #1#2#3{#4}
-% ^^A  }
-% ^^A}
-% ^^A%^^A\cs_new_protected:Nn\erw_prop_gput_keyval:Nn
-% ^^A{
-% ^^A  \prop_if_exist:NTF#1
-% ^^A  {
-% ^^A    \erw_prop_keyval_parse:NNNn
-% ^^A    #1
-% ^^A    \erw_keyval_error:n
-% ^^A    \prop_gput:Nnn
-% ^^A    {#2}
-% ^^A  }
-% ^^A}
-% ^^A\cs_generate_variant:Nn \erw_prop_put_keyval:Nn { c }
 %    \end{macrocode}
+% \end{macro}
 % \section{\textsf{oper}}
 % \label{impl:oper}
 % \subsection{backend}
@@ -1404,6 +1386,14 @@ erw-l3.sty, and erw-l3.pdf.
   oper/fold_apply_par.initial:n = {Nf}
 }
 %    \end{macrocode}
+% \section{option}
+% \label{impl:option}
+%    \begin{macrocode}
+\cs_new_protected:Nn\erw_option:n
+{
+  \keys_set:nn{@@}{#1}
+}
+%    \end{macrocode}
 % \section{\textsf{seq}}
 % \label{impl:seq}
 % \subsection{backend}
@@ -1429,6 +1419,7 @@ erw-l3.sty, and erw-l3.pdf.
 \cs_generate_variant:Nn \@@_seq_put_right_prop:NNn { cc }
 %    \end{macrocode}
 % \subsection{frontend}
+% ^^A TODO see if can replace compose with just oper
 %    \begin{macrocode}
 \cs_new:Nn \erw_seq_compose:nN
 {
@@ -1440,7 +1431,7 @@ erw-l3.sty, and erw-l3.pdf.
 }
 \cs_new:Nn \erw_seq_compose_vers:nN
 {
-  \msg_error:nnn{@@}{csnset}{\erw_seq_compose_vers:nN}
+  \msg_error:nnn{@@}{notset}{\erw_seq_compose_vers:nN}
 }
 \cs_new_protected:Nn\erw_seq_put_right_clist:Nn
 {
@@ -1456,13 +1447,6 @@ erw-l3.sty, and erw-l3.pdf.
   {\seq_new:N#1\erw_seq_put_right_prop:NNn#1#2{#3}}
 }
 \cs_generate_variant:Nn \erw_seq_put_right_prop:NNn { cc }
-% ^^A\cs_new_protected:Nn\erw_seq_put_right:Nn
-% ^^A{
-% ^^A  \seq_if_exist:NTF#1
-% ^^A  {\seq_put_right:Nn#1{#2}}
-% ^^A  {\seq_new:N#1\erw_seq_put_right:Nn #1{#2}}  
-% ^^A}
-% ^^A\cs_generate_variant:Nn\erw_seq_put_right:Nn { c }
 \cs_new:Nn \@@_seq_fold:NN 
 {
   \seq_get_right:NN #2 \g@@_seq_fold_item_tl
@@ -1619,7 +1603,7 @@ erw-l3.sty, and erw-l3.pdf.
 {
   \msg_error:nnn
   {erw}
-  {csnset}
+  {notset}
   {\g@@_tl_function:n}
 }
 %    \end{macrocode}
@@ -1695,6 +1679,7 @@ erw-l3.sty, and erw-l3.pdf.
 %    \end{macrocode}
 % \end{macro}
 % \subsection{frontend}
+% ^^A TODO see if can replace compose with just oper
 %    \begin{macrocode}
 \cs_new:Nn \erw_tl_append_item:nn
 {
@@ -1722,7 +1707,7 @@ erw-l3.sty, and erw-l3.pdf.
 }
 \cs_new:Nn \erw_tl_compose_vers:nN
 {
-  \msg_error:nnn{@@}{csnset}{\erw_tl_compose_vers:nN}
+  \msg_error:nnn{@@}{notset}{\erw_tl_compose_vers:nN}
 }
 \cs_new:Nn \erw_tl_compose_vers:nn
 {
@@ -1758,6 +1743,16 @@ erw-l3.sty, and erw-l3.pdf.
     \tl_count:n{#1}
   }
 }
+%    \end{macrocode}
+% \begin{macro}{\erw_tl_join:nn, \erw_tl_join:nnn, \erw_tl_join:nnnn, \erw_tl_join:nnnnn}
+%    \begin{macrocode}
+\cs_new:Nn \erw_tl_join:nn{#1#2}
+\cs_new:Nn \erw_tl_join:nnn{#1#2#3}
+\cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
+\cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
+%    \end{macrocode}
+% \end{macro}
+%    \begin{macrocode}
 \cs_new_protected:Nn \erw_tl_map:n
 {    
   \@@_tl_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
@@ -1825,14 +1820,6 @@ erw-l3.sty, and erw-l3.pdf.
 \cs_new:Nn \erw_tl_separators:n
 {
   \@@_tl_separators:en{ \tl_count:n{#1} }{#1}
-}
-%    \end{macrocode}
-% \section{option}
-% \label{impl:option}
-%    \begin{macrocode}
-\cs_new_protected:Nn\erw_option:n
-{
-  \keys_set:nn{@@}{#1}
 }
 %    \end{macrocode}
 % \section{Closing}
