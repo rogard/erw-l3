@@ -17,8 +17,8 @@
  \RequirePackage{xparse}[2020/03/06]
  \ProvidesExplPackage
  {erw-l3}                                                                            % Package name
- {2020/05/22}                                                                        % Release date
- {2.6}                                                                               % Release version
+ {2020/05/23}                                                                        % Release date
+ {2.7}                                                                               % Release version
  {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 \cs_new:Nn \__erw_cs_name:N
 {
@@ -39,8 +39,6 @@
 \cs_new:Nn \erw_tl_join:nnn{#1#2#3}
 \cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
 \cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
-\cs_new:Nn \erw_cs_error:n{\msg_error{__erw}{generic}{unary~function~not~allowed}}
-\cs_new:Nn \erw_cs_error:nn{\msg_error{__erw}{generic}{binary~function~not~allowed}}
 \int_new:N \g__erw_csint_int
 \tl_set:Nn \g__erw_csint_name_tl {\erw_csint_name:n{\g__erw_csint_int}}
 \cs_new:Nn \erw_csint:nn
@@ -107,6 +105,8 @@
 {
   \__erw_int_range:nnn {}{0}{#1}
 }
+\cs_new:Nn \erw_keyval_error:Nn{\msg_error{__erw}{generic}{unary~function~not~allowed}}
+\cs_new:Nn \erw_keyval_error:Nnn{\msg_error{__erw}{generic}{binary~function~not~allowed}}
 \cs_new_protected:Nn\erw_keyval_parse:NNNn
 {
   \cs_set_protected:Nn \__erw_keyval_function:n {#2 #1{##1}}
@@ -146,7 +146,7 @@
   {
     \keyval_parse:NNn
     \__erw_keyval_function:n
-    \erw_cs_error:nn
+    \erw_keyval_error:Nnn
     {#2}
   }
 }
@@ -354,10 +354,10 @@
   {csnset}
   {\g__erw_tl_function:n}
 }
-\cs_set_protected:Nn \__erw_map:nn
+\cs_set_protected:Nn \__erw_tl_map:nn
 {
   \quark_if_recursion_tail_stop:n{#1}
-  \g__erw_tl_function:n{#1}  \__erw_map:nn{#2}
+  \g__erw_tl_function:n{#1}  \__erw_tl_map:nn{#2}
 }
 \cs_set_protected:Nn \__erw_tl_map_thread_at:Nnn
 {
@@ -472,7 +472,7 @@
 }
 \cs_new_protected:Nn \erw_tl_map:n
 {
-  \__erw_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+  \__erw_tl_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
 }
 \cs_new_protected:Nn \erw_tl_map:Nn
 {

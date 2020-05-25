@@ -74,8 +74,8 @@ erw-l3.sty, and erw-l3.pdf.
 %<package> \RequirePackage{xparse}[2020/03/06]
 %<package> \ProvidesExplPackage
 %<package> {erw-l3}                                                                            % Package name
-%<package> {2020/05/22}                                                                        % Release date
-%<package> {2.6}                                                                               % Release version
+%<package> {2020/05/23}                                                                        % Release date
+%<package> {2.7}                                                                               % Release version
 %<package> {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 % 
 %<*driver> 
@@ -259,7 +259,7 @@ erw-l3.sty, and erw-l3.pdf.
 %   \end{function}
 %   \begin{function}{\erw_cs_set_inline:Nn, \erw_cs_set_inline:cn}
 %     \begin{syntax}
-%       \cs{erw_cs_set_inline:Nn}\Arg{\doccceptcs}\Arg{\doccceptcode}
+%       \cs{erw_cs_set_inline:Nn}\meta{\doccceptcs}\Arg{\doccceptcode}
 %     \end{syntax}
 %   \end{function}
 %   
@@ -299,6 +299,14 @@ erw-l3.sty, and erw-l3.pdf.
 %     \end{syntax}
 %   \end{function}
 %   
+%   \section{\textsf{keys}} \label{usage:keys}
+%   \begin{function}{\erw_keyval_error:Nn, \erw_keyval_error:Nnn}
+%     \begin{syntax}
+%       \cs{erw_keyval_error:Nn}\meta{\docccepttok}\Arg{\doccceptkvl}\\
+%       \cs{erw_keyval_error:Nnn}\meta{\docccepttok}\Arg{\doccceptclist}
+%     \end{syntax}
+%   \end{function}
+%
 %   \section{\textsf{lambda}} \label{usage:lambda}
 %   \begin{function}{\erw_lambda:nnn}
 %     \begin{syntax}
@@ -361,7 +369,7 @@ erw-l3.sty, and erw-l3.pdf.
 %   \end{function}
 %   \begin{function}{\erw_seq_put_right_prop:NNn}
 %     \begin{syntax}
-%       \cs{erw_seq_put_right_prop:NNn}\meta{\doccceptseq}\meta{\doccceptprop}\Arg{\doccceptkvl}
+%       \cs{erw_seq_put_right_prop:NNn}\meta{\doccceptseq}\meta{\doccceptprop}\Arg{\doccceptclist}
 %     \end{syntax}
 %   \end{function}
 %   \begin{function}{\erw_seq_use:Nn}
@@ -518,7 +526,6 @@ erw-l3.sty, and erw-l3.pdf.
 % \iffalse
 %</guardlisting> 
 % \fi
-% \section{\textsf{cs}}
 % \section{\textsf{csint}}
 % \phantomsection\addcontentsline{toc}{subsection}
 % {\ref{listing:numbrdcs}.}
@@ -604,7 +611,7 @@ erw-l3.sty, and erw-l3.pdf.
   \ExplSyntaxOn
   \erw_prop_keyval_parse:NNNn
   \foo_prop
-  \erw_cs_error:n
+  \erw_keyval_error:Nn
   \prop_put:Nnn{ X = x, Y = y, Z = z}
   \prop_item:Nn \foo_prop{ X }
   ,\prop_item:Nn \foo_prop{ Y }
@@ -1041,7 +1048,7 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{1}{8}}{2020/04/30}{Remove: \cs{erw_cs_set_eq:NN} and variants}
 % \changes{\docvers{1}{8}}{2020/04/30}{Remove: \cs{erw_is_matrix:n} (predicate must be expandable)}
 % \changes{\docvers{1}{8}}{2020/04/30}{Rename: all cs prefixes to agree with heading under which they come, e.g. \cs{erw_identity:n} by \cs{erw_cs_identity:n} }
-% \changes{\docvers{1}{8}}{2020/04/30}{Replace: \cs{@@_map:n} by \cs{@@_oper_function:n}}
+% \changes{\docvers{1}{8}}{2020/04/30}{(deleted)}
 % \changes{\docvers{1}{8}}{2020/04/30}{Replace: \cs{erw_seq_fold:NN} by \cs{erw_oper_fold_seq:NN} and likewise for variants}
 % \changes{\docvers{1}{8}}{2020/04/30}{Replace: wrong signature |V|, by |N|, in functions such as \cs{erw_oper_compose:NnV} or \cs{erw_seq_fold:cV}}
 % \changes{\docvers{1}{9}}{2020/05/01}{Add: \cs{erw_sys_timestamp_delimiter:}}
@@ -1078,7 +1085,10 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{2}{6}}{2020/05/23}{Rename: \textsf{basics} to \nameref{usage:cs}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Replace: \cs{erw_seq_from_clist} by \cs{erw_seq_put_right_clist}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Replace: \cs{erw_seq_from_prop} by \cs{erw_seq_put_right_prop}}
-% 
+% \changes{\docvers{2}{7}}{2020/05/23}{Remove: \cs{erw_cs_error:n} }
+% \changes{\docvers{2}{7}}{2020/05/23}{Remove: \cs{erw_cs_error:nn} }
+% \changes{\docvers{2}{7}}{2020/05/23}{Add: \cs{erw_keyval_error:Nn} }
+% \changes{\docvers{2}{7}}{2020/05/23}{Add: \cs{erw_keyval_error:Nnn} }
 % \PrintChanges
 % \PrintIndex
 % \clearpage
@@ -1125,8 +1135,6 @@ erw-l3.sty, and erw-l3.pdf.
 \cs_new:Nn \erw_tl_join:nnn{#1#2#3}
 \cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
 \cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
-\cs_new:Nn \erw_cs_error:n{\msg_error{@@}{generic}{unary~function~not~allowed}}
-\cs_new:Nn \erw_cs_error:nn{\msg_error{@@}{generic}{binary~function~not~allowed}}
 %    \end{macrocode}
 % \section{\textsf{clist}}\label{impl:clist}
 % \subsection{backend}
@@ -1218,8 +1226,10 @@ erw-l3.sty, and erw-l3.pdf.
 % \section{\textsf{keys}}
 % \subsection{frontend}
 %    \begin{macrocode}
+\cs_new:Nn \erw_keyval_error:Nn{\msg_error{@@}{generic}{unary~function~not~allowed}}
+\cs_new:Nn \erw_keyval_error:Nnn{\msg_error{@@}{generic}{binary~function~not~allowed}}
 \cs_new_protected:Nn\erw_keyval_parse:NNNn
-{ 
+{
   \cs_set_protected:Nn \@@_keyval_function:n {#2 #1{##1}}
   \cs_set_protected:Nn \@@_keyval_function:nn {#3 #1{##1}{##2}}
   \keyval_parse:NNn
@@ -1277,7 +1287,7 @@ erw-l3.sty, and erw-l3.pdf.
   {
     \keyval_parse:NNn
     \@@_keyval_function:n
-    \erw_cs_error:nn
+    \erw_keyval_error:Nnn
     {#2}
   }
 }
@@ -1614,12 +1624,12 @@ erw-l3.sty, and erw-l3.pdf.
 }
 %    \end{macrocode}
 % \end{macro}
-% \begin{macro}{\@@_map:nn}
+% \begin{macro}{\@@_tl_map:nn}
 %    \begin{macrocode}
-\cs_set_protected:Nn \@@_map:nn
+\cs_set_protected:Nn \@@_tl_map:nn
 {
   \quark_if_recursion_tail_stop:n{#1}  
-  \g@@_tl_function:n{#1}  \@@_map:nn{#2}
+  \g@@_tl_function:n{#1}  \@@_tl_map:nn{#2}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -1750,7 +1760,7 @@ erw-l3.sty, and erw-l3.pdf.
 }
 \cs_new_protected:Nn \erw_tl_map:n
 {    
-  \@@_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+  \@@_tl_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
 }
 \cs_new_protected:Nn \erw_tl_map:Nn 
 {
