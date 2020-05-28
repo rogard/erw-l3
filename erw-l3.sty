@@ -17,15 +17,26 @@
  \RequirePackage{xparse}[2020/03/06]
  \ProvidesExplPackage
  {erw-l3}                                                                            % Package name
- {2020/05/23}                                                                        % Release date
- {2.8}                                                                               % Release version
+ {2020/05/27}                                                                        % Release date
+ {2.9}                                                                               % Release version
  {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 \cs_new:Nn \__erw_cs_name:N
 {
   \exp_last_unbraced:Nf \use_i:nnn {\cs_split_function:N #1}
 }
+\cs_new:Nn \erw_cs_compose:NnN
+{
+  \erw_cs_set_inline:Nn \g__erw_tl_function:n
+  {
+    #1{##1}#3
+  }
+  \exp_args:Nf\erw_tl_map:n
+  {
+    \tl_reverse:n{#2}
+  }
+}
 \cs_set:Npn \erw_cs_identity:n #1{#1}
-\cs_new:Nn \erw_cs_set_inline:Nn
+\cs_new_protected:Nn \erw_cs_set_inline:Nn
 {
   \cs_set:Npn #1 ##1{#2}
 }
@@ -36,20 +47,17 @@
 }
 \cs_generate_variant:Nn \erw_cs_gset_inline:Nn {cn}
 \int_new:N \g__erw_csint_int
-\tl_set:Nn \g__erw_csint_name_tl {\erw_csint_name:n{\g__erw_csint_int}}
+\cs_new:Nn \__erw_csint_name: {\erw_csint_name:n{\g__erw_csint_int}}
 \cs_new:Nn \erw_csint:nn
 {
-  \use:c{__erw_csint_\int_to_alph:n{#1}:n}{#2}
+ \exp_args:No \use:c{\erw_csint_name:n{#1}}{#2}
 }
 \cs_new:Nn \erw_csint_name:n {__erw_csint_\int_to_alph:n{#1}:n}
-\cs_new:Nn \erw_csint_names:nnn
-{
-  \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_csint_name:n
-}
 \cs_new_protected:Nn \erw_csint_new:n
 {
   \int_incr:N \g__erw_csint_int
-  \erw_cs_set_inline:cn{\g__erw_csint_name_tl}
+  \exp_args:No
+  \erw_cs_set_inline:cn{\__erw_csint_name:}
   {
     \token_if_cs:NTF
     {#1}
@@ -166,27 +174,16 @@
     \erw_prop_keyval_parse:NNNn#1#2#3{#4}
   }
 }
-\cs_new:Nn \__erw_oper_compose:NnN
-{
-  \erw_cs_set_inline:Nn \g__erw_tl_function:n
-  {
-    #1{##1}#3
-  }
-  \exp_args:Nf\erw_tl_map:n
-  {
-    \tl_reverse:n{#2}
-  }
-}
 \keys_define:nn{__erw}
 {
-  oper/fold_set_par.tl_gset:N = \g__erw_oper_fold_set_par_tl,
-  oper/fold_set_par.value_required:n = true,
-  oper/fold_set_par.default:n = {Nf},
-  oper/fold_set_par.initial:n = {Nf},
-  oper/fold_apply_par.tl_gset:N = \g__erw_oper_fold_apply_par_tl,
-  oper/fold_apply_par.value_required:n = true,
-  oper/fold_apply_par.default:n = {Nf},
-  oper/fold_apply_par.initial:n = {Nf}
+  tl/fold_set_par.tl_gset:N = \g__erw_tl_fold_set_par_tl,
+  tl/fold_set_par.value_required:n = true,
+  tl/fold_set_par.default:n = {Nf},
+  tl/fold_set_par.initial:n = {Nf},
+  tl/fold_apply_par.tl_gset:N = \g__erw_tl_fold_apply_par_tl,
+  tl/fold_apply_par.value_required:n = true,
+  tl/fold_apply_par.default:n = {Nf},
+  tl/fold_apply_par.initial:n = {Nf}
 }
 \cs_new_protected:Nn\erw_option:n
 {
@@ -211,18 +208,6 @@
   {\erw_prop_to_clist:Nn #2 {#3}}
 }
 \cs_generate_variant:Nn \__erw_seq_put_right_prop:NNn { cc }
-\cs_new:Nn \erw_seq_compose:nN
-{
-  \__erw_oper_compose:NnN \__erw_seq_fold:NN {#1} #2
-}
-\cs_new:Nn \erw_seq_compose_c:nN
-{
-  \__erw_oper_compose:NnN \__erw_seq_fold:cN {#1} #2
-}
-\cs_new:Nn \erw_seq_compose_vers:nN
-{
-  \msg_error:nnn{__erw}{notset}{\erw_seq_compose_vers:nN}
-}
 \cs_new_protected:Nn\erw_seq_put_right_clist:Nn
 {
   \seq_if_exist:NTF#1
@@ -237,13 +222,13 @@
   {\seq_new:N#1\erw_seq_put_right_prop:NNn#1#2{#3}}
 }
 \cs_generate_variant:Nn \erw_seq_put_right_prop:NNn { cc }
-\cs_new:Nn \__erw_seq_fold:NN
+\cs_new_protected:Nn \erw_seq_fold:NN
 {
   \seq_get_right:NN #2 \g__erw_seq_fold_item_tl
   \erw_tl_fold:NN #1 \g__erw_seq_fold_item_tl
   \seq_put_right:No #2 {\g__erw_seq_fold_item_tl}
 }
-\cs_generate_variant:Nn \__erw_seq_fold:NN {cN}
+\cs_generate_variant:Nn \erw_seq_fold:NN {cN}
 \cs_new:Nn \erw_seq_use:Nn
 {
   \exp_last_unbraced:NNf
@@ -404,7 +389,7 @@
   {
     \msg_error:nnnn { __erw }
     { separ }
-    { \exp_not:N \__erw_tl_separators:nn }
+    { \__erw_tl_separators:nn }
     {#2}
   }
 }
@@ -413,45 +398,12 @@
 {
   {#1{#2}}
 }
-\cs_new:Nn \erw_tl_compose:nN
-{
-  \__erw_oper_compose:NnN \erw_tl_fold:NN {#1} #2
-}
-\cs_new:Nn \erw_tl_compose:nn
-{
-  \tl_set:Nn \g__erw_tl_compose_tl {#2}
-  \erw_tl_compose:nN{#1}\g__erw_tl_compose_tl
-  \g__erw_tl_compose_tl
-}
-\cs_new:Nn \erw_tl_compose_c:nN
-{
-  \__erw_oper_compose:NnN \erw_tl_fold:cN {#1} #2
-}
-\cs_new:Nn \erw_tl_compose_c:nn
-{
-  \tl_set:Nn \g__erw_tl_compose_tl {#2}
-  \erw_tl_compose_c:nN{#1}\g__erw_tl_compose_tl
-  \g__erw_tl_compose_tl
-}
-\cs_new:Nn \erw_tl_compose_vers:nN
-{
-  \msg_error:nnn{__erw}{notset}{\erw_tl_compose_vers:nN}
-}
-\cs_new:Nn \erw_tl_compose_vers:nn
-{
-  \erw_csint_reset:{}
-  \tl_map_function:nN{#1}\erw_csint_new:n
-  \exp_last_unbraced:Nx
-  \erw_tl_compose_c:nn
-  {{\erw_csint_names_braced:{}}}
-  {#2}
-}
 \cs_new:Nn \erw_tl_fold:NN
 {
-  \use:c{tl_set:\g__erw_oper_fold_set_par_tl}
+  \use:c{tl_set:\g__erw_tl_fold_set_par_tl}
   #2
   {
-    \use:c{exp_args:\g__erw_oper_fold_apply_par_tl}{#1}{#2}
+    \use:c{exp_args:\g__erw_tl_fold_apply_par_tl}{#1}{#2}
   }
 }
 \cs_generate_variant:Nn \erw_tl_fold:NN {cN}
