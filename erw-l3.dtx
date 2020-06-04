@@ -33,7 +33,7 @@ See http://www.latex-project.org/lppl.txt
 \endpreamble
 \postamble
 
-Copyright (C) 2020 by Erwann Rogard
+Copyright (C) 2018-2020 by Erwann Rogard
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License (LPPL), either
@@ -74,20 +74,20 @@ erw-l3.sty, and erw-l3.pdf.
 %<package> \RequirePackage{xparse}[2020/03/06]
 %<package> \ProvidesExplPackage
 %<package> {erw-l3}                                                                            % Package name
-%<package> {2020/05/27}                                                                        % Release date
-%<package> {2.9}                                                                               % Release version
+%<package> {2020/06/03}                                                                        % Release date
+%<package> {3.0}                                                                               % Release version
 %<package> {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 % 
 %<*driver> 
+\RequirePackage{fvextra}%^^A\NB{done}{Warning:csquotes should be loaded after fvextra->nope}
 \documentclass[full]{l3doc}
 \listfiles
 \usepackage[english,french]{babel}
 \AtBeginDocument{\selectlanguage{english}}
 \usepackage{bookmark}
-\usepackage{fvextra}
-\usepackage{csquotes}%Package fvextra Warning: csquotes should be loaded after fvextra
 \usepackage[T1]{fontenc}
 \usepackage{erw-l3}
+\usepackage{microtype}
 \usepackage{nolbreaks}
 \usepackage{tabto}
 \usepackage{tcolorbox}
@@ -333,7 +333,7 @@ erw-l3.sty, and erw-l3.pdf.
 %   \DescribeOption{sys / timestamp_delim}
 %   
 %   \section{\textsf{prop}}\label{usage:prop}
-%   All functions that modify a \meta{\doccceptprop} check it exists, if not make sure it does.
+%   All functions that modify a \meta{\doccceptprop} first create it if not exist.
 %   
 %   \begin{function}{\erw_prop_keyval_parse:NNNn}
 %     \begin{syntax}
@@ -353,7 +353,7 @@ erw-l3.sty, and erw-l3.pdf.
 %   
 %   
 %   \section{\textsf{seq}}\label{usage:seq}
-%   All functions that modify a \meta{\doccceptseq} check it exists, if not make sure it does.
+%   All functions that modify a \meta{\doccceptseq} first create it if not exists.
 %   \begin{function}{\erw_seq_fold:NN,\erw_seq_fold:cN}
 %     \begin{syntax}
 %       \cs{erw_seq_fold:NN}\Arg{\Arg{\doccceptcs_1}\dots}
@@ -400,7 +400,7 @@ erw-l3.sty, and erw-l3.pdf.
 %   \end{function}
 %   
 %   \section{\textsf{tl}}
-%   All functions that modify a \meta{\docccepttl} check it exists, if not make sure it does.
+%   All functions that modify a \meta{\docccepttl} first create it if not exist.
 %   \begin{function}{\erw_tl_append_item:nn}
 %     \begin{syntax}
 %       \cs{erw_tl_append_item:nn}\Arg{arg list}\Arg{arg}
@@ -973,6 +973,17 @@ erw-l3.sty, and erw-l3.pdf.
 %   ``How to create lambda expressions?'', \url{https://tex.stackexchange.com/a/188053/112708}
 % \bibitem{user-erw} \url{https://tex.stackexchange.com/users/112708/erwann?tab=questions}
 % \end{thebibliography}
+%
+% \section{To do}
+%
+% \begin{enumerate}[label=\emph{\alph*)}]
+% \item Regression testing using \cite[Section 3.2—Specifying expectations]{l3build}. \label{todo:regtest}
+% \end{enumerate}
+% Also see:
+% \begin{enumerate}[label=\emph{\alph*)}]
+% \setcounter{enumi}{1}
+% \item \env{NOTE} or \cs{NB} tagged \texttt{abandon\docpipe{}done\docpipe{}todo} inside \jobname|.dtx|
+% \end{enumerate}
 % 
 % \changes{\docvers{1}{1}}{2018/05/23}{Brought all the modules under one file; renamed \pkg{l3erw} to \pkg{erw-l3};}
 % \changes{\docvers{1}{1}}{2018/05/23}{\cs{numbrdcsnew} changed to \cs{newnumbrdcs} and made 'disambiguable'}
@@ -1073,6 +1084,7 @@ erw-l3.sty, and erw-l3.pdf.
 % }
 % \changes{\docvers{2}{9}}{2020/05/27}{Rename: \texttt{oper / fold_set_par} to \texttt{tl / fold_set_par} }
 % \changes{\docvers{2}{9}}{2020/05/27}{Rename: \texttt{oper / fold_apply_par} to \texttt{tl / fold_apply_par} }
+% \changes{\docvers{3}{0}}{2020/06/03}{Fix: warning \pkg{csquotes}+\pkg{fvextra} }
 % \PrintChanges
 % \PrintIndex
 % \clearpage
