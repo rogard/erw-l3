@@ -74,15 +74,15 @@ erw-l3.sty, and erw-l3.pdf.
 %<package> \RequirePackage{xparse}[2020/03/06]
 %<package> \ProvidesExplPackage
 %<package> {erw-l3}                                                                            % Package name
-%<package> {2020/06/03}                                                                        % Release date
-%<package> {3.0}                                                                               % Release version
+%<package> {2020/06/04}                                                                        % Release date
+%<package> {3.1}                                                                               % Release version
 %<package> {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
 % 
 %<*driver> 
 \RequirePackage{fvextra}%^^A\NB{done}{Warning:csquotes should be loaded after fvextra->nope}
 \documentclass[full]{l3doc}
 \listfiles
-\usepackage[english,french]{babel}
+\usepackage[english]{babel}
 \AtBeginDocument{\selectlanguage{english}}
 \usepackage{bookmark}
 \usepackage[T1]{fontenc}
@@ -165,6 +165,7 @@ erw-l3.sty, and erw-l3.pdf.
 \providecommand\docopte[2]{\texttt{#1}\doceval{#2}}
 \providecommand\docopto[1]{\texttt{[}#1\texttt{]}}
 \providecommand\docpipe{\textbar}
+\providecommand\doccs[1]{\texttt{\textbackslash{}#1}}
 \providecommand\docreflist[1]{Listing~\ref{listing:#1}}
 \providecommand\docsee{See:~}
 \providecommand\docstep[1]{step~\ref{step:#1}}
@@ -222,17 +223,9 @@ erw-l3.sty, and erw-l3.pdf.
 %   \begingroup
 %   \selectlanguage{english}
 %   \begin{docabstract}{Abstract}
-%     Utilities like \pkg{expl3}\cite{interface3}.
+%     Utilities for \LaTeX3 programming\cite{interface3}.
 %   \end{docabstract}
 %   \endgroup
-%   
-%   \begingroup
-%   \selectlanguage{french}
-%   \begin{docabstract}{Résumé}
-%     Utilitaires de type \pkg{expl3}\cite{interface3}.
-%   \end{docabstract}
-%   \endgroup
-%   ^^A   \selectlanguage{english}
 %   
 %   \tableofcontents 
 %   
@@ -969,6 +962,8 @@ erw-l3.sty, and erw-l3.pdf.
 % \begin{thebibliography}{1}
 % \bibitem{interface3} The \LaTeX3 Project Team {\em The \LaTeX3 interfaces}, 2019,
 %   \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3kernel/interface3.pdf}
+% \bibitem{l3build} The \LaTeX3 Project Team {\em The \pkg{l3build} package}, 2020,
+%   \url{http://mirror.utexas.edu/ctan/macros/latex/contrib/l3build/l3build.pdf}
 % \bibitem{a-188053} \href{https://tex.stackexchange.com/users/17423/sean-allred}{@{}sean-allred}'s answer to
 %   ``How to create lambda expressions?'', \url{https://tex.stackexchange.com/a/188053/112708}
 % \bibitem{user-erw} \url{https://tex.stackexchange.com/users/112708/erwann?tab=questions}
@@ -1005,7 +1000,7 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{1}{4}}{2018/06/22}{Add: \cs{erw_merge}}
 % \changes{\docvers{1}{4}}{2018/06/22}{Add: \cs{erw_set_map_inline}}
 % \changes{\docvers{1}{4}}{2018/06/22}{Add: \cs{erw_set_map}}
-% \changes{\docvers{1}{4}}{2018/06/22}{Remove: \cs{erw_items_to} (redundant with \cs{tl_range:nnn})}
+% \changes{\docvers{1}{4}}{2018/06/22}{Remove: \doccs{erw_items_to} (redundant with \cs{tl_range:nnn})}
 % \changes{\docvers{1}{5}}{2019/12/12}{Modify: source repository}
 % \changes{\docvers{1}{5}}{2019/12/12}{Rearrange: frontend/backend sections}
 % \changes{\docvers{1}{5}}{2019/12/12}{Remove: \pkg{disambig}}
@@ -1016,15 +1011,15 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{1}{7}}{2020/04/24}{Move: \cs{erw_fold_apply_par:n}}
 % \changes{\docvers{1}{7}}{2020/04/24}{Move: \cs{erw_fold_set_par:n}}
 % \changes{\docvers{1}{7}}{2020/04/24}{(deleted)}
-% \changes{\docvers{1}{7}}{2020/04/24}{Remove: document level functions,\cs{numbrdcsnew}, \cs{numbrdcs}}
+% \changes{\docvers{1}{7}}{2020/04/24}{Remove: \doccs{numbrdcsnew}, \doccs{numbrdcs}}
 % \changes{\docvers{1}{7}}{2020/04/24}{Rename: variables with suffix |tl| get 'private mode' prexif in pl. of |\__erw| }
 % \changes{\docvers{1}{7}}{2020/04/24}{Rename: |csnum| to |csint| }
 % \changes{\docvers{1}{7}}{2020/04/24}{Rename: |numbrd_cs| to |csnum| }
 % \changes{\docvers{1}{7}}{2020/04/24}{Replace: listing's implem with that of \pkg{tocloft}}
 % \changes{\docvers{1}{7}}{2020/04/24}{Replace: vers. numb. from 3 to 2 digits}
 % \changes{\docvers{1}{8}}{2020/04/24}{Add: \env{function} for all frontend functions.}
-% \changes{\docvers{1}{8}}{2020/04/30}{Remove: \cs{erw_cs_set_eq:NN} and variants}
-% \changes{\docvers{1}{8}}{2020/04/30}{Remove: \cs{erw_is_matrix:n} (predicate must be expandable)}
+% \changes{\docvers{1}{8}}{2020/04/30}{Remove: \doccs{erw_cs_set_eq:NN} and variants}
+% \changes{\docvers{1}{8}}{2020/04/30}{Remove: \doccs{erw_is_matrix:n} (predicate must be expandable)}
 % \changes{\docvers{1}{8}}{2020/04/30}{Rename: all cs prefixes to agree with heading under which they come, e.g. \cs{erw_identity:n} by \cs{erw_cs_identity:n} }
 % \changes{\docvers{1}{8}}{2020/04/30}{(deleted)}
 % \changes{\docvers{1}{8}}{2020/04/30}{Replace: \cs{erw_seq_fold:NN} by \cs{erw_oper_fold_seq:NN} and likewise for variants}
@@ -1035,7 +1030,7 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{1}{9}}{2020/05/01}{Rename: \cs{erw_oper_gset_function:N} to \cs{erw_tl_gset_function:N} (and variants)}
 % \changes{\docvers{1}{9}}{2020/05/01}{Rename: prefix |timestamp| by |sys|}
 % \changes{\docvers{2}{0}}{2020/05/01}{Add: \cs{erw_jobnametimestamp:nn} and variants}
-% \changes{\docvers{2}{0}}{2020/05/01}{Remove: \cs{merge:nn} (redundant with \cs{erw_join:nn})}
+% \changes{\docvers{2}{0}}{2020/05/01}{Remove: \doccs{merge:nn} (redundant with \cs{erw_join:nn})}
 % \changes{\docvers{2}{0}}{2020/05/01}{Rename: \docvers{0}{0} to \docvers{1}{0}, etc.}
 % \changes{\docvers{2}{1}}{2020/05/09}{Add: \cs{erw_prop_to_clist:Nn}, \cs{erw_prop_put:NN}, and \cs{erw_prop_put:Nnn}}
 % \changes{\docvers{2}{1}}{2020/05/09}{Add: \cs{erw_seq_from_clist:Nn}, \cs{erw_seq_from_prop:NNn}, and \cs{erw_seq_put_right:Nn}}
@@ -1056,15 +1051,15 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{erw_prop_keyval_parse:NNNn}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{erw_prop_map_item:NNN} }
 % \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{varnset}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \cs{erw_cs_apply}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \cs{erw_prop_put:NN} }
-% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \cs{erw_prop_put_keyval:Nn} }
+% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \doccs{erw_cs_apply}}
+% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \doccs{erw_prop_put:NN} }
+% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \doccs{erw_prop_put_keyval:Nn} }
 % \changes{\docvers{2}{6}}{2020/05/23}{Remove: \cs{msg_new:nnn}, module \texttt{erw}, messages: \texttt{keyval/\dots}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Rename: \textsf{basics} to \nameref{usage:cs}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Replace: \cs{erw_seq_from_clist} by \cs{erw_seq_put_right_clist}}
 % \changes{\docvers{2}{6}}{2020/05/23}{Replace: \cs{erw_seq_from_prop} by \cs{erw_seq_put_right_prop}}
-% \changes{\docvers{2}{7}}{2020/05/23}{Remove: \cs{erw_cs_error:n} }
-% \changes{\docvers{2}{7}}{2020/05/23}{Remove: \cs{erw_cs_error:nn} }
+% \changes{\docvers{2}{7}}{2020/05/23}{Remove: \doccs{erw_cs_error:n} }
+% \changes{\docvers{2}{7}}{2020/05/23}{Remove: \doccs{erw_cs_error:nn} }
 % \changes{\docvers{2}{7}}{2020/05/23}{Add: \cs{erw_keyval_error:Nn} }
 % \changes{\docvers{2}{7}}{2020/05/23}{Add: \cs{erw_keyval_error:Nnn} }
 % \changes{\docvers{2}{8}}{2020/05/24}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{notset}}
@@ -1072,19 +1067,20 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{\docvers{2}{8}}{2020/05/24}{Remove: \cs{msg_new:nnn}\doceval{erw}\doceval{varnset}}
 % \changes{\docvers{2}{9}}{2020/05/27}{Add: \cs{erw_seq_fold:NN}, \cs{erw_seq_fold:cN}}
 % \changes{\docvers{2}{9}}{2020/05/27}{Add: \cs{erw_cs_compose:NnN}}
-% \changes{\docvers{2}{9}}{2020/05/27}{Remove: \cs{erw_seq_compose:nN},\cs{erw_seq_compose_c:nN},\cs{erw_seq_compose_vers:nN}}
+% \changes{\docvers{2}{9}}{2020/05/27}{Remove: \doccs{erw_seq_compose:nN},\doccs{erw_seq_compose_c:nN},\doccs{erw_seq_compose_vers:nN}}
 % \changes{\docvers{2}{9}}{2020/05/27}{Remove:
-% \cs{erw_tl_compose:nN},
-% \cs{erw_tl_compose:Nnn},
-% \cs{erw_tl_compose:nn},
-% \cs{erw_tl_compose_c:nN},
-% \cs{erw_tl_compose_c:nn},
-% \cs{erw_tl_compose_vers:nN},
-% \cs{erw_tl_compose_vers:nn}
+% \doccs{erw_tl_compose:nN},
+% \doccs{erw_tl_compose:Nnn},
+% \doccs{erw_tl_compose:nn},
+% \doccs{erw_tl_compose_c:nN},
+% \doccs{erw_tl_compose_c:nn},
+% \doccs{erw_tl_compose_vers:nN},
+% \doccs{erw_tl_compose_vers:nn}
 % }
 % \changes{\docvers{2}{9}}{2020/05/27}{Rename: \texttt{oper / fold_set_par} to \texttt{tl / fold_set_par} }
 % \changes{\docvers{2}{9}}{2020/05/27}{Rename: \texttt{oper / fold_apply_par} to \texttt{tl / fold_apply_par} }
 % \changes{\docvers{3}{0}}{2020/06/03}{Fix: warning \pkg{csquotes}+\pkg{fvextra} }
+% \changes{\docvers{3}{1}}{2020/06/04}{Miscellaneous}
 % \PrintChanges
 % \PrintIndex
 % \clearpage
