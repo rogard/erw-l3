@@ -1,0 +1,50 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\erw_keys_set:n
+{
+  clist_map_inline =
+  {
+     {foo}{n}{(#1)},
+     {bar}{Nn}{#1{#2}}
+  }
+  {nnn}
+  {
+    \cs_new:cn{__erw_#1:#2}{#3}
+  }
+}
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {  \__erw_foo:n{x} }
+  { (x) }
+}
+
+\TEST{ clist_map_inline -- case~a }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+\bool_set:Nn
+\l_tmpb_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {  \__erw_bar:Nn\__erw_foo:n{x} }
+  { (x) }
+}
+
+\TEST{ clist_map_inline -- case~b }
+{ \bool_if:NTF\l_tmpb_bool\TRUE\FALSE }
+
+%\END
+\ExplSyntaxOff
+\end{document}

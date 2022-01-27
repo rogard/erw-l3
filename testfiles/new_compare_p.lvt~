@@ -1,0 +1,35 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+% TODO input char using   https://tex.stackexchange.com/questions/402531/how-does-char-work/402532?noredirect=1#comment1568179_402532
+
+\erw_keys_set:nn{ prg }
+{ new_compare_p = 
+  {__erw_value_catcode}
+  {nNn}
+  {\exp_last_unbraced:Ne
+    \int_compare_p:nNn
+    {
+      { \char_value_catcode:n{ #1 } } % 1->11
+      #2
+      { \char_value_catcode:n{ #3 } } % 100->13
+    }
+  }
+}
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn \l_tmpa_bool
+{ \__erw_value_catcode_p:nNn {1} < {100} }
+
+\TEST{__erw_value_catcode_p,~ one > hundred}
+{ \bool_if:nTF \l_tmpa_bool \FALSE\TRUE }
+
+%\END
+\ExplSyntaxOff
+\end{document}

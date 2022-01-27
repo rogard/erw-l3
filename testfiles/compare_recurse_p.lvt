@@ -1,0 +1,38 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn\l_tmpa_bool
+{%
+  \erw_compare_recurse_p:nnN{1235}{int_compare_p}<
+}
+\TEST
+{\erw_compare_recurse_p:nnN{1235}{int_compare_p}< == true}
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+\bool_set:Nn\l_tmpa_bool
+{%
+  \erw_compare_recurse_p:nnN{5123}{int_compare_p}<
+}
+\TEST
+{\erw_compare_recurse_p:nnN{5123}{int_compare_p}< == false}
+{ \bool_if:NTF\l_tmpa_bool\FALSE\TRUE }
+
+\bool_set:Nn\l_tmpa_bool
+{%
+  \erw_compare_recurse_p:nnN{{1=w}{2=x}{4=z}}{erw_key_compare_p}<
+}
+\TEST
+{ \erw_compare_recurse_p:nnN{{1=w}{2=x}{4=z}}{erw_key_compare_p}< }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+
+%\END
+\ExplSyntaxOff
+\end{document}

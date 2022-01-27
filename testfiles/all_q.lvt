@@ -1,0 +1,56 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \tl_if_empty_p:n
+  {  \erw_all_q:w\q_recursion_tail\q_recursion_stop }
+}
+\TEST{  \erw_all_q:w\q_recursion_tail\q_recursion_stop~==~{} }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {  \erw_all_q:w {foo}\q_recursion_tail\q_recursion_stop}
+  { {foo} }
+}
+\TEST{ \erw_all_q:w {foo}\q_recursion_tail\q_recursion_stop~==~{foo} }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  { \erw_all_q:w f{oo}bar\q_recursion_tail\q_recursion_stop }
+  {f{oo}bar}
+}
+\TEST{  \erw_all_q:w f{oo}bar\q_recursion_tail\q_recursion_stop~==~f{oo}bar }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {  \erw_all_q:w foo{bar}\q_recursion_tail\q_recursion_stop }
+  {foo{bar}}
+}
+\TEST{ \erw_all_q:w foo{bar}\q_recursion_tail\q_recursion_stop~==~f }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+%\END
+\ExplSyntaxOff
+\end{document}

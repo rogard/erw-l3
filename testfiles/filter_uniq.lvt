@@ -1,0 +1,39 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn\l_tmpa_bool
+{%
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {\erw_filter_uniq:nn{int_compare_p}{{1}{2}{2}}}
+  {{1}{2}}
+}
+\TEST{ 
+ \erw_filter_uniq:nn
+ {int_compare_p}{{1}{2}{2}} == {{1}{2}}
+}
+{\bool_if:NTF\l_tmpa_bool\TRUE\FALSE}
+
+\bool_set:Nn\l_tmpa_bool
+{%
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {\erw_filter_uniq:nn{int_compare_p}{122}}
+  {12}
+}
+\TEST{ 
+ \erw_filter_uniq:nn
+ {int_compare_p}{122} == {12}
+}
+{\bool_if:NTF\l_tmpa_bool\TRUE\FALSE}
+
+%\END
+\ExplSyntaxOff
+\end{document}

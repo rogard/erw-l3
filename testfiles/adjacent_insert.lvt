@@ -1,0 +1,48 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn\l_tmpa_bool
+{\exp_args:Ne
+   \str_if_eq_p:nn
+   {\erw_adjacent_insert:nn{}{,~}}{}}
+
+\TEST{\erw_adjacent_insert:nn{}{,~}=={}}
+{%
+\bool_if:NTF
+\l_tmpa_bool
+\TRUE\FALSE}
+
+\bool_set:Nn\l_tmpa_bool
+{\exp_args:Ne
+   \str_if_eq_p:nn
+   {\erw_adjacent_insert:nn{{foo}{bar}}{,~}}{{foo},~{bar}}}
+
+\TEST{\exp_args:Ne
+   \str_if_eq_p:nn
+   {\erw_adjacent_insert:nn{{foo}{bar}}{,~}}{{foo},~{bar}}}
+{%
+\bool_if:NTF
+\l_tmpa_bool
+\TRUE\FALSE}
+
+\bool_set:Nn\l_tmpa_bool
+{\exp_args:Ne
+   \str_if_eq_p:nn
+   {\erw_adjacent_insert:nn{f{oo}bar}{,~}}{f,~{oo},~b,~a,~r}}
+
+\TEST{\erw_adjacent_insert:nn{f{oo}bar}{,~}==f,{oo},b,a,r}
+{%
+\bool_if:NTF
+\l_tmpa_bool
+\TRUE\FALSE}
+
+%\END
+\ExplSyntaxOff
+\end{document}

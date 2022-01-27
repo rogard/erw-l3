@@ -1,0 +1,38 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {%
+    \erw_thread_sort:nnNn
+    { erw_key_compare_p }
+    { { 2 = x }{ 3 = y } }
+    <
+    { { 1 = w }{ 4 = z } }
+  }
+  { { 1 = w }{ 2 = x }{ 3 = y }{ 4 = z } }
+}
+\TEST{
+      \erw_thread_sort:nnNn
+      { erw_key_compare_p }
+      { { 2 = x }{ 3 = y } }
+      <
+      { { 1 = w }{ 4 = z } }
+      ==
+      { 1 = w }{ 2 = x }{ 3 = y }{ 4 = z }
+}
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+%\END
+\ExplSyntaxOff
+\end{document}

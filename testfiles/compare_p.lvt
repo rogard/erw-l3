@@ -1,0 +1,29 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn \l_tmpa_bool
+{ \erw_compare_p:nNnNn{int_compare_p}
+\erw_keyval_key:n{ 1 = x }<{ 2 = y} }
+
+\TEST{ \erw_compare_p:nNnNn{int_compare_p}
+\erw_keyval_key:n{ 1 = x }<{ 2 = y} }
+{ \bool_if:nTF \l_tmpa_bool \TRUE\FALSE }
+
+\bool_set:Nn \l_tmpa_bool
+{ \erw_compare_p:nNnNn{int_compare_p}
+\erw_keyval_key:n{ 2 = x }<{ 1 = y} }
+
+\TEST{ \erw_compare_p:nNnNn{int_compare_p}
+\erw_keyval_key:n{ 2 = x }<{ 1 = y} }
+{ \bool_if:nTF \l_tmpa_bool \FALSE\TRUE }
+
+%\END
+\ExplSyntaxOff
+\end{document}

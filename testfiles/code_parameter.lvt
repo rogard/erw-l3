@@ -1,0 +1,28 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {%
+    \erw_parameter:nn{3}{6}
+  }
+  { #3#4#5#6#7#8 }
+}
+
+\TEST
+{ \erw_parameter:nn{3}{6} == #3#4#5#6#7#8 }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+%\END
+\ExplSyntaxOff
+\end{document}

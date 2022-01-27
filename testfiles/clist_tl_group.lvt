@@ -1,0 +1,56 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \tl_if_empty_p:n
+  {  \erw_clist_tl:nn{\c_true_bool}{} }
+}
+\TEST{  \erw_clist_tl:nn{\c_true_bool}{} }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {  \erw_clist_tl:nn{\c_true_bool}{ {foo} }}
+  { {foo} }
+}
+\TEST{ \erw_clist_tl:nn{\c_true_bool}{ {foo} } }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  { \erw_clist_tl:nn{\c_true_bool}{ f{oo}bar } }
+  {f,{oo},b,a,r}
+}
+\TEST{  \erw_clist_tl:nn{\c_true_bool}{ f{oo}bar } }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+\bool_set:Nn
+\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  {  \erw_clist_tl:nn{\c_true_bool}{ foo{bar} } }
+  {f,o,o,{bar}}
+}
+\TEST{ \erw_clist_tl:nn{\c_true_bool}{ foo{bar} } }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+%\END
+\ExplSyntaxOff
+\end{document}

@@ -1,0 +1,32 @@
+\input regression-test.tex
+\documentclass{article}
+\usepackage{erw-l3}
+\ExplSyntaxOn
+
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\START
+
+\bool_set:Nn\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  { \erw_split_even:n{{1=w}{2=x}} }
+  { {{1=w}}{{2=x}} }
+}
+\TEST{ \erw_split_even:n{{1=w}{2=x}} == {{1=w}}{{2=x}} }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+\bool_set:Nn\l_tmpa_bool
+{
+  \exp_args:Ne
+  \str_if_eq_p:nn
+  { \erw_split_even:n{{1=w}{2=x}{3=y}} }
+  { {{1=w}{2=x}}{{3=y}} }
+}
+\TEST{ \erw_split_even:n{{1=w}{2=x}{3=y}} == {{1=w}{2=x}}{{3=y}} }
+{ \bool_if:NTF\l_tmpa_bool\TRUE\FALSE }
+
+%\END
+\ExplSyntaxOff
+\end{document}
