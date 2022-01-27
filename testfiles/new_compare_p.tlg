@@ -1,8 +1,0 @@
-This is a generated file for the l3build validation system.
-Don't change this file in any respect.
-============================================================
-TEST 1: __erw_value_catcode_p, one>hundred
-============================================================
-TRUE
-============================================================
-(new_compare_p.aux)

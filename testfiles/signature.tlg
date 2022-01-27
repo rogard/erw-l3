@@ -1,8 +1,0 @@
-This is a generated file for the l3build validation system.
-Don't change this file in any respect.
-============================================================
-TEST 1: \erw_signature:n {##1{##3{##2}}{##4}##2}==NnNn
-============================================================
-TRUE
-============================================================
-(signature.aux)

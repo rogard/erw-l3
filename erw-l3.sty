@@ -15,8 +15,8 @@
  \RequirePackage{xparse, l3keys2e, xtemplate}[2021-06-01]
  \ProvidesExplPackage
  {erw-l3}                                             % Package name
- {2022-01-13}                                        % Release date
- {4.0}                                               % Release version
+ {2022-01-27}                                        % Release date
+ {4.1}                                               % Release version
  {erw-l3 --- Utilities based on LaTeX3, such as 'merge sort'  }       % Description
 \cs_generate_variant:Nn\int_compare_p:nNn{eNe}
 \cs_generate_variant:Nn\int_eval:n{e}
@@ -196,91 +196,6 @@
 #4 % <operator>
 { #3{ #1 }#4{ #2 } }
 \cs_generate_variant:Nn\__erw_compare:nnNN{eec}
-\erw_keys_set:n
-{%
-  new_compare_p =
-  {erw_compare_recurse} % <name>
-  {nnN}
-  { \__erw_compare_recurse:nnN{#1}{#2}#3 }
-}
-\cs_new:Npn
-\__erw_compare_recurse:nnN
-#1 % <tokenlist>
-#2 % <compare predicate name>
-#3 % <operator>
-{%
-  \erw_compare_recurse_p:nnNN
-  {#1} % <tokenlist>
-  {#2} % <compare predicate name>
-  \erw_identity:n % <function>
-  #3 % <operator>
-}
-\erw_keys_set:n
-{%
-  new_compare_p =
-  {erw_compare_recurse} % <name>
-  {nnNN}
-  { \__erw_compare_recurse:nnNN{#1}{#2}#3#4 }
-}
-\cs_new:Npn
-\__erw_compare_recurse:nnNN
-#1 % <tokenlist>
-#2 % <compare predicate name>
-#3 % <function>
-#4 % <operator>
-{ \__erw_compare_recurse:nNNw {#2}#3#4#1 \q_recursion_tail\q_recursion_stop }
-\cs_new:Npn
-\__erw_compare_recurse:nNNw
-#1 % <compare predicate name>
-#2 % <convert>
-#3 % <operator>
-#4 % <tokenlist>
-\q_recursion_stop
-{%
-  \quark_if_recursion_tail_stop_do:nn{#4}{\c_true_bool}
-  \__erw_compare_recurse:nNNnw{#1}{#2}{#3}#4\q_recursion_stop
-}
-\cs_new:Npn
-\__erw_compare_recurse:nNNnw
-#1 % <compare predicate name>
-#2 % <convert>
-#3 % <operator>
-#4 % <head>
-#5 % <rest>
-\q_recursion_stop
-{%
-  \quark_if_recursion_tail_stop_do:nn{#5}{\c_true_bool}
-  \__erw_compare_recurse:nNNnnw
-  {#1} % <compare predicate name>
-  #2 % <convert>
-  #3 % <operator>
-  {#4} % <head>
-  #5 % <rest>
-  \q_recursion_stop
-}
-\cs_new:Npn
-\__erw_compare_recurse:nNNnnw
-#1 % <compare predicate name>
-#2 % <convert>
-#3 % <operator>
-#4 % <fisrt>
-#5 % <second>
-#6 % <rest>
-\q_recursion_stop
-{%
-  \bool_if:nTF
-  { \erw_compare_p:nNnNn{#1}#2{#4}#3{#5} }
-  {%
-    \__erw_compare_recurse:nNNnw
-    {#1} % <compare predicate name>
-    #2 % <convert>
-    #3 % <operator>
-    {#5} % <head>
-    #6 % <rest>
-    \q_recursion_stop
-  }
-  {\c_false_bool}
-}
 \erw_keys_set:n
 {%
   new_compare_p =
@@ -797,115 +712,6 @@
   \exp_args:Ne
   \__erw_argument:nw
   {\erw_int_incr:n{#1}}#3\q_recursion_stop }
-\makeatletter
-\def\__erw_make_group_token_const#1
-{\__erw_make_group_token_constAuxi#1\@gobbletwo{}}
-\def\__erw_make_group_token_constAuxi#1#
-{#1\__erw_make_group_token_constAuxii}
-\def\__erw_make_group_token_constAuxii#1
-{\c_group_begin_token
-  \__erw_make_group_token_const{#1}
-  \c_group_end_token
-  \__erw_make_group_token_constAuxi}
-\makeatother
-\cs_new:Npn
-\__erw_code_analyze:nw
-#1 % <accum>
-#2 % <first token>
-#3 % <second token>
-#4 % <third token>
-#5 % <rest>
-\q_recursion_stop
-{%
-  \quark_if_recursion_tail_stop_do:nn{#3}{#1}
-  \token_if_parameter:NTF#2
-  {%
-    \token_if_group_begin:NTF#4
-    {%
-      \__erw_code_analyze:nn
-      {#1{#3=N}}
-      {#5}
-    }
-    {%
-      \__erw_code_analyze:nn
-      {#1{#3=n}}
-      {#4#5}
-    }
-  }
-  {%
-    \__erw_code_analyze:nn{#1}{#3#4#5}
-  }
-  \__erw_empty:w \q_recursion_stop
-}
-\cs_new:Npn
-\__erw_code_analyze:nn
-#1 % <accum>
-#2 % <first token>
-{%
-  \__erw_code_analyze:nw
-  {#1} % <accum>
-  #2 % <first token>
-  % <second token>
-  % <third token>
-  % <rest>
-  \q_recursion_stop
-}
-\cs_new:Npn
-\__erw_code_analyze_i:n
-#1 % <code-tokenlist>
-{%
-  \exp_args:Ne
-  \__erw_code_analyze:nn{\c_empty_tl}
-  {#1
-    \q_recursion_tail
-    \q_recursion_tail
-    \q_recursion_tail
-  }
-}
-\cs_new:Npn
-\__erw_code_analyze:n
-#1 %^^A <code>
-{%
-  \exp_args:Ne
-  \__erw_code_analyze_i:n
-  { \__erw_make_group_token_const{#1} }
-}
-\cs_generate_variant:Nn\__erw_code_analyze:n{e}
-\cs_new:Npn
-\erw_code_analyze:n
-#1 %^^A <code>
-{%
-  \erw_filter_uniq:ne
-  {erw_key_compare_p}
-  {%
-    \erw_merge_sort:nNe
-    {erw_key_compare_p}<
-    { \__erw_code_analyze:n{#1} }
-  }
-}
-\msg_new:nnn{__erw}
-{code-adjacent-parameters}
-{code~has~non~adjacent~parameters;~#1}
-\cs_new:Npn
-\__erw_signature:n
-#1 % <position signature>
-{%
-  \bool_if:nTF
-  { \erw_compare_recurse_p:nnN{#1}{erw_key_compare_p}< }
-  { \tl_map_function:nN{#1}\erw_keyval_value:n }
-  {%
-    \msg_error:nnn{__erw}
-    {code-adjacent-parameters}{#1}
-  }
-}
-\cs_generate_variant:Nn\__erw_signature:n{e}
-\cs_new:Npn
-\erw_signature:n
-#1 % <position signature>
-{%
-  \__erw_signature:e
-  { \erw_code_analyze:n{#1} }
-}
 \ProcessKeysOptions{__erw}
 \ExplSyntaxOff
 %% 

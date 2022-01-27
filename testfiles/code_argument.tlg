@@ -1,8 +1,0 @@
-This is a generated file for the l3build validation system.
-Don't change this file in any respect.
-============================================================
-TEST 1: \erw_argument:nn {3}{nNn}=={##1}##2{##3}
-============================================================
-TRUE
-============================================================
-(code_argument.aux)
