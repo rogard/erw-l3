@@ -5,12 +5,11 @@
 %</internal> 
 %<*readme> 
 -----------------------------------------------------------------
-##### erw-l3 --- Utilities for LaTeX3 programming
+##### erw-l3 --- Utilities based on LaTeX3, such as \merge_sort:nNn
 - Source repository: https://github.com/rogard/erw-l3
 - Released under the LaTeX Project Public License v1.3c or later
 - See http://www.latex-project.org/lppl.txt
 -----------------------------------------------------------------
-
 %</readme> 
 %<*internal> 
 \fi
@@ -24,8 +23,8 @@
 \keepsilent
 \askforoverwritefalse
 \preamble
-----------------------------------------------------------------------------
-erw-l3 --- Utilities for LaTeX3 programming
+-----------------------------------------------------------------------------
+erw-l3 ---  Utilities based on LaTeX3, such as 'merge sort' 
 Released under the LaTeX Project Public License v1.3c or later
 See http://www.latex-project.org/lppl.txt
 ----------------------------------------------------------------------------
@@ -33,7 +32,7 @@ See http://www.latex-project.org/lppl.txt
 \endpreamble
 \postamble
 
-Copyright (C) 2018-2020 by Erwann Rogard
+Copyright (C) 2020-2022 by Erwann Rogard
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License (LPPL), either
@@ -68,141 +67,79 @@ erw-l3.sty, and erw-l3.pdf.
 \expandafter\endgroup
 \fi
 %</internal> 
-%<package> \NeedsTeXFormat{LaTeX2e}[2020/02/02]
-%<package> \RequirePackage{etoolbox}[2019/09/21]
-%<package> \RequirePackage{l3keys2e}[2020/03/06]
-%<package> \RequirePackage{xparse}[2020/03/06]
+%<package> \NeedsTeXFormat{LaTeX2e}[2021-06-01]
+%<package> \RequirePackage{xparse, l3keys2e, xtemplate}[2021-06-01]
 %<package> \ProvidesExplPackage
-%<package> {erw-l3}                                                                            % Package name
-%<package> {2020/06/04}                                                                        % Release date
-%<package> {3.1}                                                                               % Release version
-%<package> {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
-% 
+%<package> {erw-l3}                                             % Package name
+%<package> {2022-01-13}                                        % Release date
+%<package> {4.0}                                               % Release version
+%<package> {erw-l3 --- Utilities based on LaTeX3, such as 'merge sort'  }       % Description
 %<*driver> 
-\RequirePackage{fvextra}%^^A\NB{done}{Warning:csquotes should be loaded after fvextra->nope}
-\documentclass[full]{l3doc}
-\listfiles
-\usepackage[english]{babel}
-\AtBeginDocument{\selectlanguage{english}}
-\usepackage{bookmark}
-\usepackage[T1]{fontenc}
-\usepackage{erw-l3}
-\usepackage{microtype}
-\usepackage{nolbreaks}
-\usepackage{tabto}
-\usepackage{tcolorbox}
-\tcbuselibrary{listings, breakable}
-\usepackage{xparse}
-\usepackage{hyperref}
+\documentclass%^^A[show-notes]
+% ^^A[draft]
+{l3doc}
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
-% ^^A\AtEndDocument { \PrintChanges \PrintIndex }
-\makeatletter
-\newcommand*{\docsetnameref}{\def\@currentlabelname}%https://tex.stackexchange.com/questions/537751
-\makeatother
+% ^^A\documentclass[full, show-notes]{l3doc}
+% ^^A \listfiles
+\usepackage{amsmath, bookmark, enumitem, mathtools, microtype, tcolorbox, xparse}
+\usepackage[french, german, english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[bibencoding=auto, backend=biber, sorting=ynt]{biblatex}
+\begin{filecontents*}{\jobname.bib}
+@manual{interface3,
+  title        = {The \LaTeX3 interfaces},
+  author       = {The \LaTeX3 Project Team},
+  year         = {2019},
+  note         = {\url{https://ctan.math.washington.edu/tex-archive/macros/latex/contrib/l3kernel/expl3.pdf}},
+  annote       = {} }
+\end{filecontents*}
+\addbibresource{\jobname.bib}
 \ExplSyntaxOn
-\tl_gset:Nn \partname {Part}
-\newenvironment{docabstract}[1]%https://latex.org/forum/viewtopic.php?t=12156
-{\renewcommand{\abstractname}{#1}\begin{abstract}}
-  {\end{abstract}}
-\cs_new:Nn \__erw_docu:n{\MakeUppercase #1}
-\ProvideDocumentCommand\DocPhantomSection{smmm}
-{
-  \leavevmode
-  \refstepcounter{#2}
-  \IfBooleanT{#1}
-  {
-    \addcontentsline{toc}{#2}{\protect\numberline{\use:c{the#2}}#3}
-  }
-  \docsetnameref{#3}
-  \label{#4}
-}
-\providecommand\docU[1]{\exp_args:Nx \__erw_docu:n{#1}}
-\ExplSyntaxOff
+% ^^A *** Sectioning
+\tl_gset:Nn \partname {Part}%^^A allows to test w/o babel
+% ^^A *** Msg
+\msg_new:nnn{__erw-l3_doc}{unknown}{~#1:#2~unknown}
+% ^^A *** Expressions
+\ProvideDocumentCommand{\docrule}{}{\texttt{$\rightarrow$}}
+\ProvideDocumentCommand{\docpipe}{}{\textbar}
+% ^^A *** L3 package
+\ProvideDocumentCommand{\docparam}{m}{\texttt{\#}\meta{#1}}
+% ^^A *** Lists
+\newlist{arab-inl}{enumerate*}{1}
+\setlist[arab-inl]{label=\arabic*)}
+\newlist{colon-inl}{itemize*}{1}
+\setlist[colon-inl]
+{ %^^Abefore=\noindent,
+  label={},
+  itemjoin={{; }},
+  after={{.}}}
+\newlist{descr}{description}{2}
+\setlist[descr]{nosep, align=right, itemindent=0pt, font=\sffamily\tiny}
 % ^^A Sort--->
-\providecommand\docarg[1]{\texttt{#1}} % fun[param] (macro) vs fun[arg] (eval)
-\providecommand\docargnoval{\c_novalue_tl}
-\providecommand\docassign[2]{#1~$\leftarrow$~#2}
-\providecommand\docccept[1]{\textit{#1}}
-\providecommand\doccceptargspec{arg~spec}
-\providecommand\doccceptbool{boolean}
-\providecommand\doccceptcont{container}
-\providecommand\doccceptclist{clist}
-\providecommand\doccceptcode{code}
-\providecommand\doccceptcsname{cs name}
-\providecommand\doccceptcsorcode{cs~or~code}
-\providecommand\doccceptcs{cs}
-\providecommand\doccceptempty{empty}
-\providecommand\doccceptgroup{local~group}
-\providecommand\doccceptint{integer}
-\providecommand\doccceptitems{items}
-\providecommand\doccceptkey{key}
-\providecommand\doccceptkvl{keyval~list}
-\providecommand\doccceptopt{option}
-\providecommand\doccceptpath{path}
-\providecommand\doccceptplaceh{placeholder}
-\providecommand\doccceptpre{preamble}
-\providecommand\doccceptprop{prop}
-\providecommand\doccceptsep{separators}
-\providecommand\doccceptseq{seq}
-\providecommand\docccepttlvar{tl~var}
-\providecommand\docccepttl{token~list}
-\providecommand\docccepttok{token}
-\providecommand\doccceptval{val}
-\providecommand\docconv[1]{convention~\autoref{conv:#1}}
-\providecommand\docdefaultfor{default~for~}
-\providecommand\docenvdoc{\env{document}}
-\providecommand\doceval[1]{\texttt{\char`\{}#1\texttt{\char`\}}}
-\providecommand\docexpand[2]{#1~$\rightarrow$~#2}
-\providecommand\docfillblank{\begin{minipage}[t]{\linewidth}\end{minipage}}
-\providecommand\docissuedont{Don't: }
-\providecommand\docissuedo{Do: }
-\providecommand\docissuesymp{Symptom: }
-\providecommand\doclist[1]{Listing~\ref{listing:#1}}
-\providecommand\docnb{\noindent\textbf{NB}:~}
-\providecommand\docoptd[1]{\texttt{\textless}#1\texttt{\textgreater}}
-\providecommand\docopte[2]{\texttt{#1}\doceval{#2}}
-\providecommand\docopto[1]{\texttt{[}#1\texttt{]}}
-\providecommand\docpipe{\textbar}
-\providecommand\doccs[1]{\texttt{\textbackslash{}#1}}
-\providecommand\docreflist[1]{Listing~\ref{listing:#1}}
-\providecommand\docsee{See:~}
-\providecommand\docstep[1]{step~\ref{step:#1}}
-\providecommand\doctip{\noindent\textbf{Tip}:~}
-\providecommand\docvers[2]{v#1.#2}
-\providecommand\docwarn{\noindent\textbf{Warning}:~}
-\providecommand\docxparsed[1][~argument]{`d'-type~#1}
-\providecommand\docxparsee[1][~argument]{`e'-type~#1}
-\providecommand\docxparsem[1][~argument]{`m'-type~#1}
-\providecommand\docxparseo[1][~argument]{`o'-type~#1}
-\providecommand\pkgkey{key$_{i}$}
-\providecommand\pkgobj[1]{object identified by #1}
-\providecommand\pkgoptex{\docarg{Expans}}
-\providecommand\pkgoptfi{\docarg{File}}
-\providecommand\pkgoptin{\docarg{Inner}}
-\providecommand\pkgoptions{kvl0}
-\providecommand\pkgoptou{\docarg{Outer}}
-\providecommand\pkgoptpad{\docarg{Default}}%default
-\providecommand\pkgoptpa{\docarg{Param}}
-\providecommand\pkgoptse{\docarg{Separ}}
-\providecommand\pkgoptwr{\docarg{Write}}
-\providecommand\pkgparap{\texttt{+}}%append
-\providecommand\pkgparex{\texttt{*}}%expand
-\providecommand\pkgparhe{tl$_{1}$}%head
-\providecommand\pkgparin{code$_{1}$}%inner
-\providecommand\pkgparkvlnxt{kvl$_{2}$}
-\providecommand\pkgparkvl{kvl$_{1}$}
-\providecommand\pkgparou{code$_{2}$}%outer
-\providecommand\pkgparpa{tl$_{2}$}%param
-\providecommand\pkgparsiii{tl$_{5}$}
-\providecommand\pkgparsii{tl$_{4}$}
-\providecommand\pkgparsi{tl$_{3}$}
-\providecommand\pkgpars{\Arg{\pkgparsi}\docpipe\Arg{\pkgparsi}\Arg{\pkgparsii}\docpipe\Arg{\pkgparsi}\Arg{\pkgparsii}\Arg{\pkgparsiii}}%separ
-\providecommand\pkgparta{tl$_{6}$}%tail
-\providecommand\pkgsep[1]{\Arg{#1}}
-\providecommand\pkgval{val$_{i}$}
+\ProvideDocumentCommand{\docdescrf}{m}{{\sffamily\bfseries\tiny{}#1}}
+\ProvideDocumentCommand{\docfillblank}{}{\begin{minipage}[t]{\linewidth}\end{minipage}}
 % ^^A Sort<---
+\ExplSyntaxOff
+% ^^A *** listing
+\tcbuselibrary{listings, breakable}
+\newtcblisting[auto counter]
+{listing}[2][]{
+  noparskip,
+  breakable,
+  colback=white,
+  colframe=black,
+  opacitybacktitle=.8,%
+  fonttitle=\bfseries,
+  title={Listing~\thetcbcounter. #1},
+  arc=0pt,
+  outer arc=0pt,
+  boxrule=1pt,
+  listing and text,
+  #2}
+\usepackage{erw-l3}
+\usepackage{hyperref} %^^A comes last
 \begin{document}
 \DocInput{\jobname.dtx}
 \end{document}
@@ -210,1578 +147,1107 @@ erw-l3.sty, and erw-l3.pdf.
 % \fi
 % 
 % \GetFileInfo{\jobname.sty}
-% \begin{documentation}
-%   \title{The \pkg{erw-l3} package \thanks{^^A
-%   This file describes version \fileversion, last revised \filedate.^^A
+% \title{The \pkg{erw-l3} package\thanks{^^A
+% This file describes version \fileversion, last revised \filedate.^^A
 % }^^A
 % }
-%   \author{Erwann Rogard\thanks{firstname dot lastname AusTria gmail dot com}}
-%   
-%   \date{Released \filedate}
-%   
-%   \maketitle
-%   \begingroup
-%   \selectlanguage{english}
-%   \begin{docabstract}{Abstract}
-%     Utilities for \LaTeX3 programming\cite{interface3}.
-%   \end{docabstract}
-%   \endgroup
-%   
-%   \tableofcontents 
-%   
-%   \part{Usage}\label{part:usage}
-%   ^^A   \VerbatimFootnotes
-%   
-%   \DocPhantomSection*{section}{Loading the package}{usage:load}
-%   \begin{function}{\usepackage}
-%     \begin{syntax}
-%       \cs{usepackage}\doceval{\pkg{\jobname}}
-%     \end{syntax}
-%     \begin{description}
-%     \item[Requirement]\docfillblank
-%       \begin{enumerate}
-%       \item \file{\jobname.sty} and its dependencies are in the path of the \LaTeX~engine. See \autoref{part:other}, \autoref{other:support}.
-%       \item Goes in the~\docccept{\doccceptpre}
-%       \end{enumerate}
-%     \end{description}  
-%   \end{function}
-%   
-%   \section{\textsf{cs}}\label{usage:cs}
-%   \begin{function}{\erw_cs_compose:NnN}
-%     \begin{syntax}
-%       \cs{erw_cs_compose:NnN}\meta{\doccceptcs}\Arg{\doccceptitems}\meta{\docccepttlvar}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_cs_identity:n}
-%     \begin{syntax}
-%       \cs{erw_cs_identity:n}\Arg{arg}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_cs_set_inline:Nn, \erw_cs_set_inline:cn, \erw_cs_gset_inline:Nn, \erw_cs_set_inline:cn}
-%     \begin{syntax}
-%       \cs{erw_cs_set_inline:Nn}\meta{\doccceptcs}\Arg{\doccceptcode}
-%     \end{syntax}
-%   \end{function}
-%   
-%   \section{\textsf{csint}}
-%   \begin{function}{\erw_csint:nn}
-%     \begin{syntax}
-%       \cs{erw_csint:nn}\Arg{\doccceptint}\Arg{arg}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_csint_name:n}
-%     \begin{syntax}
-%       \cs{erw_csint_name:n}\Arg{\doccceptint}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_csint_names_braced:, \erw_csint_names_braced:n, \erw_csint_names_braced:nnn}
-%   \end{function}
-%   \begin{function}{\erw_csint_new:n}
-%     \begin{syntax}
-%       \cs{erw_csint_new:n}\Arg{\doccceptint}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_csint_reset:}
-%     \begin{syntax}
-%       \cs{erw_csint_reset:}
-%     \end{syntax}
-%   \end{function}
-%   
-%   \section{\textsf{int}} \label{usage:int}
-%   \begin{function}{\erw_int_range:n, \erw_int_range:nn}
-%     \begin{syntax}
-%       \cs{erw_int_range:n}\Arg{\doccceptint}
-%     \end{syntax}
-%   \end{function}
-%   
-%   \section{\textsf{keys}} \label{usage:keys}
-%   \begin{function}{\erw_keyval_parse:NNNn}
-%     \begin{syntax}
-%       \cs{erw_keyval_parse:NNNn} \meta{\doccceptcont}\meta{\doccceptcs_1}\meta{\doccceptcs_2}\doceval{\doceval{\meta\docccepttl_1}\dots}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_keyval_error:Nn, \erw_keyval_error:Nnn}
-%     \begin{syntax}
-%       \cs{erw_keyval_error:Nn}\meta{\docccepttok}\Arg{\doccceptkvl}\\
-%       \cs{erw_keyval_error:Nnn}\meta{\docccepttok}\Arg{\doccceptclist}
-%     \end{syntax}
-%   \end{function}
-%   
-%   \section{\textsf{lambda}} \label{usage:lambda}
-%   \begin{function}{\erw_lambda:nnn}
-%     \begin{syntax}
-%       \cs{erw_lambda:nnn}\meta{\docccepttok}\Arg{\doccceptargspec}\Arg{\doccceptcode}
-%     \end{syntax}
-%   \end{function}
-%   
-%   \section{\textsf{option}}\label{usage:option}
-%   \begin{function}{\erw_option:n}
-%     \begin{syntax}
-%       \cs{erw_option:n}\Arg{\doccceptkvl}
-%     \end{syntax}
-%   \end{function}
-%   
-%   \DescribeOption{tl / fold_set_par}
-%   \DescribeOption{tl / fold_apply_par}
-%   \DescribeOption{sys / timestamp_delim}
-%   
-%   \section{\textsf{prop}}\label{usage:prop}
-%   All functions that modify a \meta{\doccceptprop} first create it if not exist.
-%   
-%   \begin{function}{\erw_prop_keyval_parse:NNNn}
-%     \begin{syntax}
-%       \cs{erw_prop_keyval_parse:NNNn}\meta{\doccceptprop}\meta{\doccceptcs_1}\meta{\doccceptcs_2}\Arg{\doccceptkvl}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_prop_map_item:NNN}
-%     \begin{syntax}
-%       \cs{erw_prop_map_item:NNN}\meta{\doccceptcs}\meta{\doccceptprop_1}\meta{\doccceptprop_2}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_prop_to_clist:Nn}
-%     \begin{syntax}
-%       \cs{erw_prop_to_clist:Nn}\meta{\doccceptprop}\doceval{\meta{\doccceptkey_1},\dots}
-%     \end{syntax}
-%   \end{function}
-%   
-%   
-%   \section{\textsf{seq}}\label{usage:seq}
-%   All functions that modify a \meta{\doccceptseq} first create it if not exists.
-%   \begin{function}{\erw_seq_fold:NN,\erw_seq_fold:cN}
-%     \begin{syntax}
-%       \cs{erw_seq_fold:NN}\Arg{\Arg{\doccceptcs_1}\dots}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_seq_put_right_clist:Nn, \erw_seq_put_right_clist:cn}
-%     \begin{syntax}
-%       \cs{erw_seq_put_right_clist:Nn}\meta{\doccceptseq}\Arg{\doccceptclist}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_seq_put_right_prop:NNn}
-%     \begin{syntax}
-%       \cs{erw_seq_put_right_prop:NNn}\meta{\doccceptseq}\meta{\doccceptprop}\Arg{\doccceptclist}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_seq_use:Nn}
-%     \begin{syntax}
-%       \cs{erw_seq_use:Nn}\meta{\doccceptseq}\Arg{\doccceptitems}
-%     \end{syntax}
-%     \begin{description}
-%     \item[Also see] \cite[Section 8 of \pkg{l3seq}]{interface3}
-%     \item[Semantics] \cs{seq_use:Nnnn}\meta{\doccceptseq}\nameref{usage:tl:sep}\Arg{\doccceptitems}
-%     \end{description}
-%   \end{function}
-%   
-%   \section{\textsf{sys}}\label{usage:sys}
-%   \begin{function}{\erw_sys_jobnametimestamp:nn,\erw_sys_jobnametimestamp:}
-%     \begin{syntax}
-%       \cs{erw_sys_jobnametimestamp:nn}\doceval{date\docpipe{}time\docpipe{}datetime}\doceval{10\docpipe{}16}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_sys_timestamp:nn,\erw_sys_timestamp:}
-%     \begin{syntax}
-%       \cs{erw_sys_timestamp:nn}\doceval{date\docpipe{}time\docpipe{}datetime}\doceval{10\docpipe{}16}
-%     \end{syntax}
-%     \begin{description}
-%     \item[Semantics] Timestamp in base 10 or 16
-%     \end{description}
-%   \end{function}
-%   \begin{function}{\erw_sys_timestamp_delimiter:}
-%     \begin{syntax}
-%       \cs{erw_sys_timestamp_delimiter:}
-%     \end{syntax}
-%   \end{function}
-%   
-%   \section{\textsf{tl}}
-%   All functions that modify a \meta{\docccepttl} first create it if not exist.
-%   \begin{function}{\erw_tl_append_item:nn}
-%     \begin{syntax}
-%       \cs{erw_tl_append_item:nn}\Arg{arg list}\Arg{arg}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_tl_fold:NN,  \erw_tl_fold:cN}
-%     \begin{syntax}
-%       \cs{erw_tl_fold:NN}\meta{\doccceptcs}\meta{\docccepttlvar}
-%     \end{syntax}
-%   \end{function}
-%   \DocPhantomSection{subsection}{\cs{erw_tl_gset_function:n}}{usage:tl:function}
-%   \begin{function}{\erw_tl_gset_function:N, \erw_tl_gset_function:n}
-%     \begin{syntax}
-%       \cs{erw_tl_gset_function:n}\Arg{\doccceptcode}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_tl_join:nn, \erw_tl_join:nnn, \erw_tl_join:nnnn, \erw_tl_join:nnnnn}
-%     \begin{syntax}
-%       \cs{erw_tl_join:nn}\Arg{\docccepttl_{1}}\Arg{\docccepttl_{2}}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_tl_last_item:n}
-%     \begin{syntax}
-%       \cs{erw_tl_last_item:n}\Arg{\docccepttl}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_tl_map:n, \erw_tl_map:Nn}
-%     \begin{syntax}
-%       \cs{erw_tl_map:n}\Arg{\doccceptitems}
-%     \end{syntax}
-%     \begin{description}
-%     \item[Semantics] Maps over \meta{\doccceptitems} using the internal function set by \nameref{usage:tl:function}
-%     \end{description}
-%   \end{function}
-%   \begin{function}{\erw_tl_map_inline:nn }
-%     \begin{syntax}
-%       \cs{erw_tl_map_inline:nn}\Arg{\doccceptcode}\Arg{\doccceptitems}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_tl_map_thread:Nn}
-%     \begin{syntax}
-%       \cs{erw_tl_math_thread:Nn}\meta{\doccceptcs}\doceval{\meta{\doccceptitems}}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_tl_map_thread_at:Nnn}
-%     \begin{syntax}
-%       \cs{erw_tl_math_thread_at:Nnn}\Arg{\doccceptint{}}\Arg{\docccepttl}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_tl_repeat:nn}
-%     \begin{syntax}
-%       \cs{erw_tl_repeat:nn}\Arg{\doccceptint{}}\Arg{\docccepttl}
-%     \end{syntax}
-%   \end{function}
-%   \begin{function}{\erw_tl_split:nnn, \erw_tl_split:nn}
-%     \begin{syntax}
-%       \cs{erw_tl_split:nn}\Arg{\doccceptitems}\Arg{delimiter}
-%     \end{syntax}
-%   \end{function}
-%   \DocPhantomSection{subsection}{\cs{erw_tl_separators:n}}{usage:tl:sep}
-%   \begin{function}{\erw_tl_separators:n}
-%     \begin{syntax}
-%       \cs{erw_tl_separators:n}\Arg{\doccceptitems}
-%     \end{syntax}
-%     \begin{description}
-%     \item[Semantics] According to the count of \meta{\doccceptitems}:
-%       \begin{enumerate}[label=\emph{\arabic*)}]
-%       \item \Arg{\docccepttl_1}\Arg{\docccepttl_1}\Arg{\docccepttl_1}
-%       \item \Arg{\docccepttl_1}\Arg{\docccepttl_2}\Arg{\docccepttl_1\docccepttl_2}
-%       \item \Arg{\docccepttl_1}\Arg{\docccepttl_2}\Arg{\docccepttl_3}
-%       \end{enumerate}
-%     \end{description}
-%   \end{function}
-%   \clearpage
+%   \begin{documentation}
+%     \maketitle
+%     \begin{abstract}
+%       Provides utilities based on \LaTeX3\cite{interface3}, such as \cs{erw_merge_sort:nNn}.
+%     \end{abstract}
+%   \tableofcontents
+%     \part{Usage}
+%     \section{\textsf{boilerplate}}
+%     \begin{function}{\erw_keys_set:n,\erw_keys_set:nn}
+%       \cs{erw_keys_set:n}\Arg{keyval list}
+%     \end{function}
+%     \begin{function}[EXP]
+%       {\erw_identity:n,
+%       \erw_int_incr:n,
+%       \erw_swap:nn,
+%       \erw_swap:ne,
+%       \erw_name_signature_cs:N}
+%     \end{function}
+%     \section{\textsf{quark}}
+%     \begin{function}
+%       {\erw_all_q:w,
+%       \erw_remove_first_q:w,
+%       \erw_first_q:w,
+%       \erw_remove_last_q:w,
+%       \erw_last_q:w}
+%       \begin{syntax}
+%         \cs{erw_remove_last_q:w}\meta{tokenlist} \cs[no-index]{q_recursion_tail}\cs[no-index]{q_recursion_stop}
+%       \end{syntax}
+%     \end{function}
+%     \section{\textsf{predicate}}
+%     \begin{function}{new_compare_p}
+%       \cs{erw_keys_set:n}|{ new_compare_p = |\Arg{name}\Arg{signature}\Arg{predicate}| }|
+%       \begin{descr}
+%       \item[Instance]\docfillblank
+%         \begin{descr}
+%         \item[erw_compare_p:nNnNn]
+%         \item[erw_compare_recurse_p:nnN]
+%         \item[erw_int_incr_p:nn]
+%         \item[erw_key_compare_p:nNn]
+%         \item[erw_key_compare_p:n]
+%         \end{descr}
+%       \end{descr}
+%     \end{function}
+% \section{\textsf{keyval}}
+% \begin{function}
+%   { \erw_keyval_key:n,
+%   \erw_keyval_value:n,
+%   \erw_keyval:nn,
+%   \erw_keyval_dispatch:NNn,
+%   \erw_keyval_dispatch_protected:NNn }
+% \end{function}
+% \section{\textsf{op's on lists}}
+% \begin{function}
+%   {\erw_remove_first:n,
+%   \erw_remove_last:n,
+%   \erw_first:n,
+%   \erw_last:n,
+%   \erw_adjacent_insert:nn,
+%   \erw_adjacent_insert:en}
+% \end{function}
+% \section{\textsf{algo}}
+% \begin{function}
+%   {\erw_split_even:n,
+%   \erw_split_even:e,
+%   \erw_merge_sort:nNn,
+%   \thread_sort:nnNn,
+%   \erw_filter_uniq:nn,
+%   \erw_filter_uniq:n
+% }
+%   \begin{syntax}
+%     \cs{erw_thread_sort:nnNn}\Arg{first sorted list}\Arg{second sorted list}\Arg{compare predicate name}|<|\docpipe|>|
+%     \cs{erw_merge_sort:nNn}\Arg{compare predicate name}|<|\docpipe|>|\Arg{unsorted list}
+%     \cs{erw_filter_uniq:nn}\Arg{compare predicate}\Arg{tokenlist}
+%     \cs{erw_filter_uniq:n}\Arg{ascending intergers}
+%   \end{syntax}
+% \end{function}
+% \section{\textsf{code}}
+% \begin{function}{\erw_parameter:n,
+%   \erw_parameter:nn,\argument:nn,
+%   \erw_code_analyze:n,
+%   \erw_signature:n}
+%   \begin{syntax}
+%     \cs{erw_parameter:n}\Arg{arity}
+%     \cs{erw_parameter:nn}\Arg{start pos}\Arg{arity}
+%     \cs{erw_argument:nn}\Arg{start pos}\Arg{signature}
+%   \end{syntax}
+% \end{function}
 %
-%   \part{Listing}\label{part:listing}
-%   
-%   \newtcblisting[auto counter]
-%   {listing}[2][]{
-%   noparskip,
-%   breakable,
-%   colback=white,
-%   colframe=black,
-%   opacitybacktitle=.8,%
-%   fonttitle=\bfseries,
-%   title={Listing~\thetcbcounter. #1},
-%   arc=0pt,
-%   outer arc=0pt,
-%   boxrule=1pt,
-%   listing and text,
-%   #2}
-%   
-%   \section{\textsf{constants}}
-%   \phantomsection\addcontentsline{toc}{subsection}
-%   {\ref{listing:const}.}
-%   \iffalse
-%<*guardlisting>   
-%   \fi
-\begin{listing}[]
-  {label=listing:const, listing and text}
-  \ExplSyntaxOn
-  \seq_const_from_clist:Nn \foo_seq{ A, B, C } 
-  \prop_const_from_keyval:Nn \foo_prop{ A = a, B = b, C = c }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \section{\textsf{cs}}
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:cs:compose}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:cs:compose, listing and text}
-  \ExplSyntaxOn
-  \cs_set:Nn \__foo:n { f(#1) }
-  \cs_set:Nn \__bar:n { g[#1] }
-  \cs_set:Nn \__baz:n { h\{#1\} }
-  \tl_set:Nn \l_tmpa_tl{ X }
-  \erw_cs_compose:NnN \erw_tl_fold:NN{ {\__baz:n}{\__bar:n}{\__foo:n} }\l_tmpa_tl
-  \tl_use:N \l_tmpa_tl
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:cs:compose:c}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:cs:compose:c, listing and text}
-  \ExplSyntaxOn
-  \tl_map_function:nN { {f(#1)} {g[#1]} {h\{#1\}} }\erw_csint_new:n
-  \tl_set:Nn \l_tmpa_tl{X}
-  \exp_args:NNx
-  \erw_cs_compose:NnN \erw_tl_fold:cN
-  {\erw_csint_names_braced:nnn{ 1 }{ 1 }{ 3 }}
-  \l_tmpa_tl
-  \tl_use:N \l_tmpa_tl
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \section{\textsf{csint}}
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:csint}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:csint, listing and text}
-  \ExplSyntaxOn
-  \cs_set:Nn\__foo:n{ f(#1) }
-  \cs_set:Nn\__baz:n{ h\{#1\} }
-  \tl_map_function:nN { {\__foo:n} {g[#1]} {\__baz:n} }\erw_csint_new:n
-  \erw_csint:nn{1}{X},\  
-  \erw_csint:nn{2}{X},\  
-  \erw_csint:nn{3}{X}.
-  \erw_csint_reset:
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \section{\textsf{int}}
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:int:range}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:int:range, listing and text}
-  \ExplSyntaxOn
-  \erw_int_range:nn{ 2 }{ 5 }\\
-  \erw_int_range:n{ 5 }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \section{\textsf{lambda}}
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:lambda}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:lambda, listing and text}
-  \ExplSyntaxOn
-  \tl_set:Nn \l_tmpa_tl
-  {
-    \erw_lambda:nnn \DeclareDocumentCommand{ m }{ Hello,~#1! }
-  }
-  \l_tmpa_tl{ world }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \section{\textsf{prop}}
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:prop:map}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:prop:map, listing and text}
-  \ExplSyntaxOn
-  \erw_prop_map_item:NNN \prop_put:Nnx \baz_prop \foo_prop
-  \prop_if_exist:NTF\baz_prop{T}{F}\\
-  \prop_item:Nn \baz_prop{ A }
-  ,\prop_item:Nn \baz_prop{ B }
-  ,\prop_item:Nn \baz_prop{ C }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:prop:put:keyval}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:prop:put:keyval, listing and text}
-  \ExplSyntaxOn
-  \erw_prop_keyval_parse:NNNn
-  \foo_prop
-  \erw_keyval_error:Nn
-  \prop_put:Nnn{ X = x, Y = y, Z = z}
-  \prop_item:Nn \foo_prop{ X }
-  ,\prop_item:Nn \foo_prop{ Y }
-  ,\prop_item:Nn \foo_prop{ Z }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}{\ref{listing:prop:clist}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:prop:clist, listing and text}
-  \ExplSyntaxOn
-  \erw_prop_to_clist:Nn \foo_prop{ A, B, C }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \section{\textsf{seq}}
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:seq:fold}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:seq:fold, listing and text}
-  \ExplSyntaxOn
-  \cs_set:Nn \__foo:n { f(#1) }
-  \cs_set:Nn \__bar:n { g[#1] }
-  \cs_set:Nn \__baz:n { h\{#1\} }
-  \seq_new:N \l_tmp_seq
-  \seq_put_right:Nn \l_tmp_seq{X}
-  \erw_cs_compose:NnN \erw_seq_fold:NN{ {\__baz:n}{\__bar:n}{\__foo:n} }\l_tmp_seq
-  \seq_item:Nn \l_tmp_seq{ 1 }\\
-  \seq_item:Nn \l_tmp_seq{ 2 }\\
-  \seq_item:Nn \l_tmp_seq{ 3 }\\
-  \seq_item:Nn \l_tmp_seq{ 4 }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:seq:fold:c}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:seq:fold:c, listing and text}
-  \ExplSyntaxOn  
-  \cs_set:Nn \__foo:n { f(#1) }
-  \cs_set:Nn \__bar:n { g[#1] }
-  \cs_set:Nn \__baz:n { h\{#1\} }
-  \seq_put_right:Nn \l_tmpa_seq{X}
-  \erw_cs_compose:NnN \erw_seq_fold:cN{ {__baz:n}{__bar:n}{__foo:n} }\l_tmpa_seq
-  \seq_item:Nn \l_tmpa_seq{ 1 }\\
-  \seq_item:Nn \l_tmpa_seq{ 2 }\\
-  \seq_item:Nn \l_tmpa_seq{ 3 }\\
-  \seq_item:Nn \l_tmpa_seq{ 4 }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:seq:prop}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:seq:prop, listing and text}
-  \ExplSyntaxOn
-  \erw_seq_put_right_prop:NNn \bar_seq\foo_prop{ A, B, C }
-  \seq_use:Nn\bar_seq{,}
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:seq:use}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:seq:use, listing and text}
-  \ExplSyntaxOn
-  \seq_put_right:Nn\l_tmpa_seq{ A }
-  \seq_put_right:Nn\l_tmpa_seq{ B }
-  \erw_seq_use:Nn \l_tmpa_seq{ {~and~} }\\
-  \erw_seq_use:Nn \l_tmpa_seq{ {,\ }{~and~} }\\
-  \erw_seq_use:Nn \l_tmpa_seq{ {~and~}{,\ }{,~and~} }\\[1em]
-  \seq_put_right:Nn\l_tmpa_seq{ C }
-  \erw_seq_use:Nn \l_tmpa_seq{ {~and~} }\\
-  \erw_seq_use:Nn \l_tmpa_seq{ {,\ }{and~} }\\
-  \erw_seq_use:Nn \l_tmpa_seq{ {~and~}{,\ }{,~and~} }\\
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \section{\textsf{sys}}
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:sys:alone}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:sys:alone, listing and text}
-  \ExplSyntaxOn
-  \noindent\erw_sys_timestamp:nn{date}{10}{-}
-  \noindent\erw_sys_timestamp:nn{time}{10}\\
-  \noindent\erw_sys_timestamp:nn{datetime}{10}\\
-  \erw_sys_timestamp:nn{date}{16}{\%}
-  \erw_sys_timestamp:nn{time}{16}\\
-  \erw_option:n{ sys / timestamp_delim = {\%} }
-  \erw_sys_timestamp:nn{datetime}{16}\\
-  \erw_sys_jobnametimestamp:
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:sys:iow}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:sys:iow, listing and text}
-  \ExplSyntaxOn
-  \erw_option:n{ sys / timestamp_delim = \c_empty_tl }
-  \iow_new:N \foo_iow
-  \tl_set:Nx \foo_dec { \erw_sys_timestamp:nn{datetime}{10} }
-  \tl_set:Nx \foo_hex { \erw_sys_timestamp: }
-  \iow_open:Nn \foo_iow{ \foo_hex }
-  \iow_now:Nn\foo_iow{ Hello,\ world! }
-  \iow_close:N \foo_iow
-  D:\foo_dec\\
-  \file_timestamp:n{ \foo_hex }\\
-  \file_input:n{ \foo_hex }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \section{\textsf{tl}}
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:tl:fold}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:tl:fold, listing and text}
-  \ExplSyntaxOn
-  \cs_set:Nn \__foo:n { f(#1) }
-  \tl_set:Nn \l_tmpa_tl{ X }
-  \erw_tl_fold:NN\__foo:n\l_tmpa_tl
-  \l_tmpa_tl\\
-  \cs_set:Nn \__bar:n { g[#1] }
-  \erw_tl_fold:cN {__bar:n}\l_tmpa_tl
-  \l_tmpa_tl
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:tl:repeat}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:tl:repeat, listing and text}
-  \ExplSyntaxOn
-  \erw_tl_repeat:nn{ 3 }{ x }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:tl:split}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:tl:split, listing and text}
-  \ExplSyntaxOn
-  \erw_tl_split:nn{ {a} {b} {c} }{ == }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:tl:map}.}
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:tl:map, listing and text}
-  \ExplSyntaxOn
-  \cs_set:Nn \__foo:n { (#1) }
-  \erw_tl_map:Nn \__foo:n{ {a}{b}{c} }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:tl:map:thread}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:tl:map:thread, listing and text}
-  \ExplSyntaxOn
-  \cs_set:Nn \__foo:n { (#1) }
-  \erw_tl_map_thread:Nn \__foo:n
-  { 
-    { {a}{b}{c}{d}{e}{f} }
-  }\\
-  \cs_set:Nn\__foo:nn { (#1+#2) }
-  \erw_tl_map_thread:Nn \__foo:nn
-  { 
-    { {a}{b}{c}{d}{e}{f} }
-    { {A}{B}{C}{D}{E}{F} }
-  }\\
-  \cs_set:Nn \__foo:nnn { (#1+#2+#3) }
-  \erw_tl_map_thread:Nn \__foo:nnn
-  { 
-    { {a}{b}{c}{d}{e}{f} }
-    { {A}{B}{C}{D}{E}{F} }
-    { {k}{l}{m}{n}{o}{p} }
-  }\\
-  \cs_set:Nn \__foo:nnnn { (#1+#2+#3+#4) }
-  \erw_tl_map_thread:Nn \__foo:nnnn
-  { 
-    { {a}{b}{c}{d}{e}{f} }
-    { {A}{B}{C}{D}{E}{F} }
-    { {k}{l}{m}{n}{o}{p} }
-    { {K}{L}{M}{N}{O}{P} }
-  }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% \phantomsection\addcontentsline{toc}{subsection}
-% {\ref{listing:tl:map:thread:at}. }
-% \iffalse
-%<*guardlisting> 
-% \fi
-\begin{listing}[]
-  {label=listing:tl:map:thread:at, listing and text}
-  \ExplSyntaxOn
-  \cs_set:Nn\__foo:nn { (#1+#2) }
-  \erw_tl_map_thread_at:Nnn \__foo:nn{ 2 }
-  { 
-    { {a}{b}{c}{d}{e}{f} }
-    { {A}{B}{C}{D}{E}{F} }
-  }
-  \ExplSyntaxOff
-\end{listing}
-% \iffalse
-%</guardlisting> 
-% \fi
-% 
-% \clearpage
-% \part{Other}\label{part:other}
-% 
-% \section{Acknowledgment}\label{other:acknowl} 
-% 
-% This work has benefited from Q\&A's from the \LaTeX community\cite{user-erw}. \nameref{usage:lambda} originally appeared in \cite{a-188053}.
-% 
-% \section{Install}\label{other:install}
-% \begin{enumerate}[label=\emph{\arabic*)}]
-% \item Compile \file{\jobname.dtx} (under Unix, \texttt{\$tex timestamp.dtx})
-% \item Put the generated \file{\jobname.sty} in the search path of the \LaTeX engine
-% \end{enumerate}
-% 
+% \part{Other}
+% \section{Bibliograhy}
+% \printbibliography[heading=none]
 % \section{Support}\label{other:support}
 % 
-% This package is available from \url{https://www.ctan.org/pkg/\jobname} and \url{https://github.com/rogard/\jobname}.
-% 
-% \subsection{Platform}
-% \begin{enumerate}[label=\emph{\roman*)}]
-% \item 
-%   ^^A uname -a
-%   \begin{Verbatim}[breaklines=true]
-%     Linux laptop 4.15.0-20-generic #21-Ubuntu SMP Tue Apr 24 06:16:15 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
-%   \end{Verbatim}
-%   \label{plat:lin}
-% \end{enumerate}
-% 
-% \subsection{Engine}
-% \begin{enumerate}[label=\emph{\alph*)}]
-% \item 
-%   \begin{Verbatim}[breaklines=true]
-%     pdfTeX 3.14159265-2.6-1.40.20 (TeX Live 2019)
-%   \end{Verbatim}
-%   \label{eng:tlxviiii:pdf}
-% \item 
-%   \begin{Verbatim}[breaklines=true]
-%     pdfTeX 3.14159265-2.6-1.40.21 (TeX Live 2020)
-%   \end{Verbatim}
-%   \label{eng:tlxx:pdf}
-% \item
-%   \begin{Verbatim}[breaklines=true]
-%     LuaHBTeX, Version 1.12.0 (TeX Live 2020)
-%   \end{Verbatim}
-%   \label{eng:tlxx:lua}
-% \item
-%   \begin{Verbatim}[breaklines=true]
-%     XeTeX 3.14159265-2.6-0.999992 (TeX Live 2020)
-%   \end{Verbatim}
-%   \label{eng:tlxx:xe}
-% \end{enumerate}
-% 
-% \subsection{Results}
-% 
-% \begin{enumerate}[label=\emph{\arabic*)}]
-% \item \pkg{\jobname} \docvers{2}{0} compiles satisfactorily on platform \ref{plat:lin} and engines \ref{eng:tlxx:pdf},  \ref{eng:tlxx:lua}, and \ref{eng:tlxx:xe}
-% \end{enumerate}
-% 
-% \DocPhantomSection*{section}{References}{other:bib}
-% \begin{thebibliography}{1}
-% \bibitem{interface3} The \LaTeX3 Project Team {\em The \LaTeX3 interfaces}, 2019,
-%   \url{http://ftp.math.purdue.edu/mirrors/ctan.org/macros/latex/contrib/l3kernel/interface3.pdf}
-% \bibitem{l3build} The \LaTeX3 Project Team {\em The \pkg{l3build} package}, 2020,
-%   \url{http://mirror.utexas.edu/ctan/macros/latex/contrib/l3build/l3build.pdf}
-% \bibitem{a-188053} \href{https://tex.stackexchange.com/users/17423/sean-allred}{@{}sean-allred}'s answer to
-%   ``How to create lambda expressions?'', \url{https://tex.stackexchange.com/a/188053/112708}
-% \bibitem{user-erw} \url{https://tex.stackexchange.com/users/112708/erwann?tab=questions}
-% \end{thebibliography}
+% This package is available from \url{https://github.com/rogard/erw-l3}.
+% \changes{v4.0}{2022/01/27}
+%{Replacing 3.2 altogether (not used by any packages but mine that have been updated accordingly} 
 %
-% \section{To do}
-%
-% \begin{enumerate}[label=\emph{\alph*)}]
-% \item Regression testing using \cite[Section 3.2—Specifying expectations]{l3build}. \label{todo:regtest}
-% \end{enumerate}
-% Also see:
-% \begin{enumerate}[label=\emph{\alph*)}]
-% \setcounter{enumi}{1}
-% \item \env{NOTE} or \cs{NB} tagged \texttt{abandon\docpipe{}done\docpipe{}todo} inside \jobname|.dtx|
-% \end{enumerate}
-% 
-% \changes{\docvers{1}{1}}{2018/05/23}{Brought all the modules under one file; renamed \pkg{l3erw} to \pkg{erw-l3};}
-% \changes{\docvers{1}{1}}{2018/05/23}{\cs{numbrdcsnew} changed to \cs{newnumbrdcs} and made 'disambiguable'}
-% \changes{\docvers{1}{1}}{2018/05/23}{\pkg{disambig}/backend: changes to the key, added \cs{ProcessPackageKeysOption};}
-% \changes{\docvers{1}{2}}{2018/06/21}{Add: \cs{erw_items_to}}
-% \changes{\docvers{1}{2}}{2018/06/21}{Add: \cs{erw_last_item}}
-% \changes{\docvers{1}{2}}{2018/06/21}{Add: \cs{erw_repeat}}
-% \changes{\docvers{1}{2}}{2018/06/21}{Add: \cs{erw_split}}
-% \changes{\docvers{1}{2}}{2018/06/21}{Add: \cs{map_thread}}
-% \changes{\docvers{1}{2}}{2018/06/21}{Front end cmds no longer generated with module \pkg{disambig}; Option of the same name deleted;}
-% \changes{\docvers{1}{2}}{2018/06/21}{Rearrange: the doc to clearly separate frontend from backend}
-% \changes{\docvers{1}{2}}{2018/06/21}{Modify: \cs{erw_compose}, order in which functions composed ($g\circ f$ means $f$ comes before $g$)}
-% \changes{\docvers{1}{2}}{2018/06/21}{\pkg{disambig}: pushed the code inside \cs{keys_define};}
-% \changes{\docvers{1}{2}}{2018/06/21}{\pkg{disambig}: \cs{disambignewcmd} no longer takes a token name as arg, rather a token.}
-% \changes{\docvers{1}{3}}{2018/06/22}{Replace: versioning, should have been 0.1.2}
-% \changes{\docvers{1}{4}}{2018/06/22}{Add: \cs{erw_accum}}
-% \changes{\docvers{1}{4}}{2018/06/22}{Add: \cs{erw_int_range}}
-% \changes{\docvers{1}{4}}{2018/06/22}{Add: \cs{erw_is_matrix} (to check arg of \cs{erw_tl_map_thread:Nn})}
-% \changes{\docvers{1}{4}}{2018/06/22}{Add: \cs{erw_merge}}
-% \changes{\docvers{1}{4}}{2018/06/22}{Add: \cs{erw_set_map_inline}}
-% \changes{\docvers{1}{4}}{2018/06/22}{Add: \cs{erw_set_map}}
-% \changes{\docvers{1}{4}}{2018/06/22}{Remove: \doccs{erw_items_to} (redundant with \cs{tl_range:nnn})}
-% \changes{\docvers{1}{5}}{2019/12/12}{Modify: source repository}
-% \changes{\docvers{1}{5}}{2019/12/12}{Rearrange: frontend/backend sections}
-% \changes{\docvers{1}{5}}{2019/12/12}{Remove: \pkg{disambig}}
-% \changes{\docvers{1}{5}}{2019/12/12}{Split Section Preliminaries into Conventions and Requirement.}
-% \changes{\docvers{1}{6}}{2020/02/05}{Fix: critical bug preventing \pkg{erw-l3} from working without explicit inclusion of \pkg{expl3}}
-% \changes{\docvers{1}{7}}{2020/04/24}{Add: \nameref{impl:option}}
-% \changes{\docvers{1}{7}}{2020/04/24}{Add: \nameref{impl:sys}}
-% \changes{\docvers{1}{7}}{2020/04/24}{Move: \cs{erw_fold_apply_par:n}}
-% \changes{\docvers{1}{7}}{2020/04/24}{Move: \cs{erw_fold_set_par:n}}
-% \changes{\docvers{1}{7}}{2020/04/24}{(deleted)}
-% \changes{\docvers{1}{7}}{2020/04/24}{Remove: \doccs{numbrdcsnew}, \doccs{numbrdcs}}
-% \changes{\docvers{1}{7}}{2020/04/24}{Rename: variables with suffix |tl| get 'private mode' prexif in pl. of |\__erw| }
-% \changes{\docvers{1}{7}}{2020/04/24}{Rename: |csnum| to |csint| }
-% \changes{\docvers{1}{7}}{2020/04/24}{Rename: |numbrd_cs| to |csnum| }
-% \changes{\docvers{1}{7}}{2020/04/24}{Replace: listing's implem with that of \pkg{tocloft}}
-% \changes{\docvers{1}{7}}{2020/04/24}{Replace: vers. numb. from 3 to 2 digits}
-% \changes{\docvers{1}{8}}{2020/04/24}{Add: \env{function} for all frontend functions.}
-% \changes{\docvers{1}{8}}{2020/04/30}{Remove: \doccs{erw_cs_set_eq:NN} and variants}
-% \changes{\docvers{1}{8}}{2020/04/30}{Remove: \doccs{erw_is_matrix:n} (predicate must be expandable)}
-% \changes{\docvers{1}{8}}{2020/04/30}{Rename: all cs prefixes to agree with heading under which they come, e.g. \cs{erw_identity:n} by \cs{erw_cs_identity:n} }
-% \changes{\docvers{1}{8}}{2020/04/30}{(deleted)}
-% \changes{\docvers{1}{8}}{2020/04/30}{Replace: \cs{erw_seq_fold:NN} by \cs{erw_oper_fold_seq:NN} and likewise for variants}
-% \changes{\docvers{1}{8}}{2020/04/30}{(deleted)}
-% \changes{\docvers{1}{9}}{2020/05/01}{Add: \cs{erw_sys_timestamp_delimiter:}}
-% \changes{\docvers{1}{9}}{2020/05/01}{Add: \cs{erw_tl_join:nn} and variants}
-% \changes{\docvers{1}{9}}{2020/05/01}{Rename: \cs{erw_append_arg:nn} to \cs{erw_tl_append_item:nn}}
-% \changes{\docvers{1}{9}}{2020/05/01}{Rename: \cs{erw_oper_gset_function:N} to \cs{erw_tl_gset_function:N} (and variants)}
-% \changes{\docvers{1}{9}}{2020/05/01}{Rename: prefix |timestamp| by |sys|}
-% \changes{\docvers{2}{0}}{2020/05/01}{Add: \cs{erw_jobnametimestamp:nn} and variants}
-% \changes{\docvers{2}{0}}{2020/05/01}{Remove: \doccs{merge:nn} (redundant with \cs{erw_join:nn})}
-% \changes{\docvers{2}{0}}{2020/05/01}{Rename: \docvers{0}{0} to \docvers{1}{0}, etc.}
-% \changes{\docvers{2}{1}}{2020/05/09}{Add: \cs{erw_prop_to_clist:Nn}, \cs{erw_prop_put:NN}, and \cs{erw_prop_put:Nnn}}
-% \changes{\docvers{2}{1}}{2020/05/09}{Add: \cs{erw_seq_from_clist:Nn}, \cs{erw_seq_from_prop:NNn}, and \cs{erw_seq_put_right:Nn}}
-% \changes{\docvers{2}{1}}{2020/05/09}{(delete)}
-% \changes{\docvers{2}{1}}{2020/05/09}{Replace: \cs{erw_seq_fold:NN} by \cs{__erw_seq_fold:NN}}
-% \changes{\docvers{2}{2}}{2020/05/18}{Add: \cs{erw_seq_use:Nn}}
-% \changes{\docvers{2}{2}}{2020/05/18}{Add: \cs{erw_tl_separators:n}}
-% \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{csnset}}
-% \changes{\docvers{2}{3}}{2020/05/20}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{keyval/\dots}}
-% \changes{\docvers{2}{3}}{2020/05/20}{Fix: 'mark as private code' (hiherto unnoticed)}
-% \changes{\docvers{2}{3}}{2020/05/20}{Modify: behavior of \cs{erw_seq_use:Nn}}
-% \changes{\docvers{2}{3}}{2020/05/20}{Move: all \cs{msg_new:Nnnn} statements under same heading}
-% \changes{\docvers{2}{4}}{2020/05/21}{Add: \cs{erw_lambda:nnn}}
-% \changes{\docvers{2}{5}}{2020/05/22}{Add: \cs{erw_prop_put_keyval:Nn}}
-% \changes{\docvers{2}{6}}{2020/05/22}{Add: \cs{erw_keyval_parse:NNNn}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{erw_cs_error:nn}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{erw_cs_error:n}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{erw_prop_keyval_parse:NNNn}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{erw_prop_map_item:NNN} }
-% \changes{\docvers{2}{6}}{2020/05/23}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{varnset}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \doccs{erw_cs_apply}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \doccs{erw_prop_put:NN} }
-% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \doccs{erw_prop_put_keyval:Nn} }
-% \changes{\docvers{2}{6}}{2020/05/23}{Remove: \cs{msg_new:nnn}, module \texttt{erw}, messages: \texttt{keyval/\dots}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Rename: \textsf{basics} to \nameref{usage:cs}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Replace: \cs{erw_seq_from_clist} by \cs{erw_seq_put_right_clist}}
-% \changes{\docvers{2}{6}}{2020/05/23}{Replace: \cs{erw_seq_from_prop} by \cs{erw_seq_put_right_prop}}
-% \changes{\docvers{2}{7}}{2020/05/23}{Remove: \doccs{erw_cs_error:n} }
-% \changes{\docvers{2}{7}}{2020/05/23}{Remove: \doccs{erw_cs_error:nn} }
-% \changes{\docvers{2}{7}}{2020/05/23}{Add: \cs{erw_keyval_error:Nn} }
-% \changes{\docvers{2}{7}}{2020/05/23}{Add: \cs{erw_keyval_error:Nnn} }
-% \changes{\docvers{2}{8}}{2020/05/24}{Add: \cs{msg_new:nnn}\doceval{erw}\doceval{notset}}
-% \changes{\docvers{2}{8}}{2020/05/24}{Remove: \cs{msg_new:nnn}\doceval{erw}\doceval{csnset}}
-% \changes{\docvers{2}{8}}{2020/05/24}{Remove: \cs{msg_new:nnn}\doceval{erw}\doceval{varnset}}
-% \changes{\docvers{2}{9}}{2020/05/27}{Add: \cs{erw_seq_fold:NN}, \cs{erw_seq_fold:cN}}
-% \changes{\docvers{2}{9}}{2020/05/27}{Add: \cs{erw_cs_compose:NnN}}
-% \changes{\docvers{2}{9}}{2020/05/27}{Remove: \doccs{erw_seq_compose:nN},\doccs{erw_seq_compose_c:nN},\doccs{erw_seq_compose_vers:nN}}
-% \changes{\docvers{2}{9}}{2020/05/27}{Remove:
-% \doccs{erw_tl_compose:nN},
-% \doccs{erw_tl_compose:Nnn},
-% \doccs{erw_tl_compose:nn},
-% \doccs{erw_tl_compose_c:nN},
-% \doccs{erw_tl_compose_c:nn},
-% \doccs{erw_tl_compose_vers:nN},
-% \doccs{erw_tl_compose_vers:nn}
-% }
-% \changes{\docvers{2}{9}}{2020/05/27}{Rename: \texttt{oper / fold_set_par} to \texttt{tl / fold_set_par} }
-% \changes{\docvers{2}{9}}{2020/05/27}{Rename: \texttt{oper / fold_apply_par} to \texttt{tl / fold_apply_par} }
-% \changes{\docvers{3}{0}}{2020/06/03}{Fix: warning \pkg{csquotes}+\pkg{fvextra} }
-% \changes{\docvers{3}{1}}{2020/06/04}{Miscellaneous}
-% \PrintChanges
-% \PrintIndex
-% \clearpage
 % \StopEventually{
-% ^^A   \PrintChanges
-% ^^A   \PrintIndex
+% \clearpage
+% \PrintChanges
+% \PrintIndex %^^A https://tex.stackexchange.com/q/610349/112708
 % }
-% \end{documentation}
-% \begin{implementation}
-%   \part{Implementation}\label{part:impl}
-%   
-%   \section{Opening}
+%^^A%
+%   \end{documentation}
+%   \begin{implementation}
+%     \part{Implementation}\label{part:impl}
 %    \begin{macrocode}
 %<*package>      
 %<@@=erw>      
 %      \ExplSyntaxOn
 %    \end{macrocode}
-% \section{\textsf{cs}}
-% \label{impl:cs}
-% \subsection{backend}
+% \section{\textsf{kernel}}
 %    \begin{macrocode}
-\cs_new:Nn \@@_cs_name:N
-{
-  \exp_last_unbraced:Nf \use_i:nnn {\cs_split_function:N #1}
-}
+\cs_generate_variant:Nn\int_compare_p:nNn{eNe}
+\cs_generate_variant:Nn\int_eval:n{e}
+\cs_generate_variant:Nn\prg_new_conditional:Nnn{c}
+\cs_generate_variant:Nn\prg_replicate:nn{e}
+\cs_generate_variant:Nn\regex_gset:Nn{c}
+\cs_generate_variant:Nn\regex_log:N{c}
+\cs_generate_variant:Nn\regex_match:NnTF{c}
+\cs_generate_variant:Nn\tl_to_str:n{e}
+\cs_generate_variant:Nn\prop_put:Nnn{Nne}
 %    \end{macrocode}
-% \subsection{frontend}\label{basics:frontend}
-% \begin{macro}{\erw_cs_compose:NnN}
+% \section{\textsf{boilerplate}}
 %    \begin{macrocode}
-\cs_new:Nn \erw_cs_compose:NnN 
-{
-  \erw_cs_set_inline:Nn \g@@_tl_function:n
-  {
-    #1{##1}#3
-  }
-  \exp_args:Nf\erw_tl_map:n
-  {
-    \tl_reverse:n{#2}
-  }
-}
+\msg_new:nnnn{@@}{text}{text~is~not~loaded}{load~amsmath}
+\cs_new:Npn \@@_text:n #1
+{\cs_if_exist:NTF\text{\text{#1}}{\msg_error:nn{@@}{text}}}
+\cs_new:Npn\@@_empty:w #1 \q_recursion_stop {\c_empty_tl}
+\cs_new_protected:Nn\erw_keys_set:n{ \keys_set:nn{@@}{#1} }
+\cs_new_protected:Nn\erw_keys_set:nn{ \keys_set:nn{@@ / #1}{#2} }
+\cs_generate_variant:Nn\erw_apply:Nw{c}
+\cs_new:Npn \erw_identity:n#1{#1}
+\cs_new:Npn \erw_int_incr:n#1{\int_eval:n{#1+1}}
+\cs_new:Npn \erw_swap:nn#1#2{#2#1}
+\cs_generate_variant:Nn \erw_swap:nn{e}
+\cs_new:Npn \erw_name_signature_cs:N #1
+{ \exp_last_unbraced:Ne
+  \@@_name_signature_cs:nnn{\cs_split_function:N#1}}
+\cs_new:Nn \@@_name_signature_cs:nnn{{#1}{#2}}
 %    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\erw_cs_identity:n}
+% \section{\textsf{quark}}
 %    \begin{macrocode}
-\cs_set:Npn \erw_cs_identity:n #1{#1}
+\msg_new:nnn{erw}{quark-only-tail}
+{requires~tail;~got~'#1';~\msg_line_context:}
+\cs_new:Npn
+\erw_all_q:w
+#1
+\q_recursion_stop
+{%
+  \erw_remove_last_q:w#1\q_recursion_stop
+  \erw_last_q:w#1\q_recursion_stop
+}
+\cs_new:Npn
+\erw_remove_first_q:w
+#1 % <tokenlist ending with recursion tail>
+\q_recursion_stop
+{\quark_if_recursion_tail_stop:n{#1}
+  \@@_remove_first_q:nw#1\q_recursion_stop}
+\cs_new:Npn
+\@@_remove_first_q:nw
+#1 % <head>
+#2 % <rest>
+\q_recursion_stop
+{\erw_remove_last_q:w#2\q_recursion_stop
+  \erw_last_q:w#2\q_recursion_stop}
+\cs_new:Npn
+\erw_first_q:w
+#1
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop:n{#1}
+  \@@_first_q:enw{ \tl_if_head_is_group_p:n{#1}}#1\q_recursion_stop }
+\cs_new:Npn
+\@@_first_q:nnw
+#1 % <head is group>
+#2 % <head>
+#3 % <rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF{#1}{{#2}}{#2}
+}
+\cs_generate_variant:Nn\@@_first_q:nnw{e}
+\cs_new:Npn
+\erw_remove_last_q:w #1 \q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop:n{#1}
+  \@@_remove_last_q:ew{\tl_if_head_is_group_p:n{#1}}#1\q_recursion_stop }
+\cs_new:Npn
+\@@_remove_last_q:nw
+#1 % <head is group>
+#2 % <tokenlist>
+\q_recursion_stop
+{ \@@_remove_last_q:nnw{#1}#2\q_recursion_stop }
+\cs_generate_variant:Nn\@@_remove_last_q:nw{e}
+\cs_new:Npn
+\@@_remove_last_q:nnw
+#1 % <head is group>
+#2 % <head>
+#3 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop:n{#3}
+  \bool_if:nTF{#1}{{#2}}{#2}
+  \@@_remove_last_q:ew {\tl_if_head_is_group_p:n{#3}} #3 \q_recursion_stop
+}
+\cs_generate_variant:Nn\@@_remove_last_q:nnw{e}
+\cs_new:Npn
+\erw_last_q:w #1 \q_recursion_stop
+{\quark_if_recursion_tail_stop:n{#1}
+  \@@_last_q:ew{\tl_if_head_is_group_p:n{#1}}#1\q_recursion_stop}
+\cs_new:Npn
+\@@_last_q:nw
+#1 % <head is group>
+#2 % <tokenlist>
+\q_recursion_stop
+{ \@@_last_q:nnw{#1}#2\q_recursion_stop }
+\cs_generate_variant:Nn\@@_last_q:nw{e}
+\cs_new:Npn
+\@@_last_q:nnw
+#1 % <head is group>
+#2 % <head>
+#3 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#3}{ \bool_if:nTF{#1}{{#2}}{#2} }
+  \@@_last_q:ew {\tl_if_head_is_group_p:n{#3}} #3 \q_recursion_stop
+}
+\cs_generate_variant:Nn\@@_last_q:nnw{e}
 %    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\erw_cs_set_inline:Nn, \erw_cs_gset_inline:Nn}
+% \section{\textsf{predicate}}
 %    \begin{macrocode}
-\cs_new_protected:Nn \erw_cs_set_inline:Nn
-{
-  \cs_set:Npn #1 ##1{#2}
+\msg_new:nnn{@@}{predicate-empty}
+{empty~expression~in~predicate}
+\prg_new_conditional:Npnn
+\erw_and_tl:nn
+#1 % <predicate expression>
+#2 % <tokens>
+{p}
+{%^^A
+  \@@_and_tl:nw {#1}#2 \q_recursion_tail\q_recursion_stop
 }
-\cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\erw_cs_gset_inline:Nn}
-%    \begin{macrocode}
-\cs_new:Nn \erw_cs_gset_inline:Nn
-{
-  \cs_gset:Npn #1 ##1{#2}
+\cs_new:Npn
+\@@_and_tl:nw
+#1 % <predicate expression>
+#2 % <value>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#2}
+  {  \prg_return_true: }
+  \@@_and_tl:nnw
+  {#1} % <predicate expression>
+  #2 % <value>
+  \q_recursion_stop
 }
-\cs_generate_variant:Nn \erw_cs_gset_inline:Nn {cn}
-%    \end{macrocode}
-% \end{macro}
-% \section{\textsf{csint}}
-% \label{impl:csint}
-% \subsection{backend}
-%    \begin{macrocode}
-\int_new:N \g@@_csint_int
-\cs_new:Nn \@@_csint_name: {\erw_csint_name:n{\g@@_csint_int}}
-%    \end{macrocode}
-% \subsection{frontend}
-% \begin{macro}{\erw_csint:nn}
-%    \begin{macrocode}
-\cs_new:Nn \erw_csint:nn
-{
- \exp_args:No \use:c{\erw_csint_name:n{#1}}{#2}
-}
-%    \end{macrocode}
-% \end{macro}
-%^^A% \begin{macro}{\erw_csint_list:nnn}%^^A TODO
-%^^A%    \begin{macrocode}
-%^^A\cs_new:Nn \erw_csint_list:nnn
-%^^A{
-%^^A  \int_step_inline:nnnn { #1 }{ #2 }{ #3 }
-%^^A  {
-%^^A    { \exp_args:No \use:c{\erw_csint_name:n{##1}} }
-%^^A  }
-%^^A}
-%^^A%    \end{macrocode}
-%^^A% \end{macro}
-% \begin{macro}{\erw_csint_name:n}
-%    \begin{macrocode}
-\cs_new:Nn \erw_csint_name:n {@@_csint_\int_to_alph:n{#1}:n}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\erw_csint_new:n}
-%    \begin{macrocode}
-\cs_new_protected:Nn \erw_csint_new:n
-{ 
-  \int_incr:N \g@@_csint_int
-  \exp_args:No
-  \erw_cs_set_inline:cn{\@@_csint_name:}
-  {
-    \token_if_cs:NTF
-    {#1}
-    {#1{##1}}
-    {#1}
-  }
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\erw_csint_names_braced:nnn,\erw_csint_names_braced:n,\erw_csint_names_braced:}
-%    \begin{macrocode}
-\cs_new:Nn \erw_csint_names_braced:nnn
-{
-  \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_csint_names_braced:n
-  % TODO \tl_range_braced:nnn?
-}
-\cs_new:Nn \erw_csint_names_braced:n {{\erw_csint_name:n{#1}}}
-\cs_new:Nn \erw_csint_names_braced: 
-{
-  \erw_csint_names_braced:nnn{1}{1}{\g@@_csint_int}
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\erw_csint_reset:}
-%    \begin{macrocode}
-\cs_new_protected:Nn \erw_csint_reset: 
-{
-  \int_zero:N \g@@_csint_int
-  \tl_set:Nn \@@_csint_ext_tl{}%^^A TODO remove?
-}
-%    \end{macrocode}
-% \end{macro}
-% \section{\textsf{int}}
-% \label{impl:int}
-% \subsection{backend}
-%    \begin{macrocode}
-\cs_set:Npn \@@_int_range:nnn #1 #2 #3
-{
-  \int_compare:nNnTF
-  {
-    \int_eval:n{#2+1}
-  }>{#3}
-  { 
-    {#1}
-  }
-  {
-    \@@_int_range:nnn
-    {
-      \exp_args:Nx\erw_tl_append_item:nn{#1}
-      {
-        \int_eval:n{#2+1}
-      }
-    }
-    {\int_eval:n{#2+1}}
-    {#3}
-  }
-}
-%    \end{macrocode}
-% \subsection{frontend}
-% \begin{macro}{\erw_int_range:nn, \erw_int_range:n }
-%    \begin{macrocode}
-\cs_new:Nn \erw_int_range:nn
-{
-  \@@_int_range:nnn {{#1}}{#1}{#2}
-}
-\cs_new:Nn \erw_int_range:n
-{
-  \@@_int_range:nnn {}{0}{#1}
-% ^^A Alt to:
-% ^^A    \int_step_inline:nn {#1}{##1}
-}
-%    \end{macrocode}
-% \end{macro}
-% \section{\textsf{keys}}
-% \subsection{frontend}
-% \begin{macro}{\erw_keyval_error:Nn,\erw_keyval_error:Nnn}
-%    \begin{macrocode}
-\cs_new:Nn \erw_keyval_error:Nn{\msg_error:nnnnn{@@}{keyval/n}{\erw_keyval_error:Nn}{#1}{#2}}
-\cs_new:Nn \erw_keyval_error:Nnn{\msg_error:nnnnnn{@@}{keyval/nn}{\erw_keyval_error:Nnn}{#1}{#2}{#3}}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\erw_keyval_parse:NNNn}
-%    \begin{macrocode}
-\cs_new_protected:Nn\erw_keyval_parse:NNNn
-{
-  \cs_set_protected:Nn \@@_keyval_function:n {#2 #1{##1}}
-  \cs_set_protected:Nn \@@_keyval_function:nn {#3 #1{##1}{##2}}
-  \keyval_parse:NNn
-  \@@_keyval_function:n
-  \@@_keyval_function:nn
-  {#4}
-}
-%    \end{macrocode}
-% \end{macro}
-% \section{\texttt{lambda}}
-% \begin{macro}{\erw_lambda:nnn}
-%    \begin{macrocode}
-\cs_new_protected:Npn \erw_lambda:nnn #1 #2 #3
-{
-  \exp_args:NNx 
-  #1 \@@_lambda_expression 
-  {#2}
-  {#3}
-  \@@_lambda_expression
-}
-%    \end{macrocode}
-% \end{macro}
-% \section{\textsf{msg}}
-% \label{impl:msg}
-% \subsection{backend}
-%    \begin{macrocode}
-\msg_new:nnn{@@}{generic}{#1}
-\msg_new:nnn{@@}{keyval/nn}{#1#2{#3}{#4};~encountered~key=val~where~only~key~required}
-\msg_new:nnn{@@}{keyval/n}{#1#2{#3};~encountered~key~~where~only~key=val~required}
-\msg_new:nnn{@@}{separ}{#1~expects~1~to~3~items,~#2}
-\msg_new:nnn{@@}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
-\msg_new:nnn{@@}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
-%    \end{macrocode}
-% \subsection{frontend}
-%    \begin{macrocode}
-\msg_new:nnn{erw}{notset}{#1~not~set}
-%    \end{macrocode}
-% \section{\textsf{prop}}
-% \subsection{backend}
-%    \begin{macrocode}
-\cs_new_protected:Nn \@@_prop_map_item:NNN
-{
-  \cs_set_protected:Nn \@@_function:nn
-  {
-    #1 #2 {##1}{##2}
-  }
-  \prop_map_function:NN #3 \@@_function:nn
-}
-%    \end{macrocode}
-% \subsection{frontend}
-% \begin{macro}{\erw_prop_to_clist:Nn}
-%    \begin{macrocode}
-\cs_new_protected:Nn \erw_prop_to_clist:Nn
-{
-  \cs_set:Nn \@@_keyval_function:n {,\prop_item:Nn#1{##1}}
-  \exp_args:Nf
-  \tl_tail:n
-  {
-    \keyval_parse:NNn
-    \@@_keyval_function:n
-    \erw_keyval_error:Nnn
-    {#2}
-  }
-}
-\cs_generate_variant:Nn \erw_prop_to_clist:Nn { c }
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\erw_prop_map_item:NNN}
-%    \begin{macrocode}
-\cs_new_protected:Nn \erw_prop_map_item:NNN
-{
-  \prop_if_exist:NTF #2
-  {\@@_prop_map_item:NNN #1#2#3}
-  {
-    \prop_new:N #2
-    \erw_prop_map_item:NNN #1#2#3
-  }
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\erw_prop_keyval_parse:NNNn}
-%    \begin{macrocode}
-\cs_new_protected:Nn\erw_prop_keyval_parse:NNNn
-{
-  \prop_if_exist:NTF#1
-  {\erw_keyval_parse:NNNn #1#2#3{#4}}
-  {
-    \prop_new:N #1
-    \erw_prop_keyval_parse:NNNn#1#2#3{#4}
-  }
-}  
-%    \end{macrocode}
-% \end{macro}
-% \section{\textsf{oper}}
-% \label{impl:oper}
-% \subsection{backend}
-% \subsection{frontend}
-%    \begin{macrocode}
-\keys_define:nn{@@}
-{  
-  tl/fold_set_par.tl_gset:N = \g@@_tl_fold_set_par_tl,
-  tl/fold_set_par.value_required:n = true,
-  tl/fold_set_par.default:n = {Nf},
-  tl/fold_set_par.initial:n = {Nf},
-  tl/fold_apply_par.tl_gset:N = \g@@_tl_fold_apply_par_tl,
-  tl/fold_apply_par.value_required:n = true,
-  tl/fold_apply_par.default:n = {Nf},
-  tl/fold_apply_par.initial:n = {Nf}
-}
-%    \end{macrocode}
-% \section{option}
-% \label{impl:option}
-%    \begin{macrocode}
-\cs_new_protected:Nn\erw_option:n
-{
-  \keys_set:nn{@@}{#1}
-}
-%    \end{macrocode}
-% \section{\textsf{seq}}
-% \label{impl:seq}
-% \subsection{backend}
-%    \begin{macrocode}
-\tl_new:N \g@@_seq_fold_item_tl
-\cs_new_protected:Nn\@@_seq_put_right_clist:Nn
-{
-  \cs_set_protected:Nn \@@_function:n
-  {
-    \seq_put_right:Nn #1{##1}
-  }
-  \keyval_parse:NNn
-  \@@_function:n
-  \erw_keyval_keyonly:nn
-  {#2}
-}
-\cs_generate_variant:Nn \@@_seq_put_right_clist:Nn { c }
-\cs_new_protected:Nn\@@_seq_put_right_prop:NNn
-{
-  \@@_seq_put_right_clist:Nn #1
-  {\erw_prop_to_clist:Nn #2 {#3}}
-}
-\cs_generate_variant:Nn \@@_seq_put_right_prop:NNn { cc }
-%    \end{macrocode}
-% \subsection{frontend}
-% ^^A TODO see if can replace compose with just oper
-%    \begin{macrocode}
-\cs_new_protected:Nn\erw_seq_put_right_clist:Nn
-{
-  \seq_if_exist:NTF#1
-  {\@@_seq_put_right_clist:Nn#1{#2}}
-  {\seq_new:N#1\erw_seq_put_right_clist:Nn#1{#2}}
-}
-\cs_generate_variant:Nn \erw_seq_put_right_clist:Nn { c }
-\cs_new_protected:Nn\erw_seq_put_right_prop:NNn
-{
-  \seq_if_exist:NTF#1
-  {\@@_seq_put_right_prop:NNn#1#2{#3}}
-  {\seq_new:N#1\erw_seq_put_right_prop:NNn#1#2{#3}}
-}
-\cs_generate_variant:Nn \erw_seq_put_right_prop:NNn { cc }
-\cs_new_protected:Nn \erw_seq_fold:NN 
-{
-  \seq_get_right:NN #2 \g@@_seq_fold_item_tl
-  \erw_tl_fold:NN #1 \g@@_seq_fold_item_tl
-  \seq_put_right:No #2 {\g@@_seq_fold_item_tl}
-}
-\cs_generate_variant:Nn \erw_seq_fold:NN {cN}
-\cs_new:Nn \erw_seq_use:Nn
-{
-  \exp_last_unbraced:NNf
-  \seq_use:Nnnn #1
-  \erw_tl_separators:n{#2}
-}
-%    \end{macrocode}
-% \section{\textsf{sys}}
-% \label{impl:sys}
-% \subsection{backend}
-%    \begin{macrocode}
-%    \end{macrocode}
-% \begin{macro}{\@@_sys_date:N, \@@_sys_date_dec:, \@@_sys_date_hex:}
-%    \begin{macrocode}
-\cs_new:Nn \@@_sys_date_dec:
-{
-  \int_eval:n
-  {
-    \c_sys_year_int * 10000
-    +\c_sys_month_int * 100
-    +\c_sys_day_int *  1
-  }
-}
-\cs_new:Nn \@@_sys_date:N{\int_to_hex:n{\@@_sys_date_dec:}}
-\cs_new:Nn \@@_sys_date_hex:{\int_to_hex:n{\@@_sys_date_dec:}}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\@@_sys_time_dec:, \@@_sys_time_hex}
-%    \begin{macrocode}
-\cs_new:Nn \@@_sys_time_dec:
-{
-  \int_eval:n
-  {
-    \c_sys_hour_int * 100 
-    +\c_sys_minute_int * 1 
-  }
-}
-\cs_new:Nn\@@_sys_time_hex:{\int_to_hex:n{\@@_sys_time_dec:}}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\@@_sys_datetime_base:n,  \@@_sys_datetime_dec:n, \@@_sys_datetime_join:nn, \@@_sys_datetime_hex:n, \@@_sys_datetime_period:n }
-%    \begin{macrocode}
-\cs_new:Nn\@@_sys_datetime_base:n
-{
-  \int_case:nnTF{#1}
-  {
-    {10}{dec}
-    {16}{hex}
-  }
-  {\c_empty_tl}
-  {\msg_error:nnn{@@}{timestamp / base}{\@@_sys_datetime_base:n{#1}}}
-}
-\cs_new:Nn\@@_sys_datetime_join:nn{\erw_tl_join:nnn{#1}{\g@@_sys_timestamp_delim_str}{#2}}
-\cs_new:Nn\@@_sys_datetime_period:n
-{
-  \str_case:nnTF{#1}
-  {
-    {date}{date}
-    {time}{time}
-    {datetime}{datetime}
-  }
-  {\c_empty_tl}
-  {\msg_error:nnn{@@}{ timestamp / period }{\@@_sys_datetime_period:n{#1}}}
-}
-\cs_new:Nn\@@_sys_datetime_dec: {\@@_sys_datetime_join:nn{\@@_sys_date_dec:}{\@@_sys_time_dec:}}
-\cs_new:Nn\@@_sys_datetime_hex: {\@@_sys_datetime_join:nn{\@@_sys_date_hex:}{\@@_sys_time_hex:}}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\@@_sys_jobnametimestamp_prefix:}
-%    \begin{macrocode}
-\cs_new:Nn\@@_sys_jobnametimestamp_prefix:
-{
-  \erw_tl_join:nn
-  {\c_sys_jobname_str}
-  {\g@@_sys_timestamp_delim_str}
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\@@_sys_jobnametimestamp:n, \@@_sys_jobnametimestamp:}
-%    \begin{macrocode}
-\cs_new:Nn\@@_sys_jobnametimestamp:nn
-{
-  \erw_tl_join:nn
-  {\@@_sys_jobnametimestamp_prefix:}
-  {\erw_sys_timestamp:nn{#1}{#2}}
-}
-\cs_new:Nn\@@_sys_jobnametimestamp:
-{
-  \erw_tl_join:nn
-  {\@@_sys_jobnametimestamp_prefix:}
-  {\erw_sys_timestamp:}
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\@@_sys_timestamp:nn}
-%    \begin{macrocode}
-\cs_new:Nn\@@_sys_timestamp:nn
-{
-  \exp_args:No
-  \use:c{@@_sys_\@@_sys_datetime_period:n{#1}_\@@_sys_datetime_base:n{#2}:}
-}
-\cs_new_protected:Nn \@@_sys_set_delim:nn
-{
-  \use:c{tl_gset:N#1}
-  \g@@_sys_timestamp_delim_str{#2}
-}
-%    \end{macrocode}
-% \end{macro}
-%    \begin{macrocode}
-\keys_define:nn{@@}
-{  
-  sys / timestamp_delim .code:n =
-  {
-    \exp_last_unbraced:No
-    \@@_sys_set_delim:nn{n}{#1}
-  },
-  sys / timestamp_delim  .value_required:n = true,
-  sys / timestamp_delim  .default:n = {-},
-  sys / timestamp_delim  .initial:n = {-}
-}
-% \subsection{frontend}
-%    \begin{macrocode}
-\cs_new:Nn\erw_sys_jobnametimestamp:nn{\@@_sys_jobnametimestamp:nn{#1}{#2}}
-\cs_new:Nn\erw_sys_jobnametimestamp:{\@@_sys_jobnametimestamp:}
-\cs_new:Nn\erw_sys_timestamp_delimiter:
-{
-  \use:N \g@@_sys_timestamp_delim_str
-}
-\cs_new:Nn\erw_sys_timestamp:nn
-{
-  \@@_sys_timestamp:nn{#1}{#2}
-}
-\cs_new:Nn\erw_sys_timestamp:
-{
-  \@@_sys_timestamp:nn{datetime}{16}
-}
-%    \end{macrocode}
-% \section{\textsf{tl}}
-% \label{impl:tl}
-% \subsection{backend}
-%    \begin{macrocode}
-\tl_new:N \g@@_tl_compose_tl
-%    \end{macrocode}
-% \begin{macro}{\g@@_tl_function:n}
-%    \begin{macrocode}
-\cs_new_protected:Nn \g@@_tl_function:n
-{
-  \msg_error:nnn
-  {erw}
-  {notset}
-  {\g@@_tl_function:n}
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\@@_tl_map:nn}
-%    \begin{macrocode}
-\cs_set_protected:Nn \@@_tl_map:nn
-{
-  \quark_if_recursion_tail_stop:n{#1}  
-  \g@@_tl_function:n{#1}  \@@_tl_map:nn{#2}
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\@@_tl_map_thread_at:Nnn, \@@_tl_map_thread_at:Nnnn, \@@_tl_map_thread_at:Nnnnn, \@@_tl_map_thread_at:Nnnnnn}
-%    \begin{macrocode}
-\cs_set_protected:Nn \@@_tl_map_thread_at:Nnn
-{ 
-  #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-}
-\cs_set_protected:Nn \@@_tl_map_thread_at:Nnnn
-{ 
-  #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-  {\exp_args:Nf\tl_item:nn {#4} {#2} }
-}
-\cs_set_protected:Nn \@@_tl_map_thread_at:Nnnnn
-{ 
-  #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-  {\exp_args:Nf\tl_item:nn {#4} {#2} }
-  {\exp_args:Nf\tl_item:nn {#5} {#2} }
-}
-\cs_set_protected:Nn \@@_tl_map_thread_at:Nnnnnn
-{ 
-  #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-  {\exp_args:Nf\tl_item:nn {#4} {#2} }
-  {\exp_args:Nf\tl_item:nn {#5} {#2} }
-  {\exp_args:Nf\tl_item:nn {#6} {#2} }
-}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\@@_tl_separators:nn}
-%   \begin{arguments}
-%   \item \meta{ int }
-%   \item \meta{ items }
-%   \end{arguments}
-%    \begin{macrocode}
-\cs_new:Nn \@@_tl_separators:nn
-{
-  \int_case:nnTF {#1}
-  {
-    {1}
-    { \prg_replicate:nn{ 3 }{#2} }
-    {2}
-    {
-      { \use_ii:nn #2 }
-      { \use_i:nn #2 }
-      { \use_i:nn #2 \use_ii:nn #2 }
-    }
-    {3}{#2}
-  }
-  { \c_empty_tl }
-  {
-    \msg_error:nnnn { @@ }
-    { separ }
-    { \@@_tl_separators:nn }
-    {#2}
-  }
-}
-\cs_generate_variant:Nn \@@_tl_separators:nn { e }
-%    \end{macrocode}
-% \end{macro}
-% \subsection{frontend}
-% ^^A TODO see if can replace compose with just oper
-%    \begin{macrocode}
-\cs_new:Nn \erw_tl_append_item:nn
-{
+\cs_new:Npn
+\@@_and_tl:nnw
+#1 % <predicate expression>
+#2 % <value>
+#3 % <rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF
   {#1{#2}}
+  {\@@_and_tl:nw{#1}#3\q_recursion_stop}
+  { \prg_return_false: }
 }
-\cs_new:Nn \erw_tl_fold:NN 
-{
-  \use:c{tl_set:\g@@_tl_fold_set_par_tl}
-  #2
-  {
-    \use:c{exp_args:\g@@_tl_fold_apply_par_tl}{#1}{#2}
+\cs_new:Npn \@@_new_compare_p:nnn
+#1 % <name>
+#2 % <signature>
+#3 % <code>
+{%
+  \prg_new_conditional:cnn{#1:#2}
+  {p}
+  {%
+    \bool_if:nTF
+    {#3}
+    {\prg_return_true:}
+    {\prg_return_false:}
   }
 }
-\cs_generate_variant:Nn \erw_tl_fold:NN {cN}
-\cs_new:Nn \erw_tl_gset_function:N
+\keys_define:nn{ @@ }
 {
-  \erw_cs_gset_eq:NN \g@@_tl_function:n #1
+  new_compare_p.code:n = {\@@_new_compare_p:nnn#1}
 }
-\cs_new:Nn \erw_tl_gset_function:n
-{
-  \erw_cs_gset_inline:Nn \g@@_tl_function:n {#1}
+\erw_keys_set:n
+{%
+  new_compare_p = 
+  {erw_compare} % <name>
+  {nNnNn}
+  { \@@_compare:eecN{ #2{#3} }{ #2{#5} }{ #1:nNn }#4 }
 }
-\cs_new:Nn \erw_tl_last_item:n
-{
-  \exp_args:Nof \tl_item:nn
-  {#1}
-  {
-    \tl_count:n{#1}
+\cs_new:Npn
+\@@_compare:nnNN
+#1 % <first>
+#2 % <second>
+#3 % <predicate>
+#4 % <operator>
+{ #3{ #1 }#4{ #2 } }
+\cs_generate_variant:Nn\@@_compare:nnNN{eec}
+\erw_keys_set:n
+{%
+  new_compare_p = 
+  {erw_compare_recurse} % <name>
+  {nnN}
+  { \@@_compare_recurse:nnN{#1}{#2}#3 }
+}
+\cs_new:Npn
+\@@_compare_recurse:nnN
+#1 % <tokenlist>
+#2 % <compare predicate name>
+#3 % <operator>
+{%
+  \erw_compare_recurse_p:nnNN
+  {#1} % <tokenlist>
+  {#2} % <compare predicate name>
+  \erw_identity:n % <function>
+  #3 % <operator>
+}
+\erw_keys_set:n
+{%
+  new_compare_p = 
+  {erw_compare_recurse} % <name>
+  {nnNN}
+  { \@@_compare_recurse:nnNN{#1}{#2}#3#4 }
+}
+\cs_new:Npn
+\@@_compare_recurse:nnNN
+#1 % <tokenlist>
+#2 % <compare predicate name>
+#3 % <function>
+#4 % <operator>
+{ \@@_compare_recurse:nNNw {#2}#3#4#1 \q_recursion_tail\q_recursion_stop }
+\cs_new:Npn
+\@@_compare_recurse:nNNw
+#1 % <compare predicate name>
+#2 % <convert>
+#3 % <operator>
+#4 % <tokenlist>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#4}{\c_true_bool}
+  \@@_compare_recurse:nNNnw{#1}{#2}{#3}#4\q_recursion_stop
+}
+\cs_new:Npn
+\@@_compare_recurse:nNNnw
+#1 % <compare predicate name>
+#2 % <convert>
+#3 % <operator>
+#4 % <head>
+#5 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#5}{\c_true_bool}
+  \@@_compare_recurse:nNNnnw
+  {#1} % <compare predicate name>
+  #2 % <convert>
+  #3 % <operator>
+  {#4} % <head>
+  #5 % <rest>
+  \q_recursion_stop
+}
+\cs_new:Npn
+\@@_compare_recurse:nNNnnw
+#1 % <compare predicate name>
+#2 % <convert>
+#3 % <operator>
+#4 % <fisrt>
+#5 % <second>
+#6 % <rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF
+  { \erw_compare_p:nNnNn{#1}#2{#4}#3{#5} }
+  {%
+    \@@_compare_recurse:nNNnw
+    {#1} % <compare predicate name>
+    #2 % <convert>
+    #3 % <operator>
+    {#5} % <head>
+    #6 % <rest>
+    \q_recursion_stop
   }
+  {\c_false_bool}
+}
+\erw_keys_set:n
+{%
+  new_compare_p =
+  {erw_int_incr}
+  {nn}
+  {\exp_args:Ne
+    \int_compare_p:nNn{ \int_eval:n{#1+1} } = {#2} }
 }
 %    \end{macrocode}
-% \begin{macro}{\erw_tl_join:nn, \erw_tl_join:nnn, \erw_tl_join:nnnn, \erw_tl_join:nnnnn}
+% \section{\textsf{keyval}}
 %    \begin{macrocode}
-\cs_new:Nn \erw_tl_join:nn{#1#2}
-\cs_new:Nn \erw_tl_join:nnn{#1#2#3}
-\cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
-\cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
+\cs_new:Npn\@@_keyval_key:w #1 = #2 \q_recursion_stop{#1}
+\cs_new:Npn\@@_keyval_value:w #1 = #2 \q_recursion_stop{#2}
+\cs_new:Npn \erw_keyval_key:n#1{\@@_keyval_key:w #1 \q_recursion_stop}
+\cs_new:Npn \erw_keyval_value:n#1{\@@_keyval_value:w #1 \q_recursion_stop}
+\cs_new:Npn \erw_keyval:nn#1#2{ #1 = #2 }
+\erw_keys_set:n
+{
+  new_compare_p = {erw_key_compare}
+  {nNn}{ \erw_compare_p:nNnNn
+    {int_compare_p}\erw_keyval_key:n{#1}#2{#3} },
+  new_compare_p = {erw_key_compare}
+  {n}{ \erw_compare_recurse_p:nnNN{#1}
+    {int_compare_p}\erw_keyval_key:n< }
+}
+\cs_new_protected:Npn
+\@@_keyval_dispatch_build:nn
+#1 % <|_protected>
+#2 % <ext>
+{
+  \use:c{cs_new#1:cpn}
+  {erw_keyval_dispatch#2:NNn}
+  ##1 % <unary>
+  ##2 % <binary>
+  ##3 % <keyval list>
+  { \use:c{@@_keyval_dispatch#2:NNw}##1##2##3=\q_recursion_tail\q_recursion_stop }
+  \use:c{cs_new#1:cpn}
+  {@@_keyval_dispatch#2:NNw}##1##2##3=##4\q_recursion_stop
+  { \quark_if_recursion_tail_stop_do:nn{##4}{##1{##3}}
+    \use:c{@@_keyval_dispatch#2:Nw}##2##3=##4\q_recursion_stop }
+  \use:c{cs_new#1:cpn}
+  {@@_keyval_dispatch#2:Nw}##1##2=##3=\q_recursion_tail\q_recursion_stop
+  {##1{##2}{##3}}
+}
+\@@_keyval_dispatch_build:nn{}{}
+\@@_keyval_dispatch_build:nn{_protected}{_protected}
 %    \end{macrocode}
-% \end{macro}
+% \section{\textsf{op's on list}}
 %    \begin{macrocode}
-\cs_new_protected:Nn \erw_tl_map:n
-{    
-  \@@_tl_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+\cs_new:Npn
+\erw_remove_first:n
+#1 % <tokenlist>
+{\erw_remove_first_q:w#1\q_recursion_tail\q_recursion_stop}
+\cs_generate_variant:Nn\erw_remove_first:n{e}
+\cs_new:Npn
+\erw_remove_last:n
+#1 % <tokenlist>
+{\erw_remove_last_q:w#1\q_recursion_tail\q_recursion_stop}
+\cs_generate_variant:Nn\erw_remove_last:n{e}
+\cs_new:Npn
+\erw_first:n
+#1
+{\erw_first_q:w#1\q_recursion_tail\q_recursion_stop}
+\cs_generate_variant:Nn\erw_first:n{e}
+\cs_new:Npn
+\erw_last:n
+#1 % <tokenlist>
+{\erw_last_q:w#1\q_recursion_tail\q_recursion_stop}
+\cs_generate_variant:Nn\erw_last:n{e}
+\cs_new:Npn
+\erw_adjacent_insert:nn
+#1 % <list>
+#2 % <separator>
+{%
+  \erw_first:n{#1}
+  \erw_swap:en
+  { \erw_remove_first:n{#1} }
+  {%
+    \@@_adjacent_insert:nw
+    {#2} % <separator>
+  }
+  \q_recursion_tail
+  \q_recursion_stop
 }
-\cs_new_protected:Nn \erw_tl_map:Nn 
-{
-  \cs_set_eq:NN \g@@_tl_function:n #1
-  \erw_tl_map:n{#2}  
+\cs_generate_variant:Nn\erw_adjacent_insert:nn{e}
+\cs_new:Npn
+\@@_adjacent_insert:nw
+#1 % <separator>
+#2 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop:n{#2}
+  \@@_adjacent_insert:new {#1}{\tl_if_head_is_group_p:n{#2}}#2 \q_recursion_stop
 }
-\cs_new_protected:Nn \erw_tl_map_inline:nn 
-{
-  \erw_cs_set_inline:Nn \g@@_tl_function:n {#1}
-  \erw_tl_map:n{#2}
+\cs_new:Npn
+\@@_adjacent_insert:nnw
+#1 % <separator>
+#2 % <head is group>
+#3 % <head>
+#4 % <rest>
+\q_recursion_stop
+{%
+  #1\bool_if:nTF{#2}{{#3}}{#3}
+  \@@_adjacent_insert:nw{#1}#4\q_recursion_stop
 }
-\cs_new:Nn \erw_tl_repeat:nn
+\cs_generate_variant:Nn\@@_adjacent_insert:nnw{ne}
+% ^^A% ^^A%^^A <TRASH>
+% ^^A\cs_new:Npn
+% ^^A\@@_thread:NNnw #1 #2 #3 #4 #5 / #6 #7 \q_recursion_stop
+% ^^A{%
+% ^^A  \quark_if_recursion_tail_stop:n{#6}
+% ^^A  #1{#3}{#4}{#6}  
+% ^^A  \@@_thread:NNnw #1 #2 {#2{#3}} #5 / #7 \q_recursion_stop}
+% ^^A\cs_new:Npn
+% ^^A\erw_thread:NNnnn
+% ^^A#1 %  \<name_1>:nnn
+% ^^A#2 %  \<name_2>:n
+% ^^A#3 %  <position>
+% ^^A#4 %  <...{tl a_i}...>
+% ^^A#5 %  <...{tl b_i}...>
+% ^^A{ \@@_thread:NNnw #1#2{#3}#4 \q_recursion_tail / #5 \q_recursion_tail \q_recursion_stop }
+% ^^A\cs_new:Npn
+% ^^A\erw_thread_index:Nnnn
+% ^^A#1 %  \<function name>:nnn
+% ^^A#2 %  <start index>
+% ^^A#3 %  <...{tl a_i}...>
+% ^^A#4 %  <...{tl b_i}...>
+% ^^A{ \erw_thread:NNnnn#1\int_incr:n{#2}{#3}{#4} }
+% ^^A\cs_new:Npn
+% ^^A\@@_thread:Nnw #1 #2 #3 / #4 #5 \q_recursion_stop
+% ^^A{\quark_if_recursion_tail_stop:n{#4} #1{#2}{#4}
+% ^^A  \@@_thread:Nnw #1 #3 / #5 \q_recursion_stop}
+% ^^A\cs_new:Npn
+% ^^A\erw_thread:Nnn
+% ^^A#1 %  \<function name>:nn
+% ^^A#2 %  <...{tl a_i}...>
+% ^^A#3 %  <...{tl b_i}...>
+% ^^A{\@@_thread:Nnw #1 #2 \q_recursion_tail / #3 \q_recursion_tail \q_recursion_stop}
+% ^^A\cs_new:Npn
+% ^^A\@@_map:NNnw #1 #2 #3 #4 #5\q_recursion_stop
+% ^^A{\quark_if_recursion_tail_stop:n{#4} #1{#3}{#4}
+% ^^A  \@@_map:NNnw #1 #2 {#2{#3}} #5 \q_recursion_stop}
+% ^^A\cs_new:Npn
+% ^^A\erw_map:NNnn
+% ^^A#1 %  \<function name>:nn
+% ^^A#2 %  \<function name>:n
+% ^^A#3 %  <start index>
+% ^^A#4 %  <...{tl_i}...>
+% ^^A{\@@_map:NNnw #1 #2 {#3} #4 \q_recursion_tail \q_recursion_stop}
+% ^^A\cs_new:Npn
+% ^^A\erw_map_index:Nnn
+% ^^A#1 %  \<function name>:nn
+% ^^A#2 %  <start index>
+% ^^A#3 %  <...{tl_i}...>
+% ^^A{ \erw_map:NNnn #1 \erw_int_incr:n {#2}{#3} }
+% ^^A%^^A <TRASH>
+%    \end{macrocode}
+%    \begin{macrocode}
+\cs_new:Npn
+\erw_clist_tl:nn
+#1 % <bool>
+#2 % <list>
+{ \erw_clist_tl:nnw {#1} #2 \q_recursion_tail\q_recursion_stop }
+\cs_new:Npn
+\erw_clist_tl:nnw #1 #2\q_recursion_stop
+{\quark_if_recursion_tail_stop:n{#2}
+  \erw_clist_tl:nenw {#1}
+  {\tl_if_head_is_group_p:n{#2}} #2 \q_recursion_stop}
+\cs_generate_variant:Nn\erw_clist_tl:nnw{ne}
+\cs_new:Npn
+\erw_clist_tl:nnnw
+#1 % <bool>
+#2 % <head is group>
+#3 % <head>
+#4 % <rest>
+\q_recursion_stop
 {
-  \int_step_inline:nnnn{1}{1}{#1}{#2}
+  \quark_if_recursion_tail_stop_do:nn{#4}
+  {%
+    \bool_if:nTF
+    {\bool_lazy_and_p:nn{#1}{#2}}
+    {{#3}}{#3}
+  }
+  \bool_if:nTF{\bool_lazy_and_p:nn{#1}{#2}}
+  {{#3}}{#3},
+  \erw_clist_tl:nnw {#1} #4 \q_recursion_stop
 }
-\cs_new:Nn \erw_tl_split:nnn
-{
-  \tl_head:n{#1}
-  \use:c{exp_args:#3} \tl_map_inline:nn 
-  {
-    \tl_tail:n
-    {
-      #1
+\cs_generate_variant:Nn\erw_clist_tl:nnnw{ne}
+\prg_new_conditional:Npnn
+\erw_if_in_clist:nn
+#1 % <value>
+#2 % <clist>
+{p}
+{ \@@_clist_if_in:nw {#1} #2, \q_recursion_tail \q_recursion_stop }
+\cs_new:Npn
+\@@_clist_if_in:nw #1 #2 \q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop:n{#2}
+  \@@_clist_if_in:nnw {#1} #2 \q_recursion_stop
+}
+\cs_new:Nn
+\@@_clist_if_in:nn
+{\@@_clist_if_in:nw{#1} #2 \q_recursion_stop}
+\cs_new:Npn
+\@@_clist_if_in:nnw #1 #2, #3 \q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#3}
+  {%
+    \str_if_eq:nnTF{#1}{#2}
+    {\prg_return_true:}{\prg_return_false:}
+  }
+  \str_if_eq:nnTF{#1}{#2}
+  {\prg_return_true:}
+  {\@@_clist_if_in:nw {#1} #3 \q_recursion_stop}
+  \@@_empty:w\q_recursion_stop
+}
+%    \end{macrocode}
+% \section{\textsf{algo}}
+% \subsection{\textsf{split}}
+%    \begin{macrocode}
+\cs_new:Npn
+\erw_split_even:n
+#1 % <tokenlist>
+{%
+  \tl_if_empty:nF{#1}
+  {%
+    \exp_last_unbraced:Ne
+    \@@_split_even:nnnw
+    {%
+      {\@@_split_even_threshold:n{#1}} % <count>
+      {\tl_if_head_is_group_p:n{#1}} % <head is group>
     }
-  }{#2##1}    
-}
-\cs_new:Nn \erw_tl_split:nn
-{
-  \erw_tl_split:nnn{#1}{#2}{Nf}
-}
-\cs_new_protected:Nn \erw_tl_map_thread_at:Nnn
-{
-  \exp_args:Nf\int_case:nnTF
-  {
-    \tl_count:n{#3}
-  }
-  {
-    {1}{ \@@_tl_map_thread_at:Nnn #1{#2}#3 }
-    {2}{ \@@_tl_map_thread_at:Nnnn #1{#2}#3 }
-    {3}{ \@@_tl_map_thread_at:Nnnnn #1{#2}#3 }
-    {4}{ \@@_tl_map_thread_at:Nnnnnn #1{#2}#3 }
-  }
-  {
-    % Do nothing
-  }
-  {
-    \msg_error:nnn{@@}
-    {generic}
-    {erw_tl_map_thread_at:~count~of~#3~not~withing~1~to~4}        
+    #1 % <tokenlist>
+    \q_recursion_tail
+    \q_recursion_stop
   }
 }
-\cs_new_protected:Nn \erw_tl_map_thread:Nn
-{
-  \int_step_inline:nn
-  { 
-    \exp_args:Nf \tl_count:n{ \tl_head:n{#2} } 
+\cs_generate_variant:Nn\erw_split_even:n{e}
+\cs_new:Npn
+\@@_split_even_threshold:n
+#1 % <tokenlist>
+{\exp_args:Ne
+  \int_div_round:nn{\tl_count:n{#1}}{2}}
+\cs_new:Npn
+\@@_split_even:nnnw
+#1 % <threshold>
+#2 % <head is group>
+#3 % <head>
+#4 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#4}
+  { { \bool_if:nTF{#2}{{#3}}{#3} }{} }
+  \exp_last_unbraced:Ne
+  \@@_split_even:nnnnw
+  {%
+    {1} % <left size>
+    { \tl_if_head_is_group_p:n{#4} }
+    {#1} % <threshold count>
+    { \bool_if:nTF{#2}{{#3}}{#3} } % <left list>
   }
-  {
-    \erw_tl_map_thread_at:Nnn #1 {##1} {#2}
-  }
+  #4 % <right list>
+  \q_recursion_stop
 }
-\cs_new:Nn \erw_tl_separators:n
-{
-  \@@_tl_separators:en{ \tl_count:n{#1} }{#1}
+\cs_new:Npn
+\@@_split_even:nnnnw
+#1 % <left size>
+#2 % <right head is group>
+#3 % <threshold count>
+#4 % <left list>
+#5 % <right head>
+#6 % <right rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF
+  { \int_compare_p:nNn {#1}<{#3} }
+  {%
+    \exp_last_unbraced:Ne
+    \@@_split_even:nnnnw
+    {
+      { \int_eval:n{#1+1} } % <left size>
+      { \tl_if_head_is_group_p:n{#6} } % <right head is group>
+      {#3} % <threshold count>
+      {#4\bool_if:nTF{#2}{{#5}}{#5}} % <left list>
+    }
+    #6
+    \q_recursion_stop
+  }
+  {%
+    {#4}
+    {%
+      \bool_if:nTF{#2}{{#5}}{#5}
+      \erw_remove_last_q:w#6\q_recursion_stop\erw_last_q:w#6\q_recursion_stop}
+  }
 }
 %    \end{macrocode}
-% \section{Closing}
-% \label{impl:closing}
-% 
+% \subsection{\textsf{thread sort}}
 %    \begin{macrocode}
+\cs_new:Npn
+\erw_thread_sort:nnNn
+#1 % <first sorted list>
+#2 % <second sorted list>
+#3 % <compare predicate name>
+#4 % <compare operator>
+{%
+  \@@_thread_sort:nNnnn
+  {#3} % <compare predicate name>
+  #4 % <compare operator>
+  {\c_empty_tl} % <accum>
+  {#1}
+  {#2}
+}
+\cs_generate_variant:Nn\erw_thread_sort:nnNn{ee}
+\cs_new:Npn
+\@@_thread_sort:nNnnn
+#1 % <compare predicate name>
+#2 % <compare operator>
+#3 % <sorted>
+#4 % <first>
+#5 % <second>
+{%
+  \@@_thread_sort:nNnww
+  {#1} % <compare predicate name>
+  {#2} % <compare operator>
+  {#3} % <sorted>
+  #4 \q_recursion_tail% <first>
+  \q_stop
+  #5 \q_recursion_tail% <second>
+  \q_recursion_stop
+}
+\cs_generate_variant:Nn\@@_thread_sort:nNnnn{nNeee}
+\cs_new:Npn
+\@@_thread_sort:nNnww
+#1 % <compare predicate name>
+#2 % <compare operator>
+#3 % <sorted>
+#4 % <first>
+\q_stop
+#5 % <second>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#4}
+  { #3 \erw_all_q:w #5 \q_recursion_stop }
+  \quark_if_recursion_tail_stop_do:nn{#5}
+  { #3 \erw_all_q:w #4 \q_recursion_stop }
+  \@@_thread_sort:nNneeww
+  {#1}#2{#3}
+  { \tl_if_head_is_group_p:n{#4} }
+  { \tl_if_head_is_group_p:n{#5} }
+  #4\q_stop
+  #5\q_recursion_stop
+}
+\cs_new:Npn
+\@@_thread_sort:nNnnnww
+#1 % <compare predicate name>
+#2 % <compare operator>
+#3 % <sorted>
+#4 % <head is begin>
+#5 % <head is begin>
+#6 % <first head>
+#7 % <first rest>
+\q_stop
+#8 % <second head>
+#9 % <second rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF
+  { \use:c{#1:nNn}{#6}#2{#8} }
+  {%
+    \@@_thread_sort:nNeee
+    {#1}
+    #2
+    {#3\bool_if:nTF{#4}{{#6}}{#6}}
+    {\erw_all_q:w#7\q_recursion_stop}
+    {\bool_if:nTF{#5}{{#8}}{#8}\erw_all_q:w#9\q_recursion_stop}
+  }
+  {%
+    \@@_thread_sort:nNeee
+    {#1}
+    #2
+    {#3\bool_if:nTF{#5}{{#8}}{#8}}
+    {\bool_if:nTF{#4}{{#6}}{#6}\erw_all_q:w#7\q_recursion_stop}
+    {\erw_all_q:w#9\q_recursion_stop}
+  }
+}
+\cs_generate_variant:Nn\@@_thread_sort:nNnnnww{nNnee}
+%    \end{macrocode}
+% \subsection{\textsf{merge sort}}
+%    \begin{macrocode}
+\cs_new:Npn
+\erw_merge_sort:nNn
+#1 % <compare predicate name>
+#2 % <compare operator>
+#3 % <unsorted list>
+{%
+  \tl_if_empty:nF{#3}
+  {% 
+    \@@_sort_merge:enNw
+    {\tl_if_head_is_group_p:n{#3}} % <head is group>
+    {#1} % <compare predicate name>
+    #2 % <compare operator>
+    #3 % <unsorted list>
+    \q_recursion_tail
+    \q_recursion_stop
+  }
+}
+\cs_generate_variant:Nn\erw_merge_sort:nNn{nNe}
+\cs_new:Npn
+\@@_sort_merge:nnNw
+#1 % <head is group>
+#2 % <compare predicate name>
+#3 % <compare operator>
+#4 % <unsorted list head>
+#5 % <unsorted list rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#5}
+  { \bool_if:nTF{#1}{{#4}}{#4} }
+  \exp_last_unbraced:Ne
+  \@@_sort_merge:nnnN
+  {%
+    \erw_split_even:e
+    {%
+      \bool_if:nTF{#1}{{#4}}{#4}
+      \erw_all_q:w#5\q_recursion_stop
+    }
+  } % {<first sorted list>}{<second sorted list>}
+  {#2} % <compare predicate name>
+  #3 % <compare operator>
+  \@@_empty:w \q_recursion_stop
+}
+\cs_generate_variant:Nn\@@_sort_merge:nnNw{e}
+\cs_new:Npn
+\@@_sort_merge:nnnN
+#1 % <left unsorted list>
+#2 % <right unsorted list>
+#3 % <compare predicate name>
+#4 % <compare operator>
+{%
+  \erw_thread_sort:eeNn
+  {%
+    \@@_sort_merge:enNw
+    {\tl_if_head_is_group_p:n{#1}}
+    {#3} % <compare predicate name>
+    #4 % <compare operator>
+    #1 % <unsorted list>
+    \q_recursion_tail
+    \q_recursion_stop
+  } % <first sorted list>
+  {%
+    \@@_sort_merge:enNw
+    {\tl_if_head_is_group_p:n{#2}}
+    {#3} % <compare predicate name>
+    #4 % <compare operator>
+    #2 % <unsorted list>
+    \q_recursion_tail
+    \q_recursion_stop
+  } % <second sorted list>
+  {#3} % <compare predicate name>
+  #4 % <operator>
+}
+%    \end{macrocode}
+% \subsection{\textsf{filter}}
+%    \begin{macrocode}
+\msg_new:nnn{@@}{tokenlist-incr}
+{expecting~an~ascending~tokenlist~got~#1~followed~by~#2}
+\cs_new:Npn
+\@@_filter_uniq:nnw
+#1 % <compare predicate>
+#2 % <greatest>
+#3 % <tokenlist>
+\q_recursion_stop
+{ %
+  \quark_if_recursion_tail_stop:n{#3}
+  \@@_filter_uniq_aux:nnw{#1}{#2}#3\q_recursion_stop}
+\cs_new:Npn
+\@@_filter_uniq_aux:nw
+#1 % <compare predicate>
+#2 % <tokenlist head>
+#3 % <tokenlist rest>
+\q_recursion_stop
+{%
+  {#2}
+  \@@_filter_uniq:nnw
+  {#1} % <compare predicate>
+  {#2} #3 % <tokenlist>
+  \q_recursion_stop }
+\cs_new:Npn
+\@@_filter_uniq_aux:nnw
+#1 % <compare predicate>
+#2 % <last>
+#3 % <head token>
+#4 % <rest token>
+\q_recursion_stop
+{ %
+  \bool_if:nTF{\use:c{#1:nNn}{#3}<{#2}}
+  {\msg_error:nnnn{@@}{tokenlist-incr}{#2}{#3}}
+  {%
+    \bool_if:nF
+    {\use:c{#1:nNn}{#3}={#2}}
+% ^^A    {{#3}}
+{\tl_if_single_token:nTF{#3}{#3}{{#3}}}
+}
+\quark_if_recursion_tail_stop:n{#4}
+% ^^A  \@@_filter_uniq:nnw{#1}{#3}#4\q_recursion_stop }
+\@@_filter_uniq:nnw{#1}{#3}#4\q_recursion_stop }
+\cs_new:Npn
+\@@_filter_uniq:nw
+#1 % <compare predicate>
+#2 % <tokenlist>
+{%
+  \quark_if_recursion_tail_stop_do:nn{#2}{\c_empty_tl}
+  \@@_filter_uniq_aux:nw {#1}#2 \q_recursion_stop}
+\cs_new:Npn
+\erw_filter_uniq:nn
+#1 % <compare predicate>
+#2 % <tokenlist>
+{%
+  \@@_filter_uniq_aux:nw
+  {#1} % <compare predicate>
+  #2
+  \q_recursion_tail % <head token>
+  \q_recursion_stop}
+\cs_new:Npn
+\erw_filter_uniq:n
+#1 % <ascending integers>
+{ \erw_filter_uniq:nn{int_compare_p}{#1} }
+\cs_generate_variant:Nn\erw_filter_uniq:nn{ne}
+%    \end{macrocode}
+% \section{\textsf{code}}
+%    \begin{macrocode}
+\keys_define:nn{@@}
+{ clist_map_inline.code:n = \@@_map_inline_clist:nnn#1 }
+\cs_new_protected:Npn
+\@@_map_inline_clist:nnn
+#1 % <clist>
+#2 % <signature>
+#3 % <code>
+{
+  \cs_new_protected:cn
+  {@@_do:#2}{#3}
+  \clist_map_inline:nn
+  {#1}
+  {\use:c{@@_do:#2}##1}  
+}
+\cs_new:Npn
+\erw_parameter:n
+#1 %^^A  <arity>
+{## #1}
+\cs_new:Npn
+\@@_parameter_aux:nn
+#1 % <finish>
+#2 % <start>
+{ \int_step_function:nnN {#2}{#1}\erw_parameter:n}
+\cs_new:Npn
+\erw_parameter:nn
+#1 % <start>
+#2 % <count>
+{%
+  \exp_args:Ne
+  \@@_parameter_aux:nn
+  {\int_eval:n{#1+#2-1}}{#1}}
+\cs_new:Npn
+\erw_argument:nn
+#1 % <position>
+#2 % <signature>
+{\@@_argument:nw{#1}#2\q_recursion_tail\q_recursion_stop}
+\cs_new:Npn
+\@@_argument_unit:nn
+#1 % <position>
+#2 % <n|N>
+{\use:c{@@_argument_#2:w} #1 \q_recursion_stop}
+\cs_new:Npn\@@_argument_n:w #1 \q_recursion_stop{{## #1}}
+\cs_new:Npn\@@_argument_N:w #1 \q_recursion_stop{## #1}
+\cs_new:Npn
+\@@_argument:nw
+#1 % <position>
+#2 % <signature list>
+\q_recursion_stop
+{ \quark_if_recursion_tail_stop:n{#2}
+  \@@_argument:nnw{#1}#2\q_recursion_stop }
+\cs_new:Npn
+\@@_argument:nnw
+#1 % <position>
+#2 % <n|N>
+#3 % <signature rest>
+\q_recursion_stop
+{%
+  \@@_argument_unit:nn{#1}{#2}
+  \exp_args:Ne
+  \@@_argument:nw
+  {\erw_int_incr:n{#1}}#3\q_recursion_stop }
+\makeatletter
+% ^^A https://tex.stackexchange.com/a/614151/112708
+\def\@@_make_group_token_const#1
+{\@@_make_group_token_constAuxi#1\@gobbletwo{}}
+\def\@@_make_group_token_constAuxi#1#
+{#1\@@_make_group_token_constAuxii}
+\def\@@_make_group_token_constAuxii#1
+{\c_group_begin_token
+  \@@_make_group_token_const{#1}
+  \c_group_end_token
+  \@@_make_group_token_constAuxi}
+\makeatother
+\cs_new:Npn
+\@@_code_analyze:nw
+#1 % <accum>
+#2 % <first token>
+#3 % <second token>
+#4 % <third token>
+#5 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#3}{#1}
+  \token_if_parameter:NTF#2
+  {%
+    \token_if_group_begin:NTF#4
+    {%
+      \@@_code_analyze:nn
+      {#1{#3=N}}
+      {#5}
+    }
+    {%
+      \@@_code_analyze:nn
+      {#1{#3=n}}
+      {#4#5}
+    }
+  }
+  {%
+    \@@_code_analyze:nn{#1}{#3#4#5}
+  }
+  \@@_empty:w \q_recursion_stop
+}
+\cs_new:Npn
+\@@_code_analyze:nn
+#1 % <accum>
+#2 % <first token>
+% ^^A <second token>
+% ^^A <third token>
+% ^^A <rest>
+{%
+  \@@_code_analyze:nw
+  {#1} % <accum>
+  #2 % <first token>
+  % <second token>
+  % <third token>
+  % <rest>
+  \q_recursion_stop
+}
+\cs_new:Npn
+\@@_code_analyze_i:n
+#1 % <code-tokenlist>
+{%
+  \exp_args:Ne
+  \@@_code_analyze:nn{\c_empty_tl}
+  {#1
+    \q_recursion_tail
+    \q_recursion_tail
+    \q_recursion_tail
+  }
+}
+\cs_new:Npn
+\@@_code_analyze:n
+#1 %^^A <code>
+{%
+  \exp_args:Ne
+  \@@_code_analyze_i:n
+  { \@@_make_group_token_const{#1} }
+}
+\cs_generate_variant:Nn\@@_code_analyze:n{e}
+\cs_new:Npn
+\erw_code_analyze:n
+#1 %^^A <code>
+{%  
+  \erw_filter_uniq:ne 
+  {erw_key_compare_p}
+  {%
+    \erw_merge_sort:nNe
+    {erw_key_compare_p}<
+    { \@@_code_analyze:n{#1} }
+  }
+}
+\msg_new:nnn{@@}
+{code-adjacent-parameters}
+{code~has~non~adjacent~parameters;~#1}
+\cs_new:Npn
+\@@_signature:n
+#1 % <position signature>
+{%
+  \bool_if:nTF
+  { \erw_compare_recurse_p:nnN{#1}{erw_key_compare_p}< }
+  { \tl_map_function:nN{#1}\erw_keyval_value:n }
+  {%
+    \msg_error:nnn{@@}
+    {code-adjacent-parameters}{#1}
+  }
+}
+\cs_generate_variant:Nn\@@_signature:n{e}
+\cs_new:Npn
+\erw_signature:n
+#1 % <position signature>
+{%
+  \@@_signature:e
+  { \erw_code_analyze:n{#1} }
+}
+%    \end{macrocode}
+% ^^A ---
+%    \begin{macrocode}
+\ProcessKeysOptions{@@}
 \ExplSyntaxOff
 %</package> 
 %    \end{macrocode}
-% 
 % \end{implementation}
-% ^^A% \iffalse
-% ^^A%</package> 
-% ^^A% \fi
 % \Finale
 \endinput

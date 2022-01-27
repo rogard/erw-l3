@@ -5,499 +5,911 @@
 %% The original source files were:
 %%
 %% erw-l3.dtx  (with options: `package')
-%% ----------------------------------------------------------------------------
-%% erw-l3 --- Utilities for LaTeX3 programming
+%% -----------------------------------------------------------------------------
+%% erw-l3 ---  Utilities based on LaTeX3, such as 'merge sort'
 %% Released under the LaTeX Project Public License v1.3c or later
 %% See http://www.latex-project.org/lppl.txt
 %% ----------------------------------------------------------------------------
 %% 
- \NeedsTeXFormat{LaTeX2e}[2020/02/02]
- \RequirePackage{etoolbox}[2019/09/21]
- \RequirePackage{l3keys2e}[2020/03/06]
- \RequirePackage{xparse}[2020/03/06]
+ \NeedsTeXFormat{LaTeX2e}[2021-06-01]
+ \RequirePackage{xparse, l3keys2e, xtemplate}[2021-06-01]
  \ProvidesExplPackage
- {erw-l3}                                                                            % Package name
- {2020/06/04}                                                                        % Release date
- {3.1}                                                                               % Release version
- {erw-l3 --- Utilities for LaTeX3 programming }                                      % Description
-\cs_new:Nn \__erw_cs_name:N
-{
-  \exp_last_unbraced:Nf \use_i:nnn {\cs_split_function:N #1}
+ {erw-l3}                                             % Package name
+ {2022-01-13}                                        % Release date
+ {4.0}                                               % Release version
+ {erw-l3 --- Utilities based on LaTeX3, such as 'merge sort'  }       % Description
+\cs_generate_variant:Nn\int_compare_p:nNn{eNe}
+\cs_generate_variant:Nn\int_eval:n{e}
+\cs_generate_variant:Nn\prg_new_conditional:Nnn{c}
+\cs_generate_variant:Nn\prg_replicate:nn{e}
+\cs_generate_variant:Nn\regex_gset:Nn{c}
+\cs_generate_variant:Nn\regex_log:N{c}
+\cs_generate_variant:Nn\regex_match:NnTF{c}
+\cs_generate_variant:Nn\tl_to_str:n{e}
+\cs_generate_variant:Nn\prop_put:Nnn{Nne}
+\msg_new:nnnn{__erw}{text}{text~is~not~loaded}{load~amsmath}
+\cs_new:Npn \__erw_text:n #1
+{\cs_if_exist:NTF\text{\text{#1}}{\msg_error:nn{__erw}{text}}}
+\cs_new:Npn\__erw_empty:w #1 \q_recursion_stop {\c_empty_tl}
+\cs_new_protected:Nn\erw_keys_set:n{ \keys_set:nn{__erw}{#1} }
+\cs_new_protected:Nn\erw_keys_set:nn{ \keys_set:nn{__erw / #1}{#2} }
+\cs_generate_variant:Nn\erw_apply:Nw{c}
+\cs_new:Npn \erw_identity:n#1{#1}
+\cs_new:Npn \erw_int_incr:n#1{\int_eval:n{#1+1}}
+\cs_new:Npn \erw_swap:nn#1#2{#2#1}
+\cs_generate_variant:Nn \erw_swap:nn{e}
+\cs_new:Npn \erw_name_signature_cs:N #1
+{ \exp_last_unbraced:Ne
+  \__erw_name_signature_cs:nnn{\cs_split_function:N#1}}
+\cs_new:Nn \__erw_name_signature_cs:nnn{{#1}{#2}}
+\msg_new:nnn{erw}{quark-only-tail}
+{requires~tail;~got~'#1';~\msg_line_context:}
+\cs_new:Npn
+\erw_all_q:w
+#1
+\q_recursion_stop
+{%
+  \erw_remove_last_q:w#1\q_recursion_stop
+  \erw_last_q:w#1\q_recursion_stop
 }
-\cs_new:Nn \erw_cs_compose:NnN
-{
-  \erw_cs_set_inline:Nn \g__erw_tl_function:n
-  {
-    #1{##1}#3
-  }
-  \exp_args:Nf\erw_tl_map:n
-  {
-    \tl_reverse:n{#2}
-  }
-}
-\cs_set:Npn \erw_cs_identity:n #1{#1}
-\cs_new_protected:Nn \erw_cs_set_inline:Nn
-{
-  \cs_set:Npn #1 ##1{#2}
-}
-\cs_generate_variant:Nn \erw_cs_set_inline:Nn {cn}
-\cs_new:Nn \erw_cs_gset_inline:Nn
-{
-  \cs_gset:Npn #1 ##1{#2}
-}
-\cs_generate_variant:Nn \erw_cs_gset_inline:Nn {cn}
-\int_new:N \g__erw_csint_int
-\cs_new:Nn \__erw_csint_name: {\erw_csint_name:n{\g__erw_csint_int}}
-\cs_new:Nn \erw_csint:nn
-{
- \exp_args:No \use:c{\erw_csint_name:n{#1}}{#2}
-}
-\cs_new:Nn \erw_csint_name:n {__erw_csint_\int_to_alph:n{#1}:n}
-\cs_new_protected:Nn \erw_csint_new:n
-{
-  \int_incr:N \g__erw_csint_int
-  \exp_args:No
-  \erw_cs_set_inline:cn{\__erw_csint_name:}
-  {
-    \token_if_cs:NTF
-    {#1}
-    {#1{##1}}
-    {#1}
-  }
-}
-\cs_new:Nn \erw_csint_names_braced:nnn
-{
-  \int_step_function:nnnN { #1 }{ #2 }{ #3 } \erw_csint_names_braced:n
-  % TODO \tl_range_braced:nnn?
-}
-\cs_new:Nn \erw_csint_names_braced:n {{\erw_csint_name:n{#1}}}
-\cs_new:Nn \erw_csint_names_braced:
-{
-  \erw_csint_names_braced:nnn{1}{1}{\g__erw_csint_int}
-}
-\cs_new_protected:Nn \erw_csint_reset:
-{
-  \int_zero:N \g__erw_csint_int
-  \tl_set:Nn \__erw_csint_ext_tl{}%^^A TODO remove?
-}
-\cs_set:Npn \__erw_int_range:nnn #1 #2 #3
-{
-  \int_compare:nNnTF
-  {
-    \int_eval:n{#2+1}
-  }>{#3}
-  {
-    {#1}
-  }
-  {
-    \__erw_int_range:nnn
-    {
-      \exp_args:Nx\erw_tl_append_item:nn{#1}
-      {
-        \int_eval:n{#2+1}
-      }
-    }
-    {\int_eval:n{#2+1}}
-    {#3}
-  }
-}
-\cs_new:Nn \erw_int_range:nn
-{
-  \__erw_int_range:nnn {{#1}}{#1}{#2}
-}
-\cs_new:Nn \erw_int_range:n
-{
-  \__erw_int_range:nnn {}{0}{#1}
-}
-\cs_new:Nn \erw_keyval_error:Nn{\msg_error:nnnnn{__erw}{keyval/n}{\erw_keyval_error:Nn}{#1}{#2}}
-\cs_new:Nn \erw_keyval_error:Nnn{\msg_error:nnnnnn{__erw}{keyval/nn}{\erw_keyval_error:Nnn}{#1}{#2}{#3}}
-\cs_new_protected:Nn\erw_keyval_parse:NNNn
-{
-  \cs_set_protected:Nn \__erw_keyval_function:n {#2 #1{##1}}
-  \cs_set_protected:Nn \__erw_keyval_function:nn {#3 #1{##1}{##2}}
-  \keyval_parse:NNn
-  \__erw_keyval_function:n
-  \__erw_keyval_function:nn
-  {#4}
-}
-\cs_new_protected:Npn \erw_lambda:nnn #1 #2 #3
-{
-  \exp_args:NNx
-  #1 \__erw_lambda_expression
-  {#2}
-  {#3}
-  \__erw_lambda_expression
-}
-\msg_new:nnn{__erw}{generic}{#1}
-\msg_new:nnn{__erw}{keyval/nn}{#1#2{#3}{#4};~encountered~key=val~where~only~key~required}
-\msg_new:nnn{__erw}{keyval/n}{#1#2{#3};~encountered~key~~where~only~key=val~required}
-\msg_new:nnn{__erw}{separ}{#1~expects~1~to~3~items,~#2}
-\msg_new:nnn{__erw}{timestamp / base}{Calling~#1,~arg~must~be~'dec|hex'}
-\msg_new:nnn{__erw}{timestamp / period}{Calling~#1,~arg~must~be~'date|time|datetime'}
-\msg_new:nnn{erw}{notset}{#1~not~set}
-\cs_new_protected:Nn \__erw_prop_map_item:NNN
-{
-  \cs_set_protected:Nn \__erw_function:nn
-  {
-    #1 #2 {##1}{##2}
-  }
-  \prop_map_function:NN #3 \__erw_function:nn
-}
-\cs_new_protected:Nn \erw_prop_to_clist:Nn
-{
-  \cs_set:Nn \__erw_keyval_function:n {,\prop_item:Nn#1{##1}}
-  \exp_args:Nf
-  \tl_tail:n
-  {
-    \keyval_parse:NNn
-    \__erw_keyval_function:n
-    \erw_keyval_error:Nnn
-    {#2}
-  }
-}
-\cs_generate_variant:Nn \erw_prop_to_clist:Nn { c }
-\cs_new_protected:Nn \erw_prop_map_item:NNN
-{
-  \prop_if_exist:NTF #2
-  {\__erw_prop_map_item:NNN #1#2#3}
-  {
-    \prop_new:N #2
-    \erw_prop_map_item:NNN #1#2#3
-  }
-}
-\cs_new_protected:Nn\erw_prop_keyval_parse:NNNn
-{
-  \prop_if_exist:NTF#1
-  {\erw_keyval_parse:NNNn #1#2#3{#4}}
-  {
-    \prop_new:N #1
-    \erw_prop_keyval_parse:NNNn#1#2#3{#4}
-  }
-}
-\keys_define:nn{__erw}
-{
-  tl/fold_set_par.tl_gset:N = \g__erw_tl_fold_set_par_tl,
-  tl/fold_set_par.value_required:n = true,
-  tl/fold_set_par.default:n = {Nf},
-  tl/fold_set_par.initial:n = {Nf},
-  tl/fold_apply_par.tl_gset:N = \g__erw_tl_fold_apply_par_tl,
-  tl/fold_apply_par.value_required:n = true,
-  tl/fold_apply_par.default:n = {Nf},
-  tl/fold_apply_par.initial:n = {Nf}
-}
-\cs_new_protected:Nn\erw_option:n
-{
-  \keys_set:nn{__erw}{#1}
-}
-\tl_new:N \g__erw_seq_fold_item_tl
-\cs_new_protected:Nn\__erw_seq_put_right_clist:Nn
-{
-  \cs_set_protected:Nn \__erw_function:n
-  {
-    \seq_put_right:Nn #1{##1}
-  }
-  \keyval_parse:NNn
-  \__erw_function:n
-  \erw_keyval_keyonly:nn
-  {#2}
-}
-\cs_generate_variant:Nn \__erw_seq_put_right_clist:Nn { c }
-\cs_new_protected:Nn\__erw_seq_put_right_prop:NNn
-{
-  \__erw_seq_put_right_clist:Nn #1
-  {\erw_prop_to_clist:Nn #2 {#3}}
-}
-\cs_generate_variant:Nn \__erw_seq_put_right_prop:NNn { cc }
-\cs_new_protected:Nn\erw_seq_put_right_clist:Nn
-{
-  \seq_if_exist:NTF#1
-  {\__erw_seq_put_right_clist:Nn#1{#2}}
-  {\seq_new:N#1\erw_seq_put_right_clist:Nn#1{#2}}
-}
-\cs_generate_variant:Nn \erw_seq_put_right_clist:Nn { c }
-\cs_new_protected:Nn\erw_seq_put_right_prop:NNn
-{
-  \seq_if_exist:NTF#1
-  {\__erw_seq_put_right_prop:NNn#1#2{#3}}
-  {\seq_new:N#1\erw_seq_put_right_prop:NNn#1#2{#3}}
-}
-\cs_generate_variant:Nn \erw_seq_put_right_prop:NNn { cc }
-\cs_new_protected:Nn \erw_seq_fold:NN
-{
-  \seq_get_right:NN #2 \g__erw_seq_fold_item_tl
-  \erw_tl_fold:NN #1 \g__erw_seq_fold_item_tl
-  \seq_put_right:No #2 {\g__erw_seq_fold_item_tl}
-}
-\cs_generate_variant:Nn \erw_seq_fold:NN {cN}
-\cs_new:Nn \erw_seq_use:Nn
-{
-  \exp_last_unbraced:NNf
-  \seq_use:Nnnn #1
-  \erw_tl_separators:n{#2}
-}
-\cs_new:Nn \__erw_sys_date_dec:
-{
-  \int_eval:n
-  {
-    \c_sys_year_int * 10000
-    +\c_sys_month_int * 100
-    +\c_sys_day_int *  1
-  }
-}
-\cs_new:Nn \__erw_sys_date:N{\int_to_hex:n{\__erw_sys_date_dec:}}
-\cs_new:Nn \__erw_sys_date_hex:{\int_to_hex:n{\__erw_sys_date_dec:}}
-\cs_new:Nn \__erw_sys_time_dec:
-{
-  \int_eval:n
-  {
-    \c_sys_hour_int * 100
-    +\c_sys_minute_int * 1
-  }
-}
-\cs_new:Nn\__erw_sys_time_hex:{\int_to_hex:n{\__erw_sys_time_dec:}}
-\cs_new:Nn\__erw_sys_datetime_base:n
-{
-  \int_case:nnTF{#1}
-  {
-    {10}{dec}
-    {16}{hex}
-  }
-  {\c_empty_tl}
-  {\msg_error:nnn{__erw}{timestamp / base}{\__erw_sys_datetime_base:n{#1}}}
-}
-\cs_new:Nn\__erw_sys_datetime_join:nn{\erw_tl_join:nnn{#1}{\g__erw_sys_timestamp_delim_str}{#2}}
-\cs_new:Nn\__erw_sys_datetime_period:n
-{
-  \str_case:nnTF{#1}
-  {
-    {date}{date}
-    {time}{time}
-    {datetime}{datetime}
-  }
-  {\c_empty_tl}
-  {\msg_error:nnn{__erw}{ timestamp / period }{\__erw_sys_datetime_period:n{#1}}}
-}
-\cs_new:Nn\__erw_sys_datetime_dec: {\__erw_sys_datetime_join:nn{\__erw_sys_date_dec:}{\__erw_sys_time_dec:}}
-\cs_new:Nn\__erw_sys_datetime_hex: {\__erw_sys_datetime_join:nn{\__erw_sys_date_hex:}{\__erw_sys_time_hex:}}
-\cs_new:Nn\__erw_sys_jobnametimestamp_prefix:
-{
-  \erw_tl_join:nn
-  {\c_sys_jobname_str}
-  {\g__erw_sys_timestamp_delim_str}
-}
-\cs_new:Nn\__erw_sys_jobnametimestamp:nn
-{
-  \erw_tl_join:nn
-  {\__erw_sys_jobnametimestamp_prefix:}
-  {\erw_sys_timestamp:nn{#1}{#2}}
-}
-\cs_new:Nn\__erw_sys_jobnametimestamp:
-{
-  \erw_tl_join:nn
-  {\__erw_sys_jobnametimestamp_prefix:}
-  {\erw_sys_timestamp:}
-}
-\cs_new:Nn\__erw_sys_timestamp:nn
-{
-  \exp_args:No
-  \use:c{__erw_sys_\__erw_sys_datetime_period:n{#1}_\__erw_sys_datetime_base:n{#2}:}
-}
-\cs_new_protected:Nn \__erw_sys_set_delim:nn
-{
-  \use:c{tl_gset:N#1}
-  \g__erw_sys_timestamp_delim_str{#2}
-}
-\keys_define:nn{__erw}
-{
-  sys / timestamp_delim .code:n =
-  {
-    \exp_last_unbraced:No
-    \__erw_sys_set_delim:nn{n}{#1}
-  },
-  sys / timestamp_delim  .value_required:n = true,
-  sys / timestamp_delim  .default:n = {-},
-  sys / timestamp_delim  .initial:n = {-}
-}
-\cs_new:Nn\erw_sys_jobnametimestamp:nn{\__erw_sys_jobnametimestamp:nn{#1}{#2}}
-\cs_new:Nn\erw_sys_jobnametimestamp:{\__erw_sys_jobnametimestamp:}
-\cs_new:Nn\erw_sys_timestamp_delimiter:
-{
-  \use:N \g__erw_sys_timestamp_delim_str
-}
-\cs_new:Nn\erw_sys_timestamp:nn
-{
-  \__erw_sys_timestamp:nn{#1}{#2}
-}
-\cs_new:Nn\erw_sys_timestamp:
-{
-  \__erw_sys_timestamp:nn{datetime}{16}
-}
-\tl_new:N \g__erw_tl_compose_tl
-\cs_new_protected:Nn \g__erw_tl_function:n
-{
-  \msg_error:nnn
-  {erw}
-  {notset}
-  {\g__erw_tl_function:n}
-}
-\cs_set_protected:Nn \__erw_tl_map:nn
-{
+\cs_new:Npn
+\erw_remove_first_q:w
+#1 % <tokenlist ending with recursion tail>
+\q_recursion_stop
+{\quark_if_recursion_tail_stop:n{#1}
+  \__erw_remove_first_q:nw#1\q_recursion_stop}
+\cs_new:Npn
+\__erw_remove_first_q:nw
+#1 % <head>
+#2 % <rest>
+\q_recursion_stop
+{\erw_remove_last_q:w#2\q_recursion_stop
+  \erw_last_q:w#2\q_recursion_stop}
+\cs_new:Npn
+\erw_first_q:w
+#1
+\q_recursion_stop
+{%
   \quark_if_recursion_tail_stop:n{#1}
-  \g__erw_tl_function:n{#1}  \__erw_tl_map:nn{#2}
+  \__erw_first_q:enw{ \tl_if_head_is_group_p:n{#1}}#1\q_recursion_stop }
+\cs_new:Npn
+\__erw_first_q:nnw
+#1 % <head is group>
+#2 % <head>
+#3 % <rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF{#1}{{#2}}{#2}
 }
-\cs_set_protected:Nn \__erw_tl_map_thread_at:Nnn
-{
-  #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
+\cs_generate_variant:Nn\__erw_first_q:nnw{e}
+\cs_new:Npn
+\erw_remove_last_q:w #1 \q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop:n{#1}
+  \__erw_remove_last_q:ew{\tl_if_head_is_group_p:n{#1}}#1\q_recursion_stop }
+\cs_new:Npn
+\__erw_remove_last_q:nw
+#1 % <head is group>
+#2 % <tokenlist>
+\q_recursion_stop
+{ \__erw_remove_last_q:nnw{#1}#2\q_recursion_stop }
+\cs_generate_variant:Nn\__erw_remove_last_q:nw{e}
+\cs_new:Npn
+\__erw_remove_last_q:nnw
+#1 % <head is group>
+#2 % <head>
+#3 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop:n{#3}
+  \bool_if:nTF{#1}{{#2}}{#2}
+  \__erw_remove_last_q:ew {\tl_if_head_is_group_p:n{#3}} #3 \q_recursion_stop
 }
-\cs_set_protected:Nn \__erw_tl_map_thread_at:Nnnn
-{
-  #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-  {\exp_args:Nf\tl_item:nn {#4} {#2} }
+\cs_generate_variant:Nn\__erw_remove_last_q:nnw{e}
+\cs_new:Npn
+\erw_last_q:w #1 \q_recursion_stop
+{\quark_if_recursion_tail_stop:n{#1}
+  \__erw_last_q:ew{\tl_if_head_is_group_p:n{#1}}#1\q_recursion_stop}
+\cs_new:Npn
+\__erw_last_q:nw
+#1 % <head is group>
+#2 % <tokenlist>
+\q_recursion_stop
+{ \__erw_last_q:nnw{#1}#2\q_recursion_stop }
+\cs_generate_variant:Nn\__erw_last_q:nw{e}
+\cs_new:Npn
+\__erw_last_q:nnw
+#1 % <head is group>
+#2 % <head>
+#3 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#3}{ \bool_if:nTF{#1}{{#2}}{#2} }
+  \__erw_last_q:ew {\tl_if_head_is_group_p:n{#3}} #3 \q_recursion_stop
 }
-\cs_set_protected:Nn \__erw_tl_map_thread_at:Nnnnn
-{
-  #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-  {\exp_args:Nf\tl_item:nn {#4} {#2} }
-  {\exp_args:Nf\tl_item:nn {#5} {#2} }
+\cs_generate_variant:Nn\__erw_last_q:nnw{e}
+\msg_new:nnn{__erw}{predicate-empty}
+{empty~expression~in~predicate}
+\prg_new_conditional:Npnn
+\erw_and_tl:nn
+#1 % <predicate expression>
+#2 % <tokens>
+{p}
+{%^^A
+  \__erw_and_tl:nw {#1}#2 \q_recursion_tail\q_recursion_stop
 }
-\cs_set_protected:Nn \__erw_tl_map_thread_at:Nnnnnn
-{
-  #1
-  {\exp_args:Nf\tl_item:nn {#3} {#2} }
-  {\exp_args:Nf\tl_item:nn {#4} {#2} }
-  {\exp_args:Nf\tl_item:nn {#5} {#2} }
-  {\exp_args:Nf\tl_item:nn {#6} {#2} }
+\cs_new:Npn
+\__erw_and_tl:nw
+#1 % <predicate expression>
+#2 % <value>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#2}
+  {  \prg_return_true: }
+  \__erw_and_tl:nnw
+  {#1} % <predicate expression>
+  #2 % <value>
+  \q_recursion_stop
 }
-\cs_new:Nn \__erw_tl_separators:nn
-{
-  \int_case:nnTF {#1}
-  {
-    {1}
-    { \prg_replicate:nn{ 3 }{#2} }
-    {2}
-    {
-      { \use_ii:nn #2 }
-      { \use_i:nn #2 }
-      { \use_i:nn #2 \use_ii:nn #2 }
-    }
-    {3}{#2}
-  }
-  { \c_empty_tl }
-  {
-    \msg_error:nnnn { __erw }
-    { separ }
-    { \__erw_tl_separators:nn }
-    {#2}
-  }
-}
-\cs_generate_variant:Nn \__erw_tl_separators:nn { e }
-\cs_new:Nn \erw_tl_append_item:nn
-{
+\cs_new:Npn
+\__erw_and_tl:nnw
+#1 % <predicate expression>
+#2 % <value>
+#3 % <rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF
   {#1{#2}}
+  {\__erw_and_tl:nw{#1}#3\q_recursion_stop}
+  { \prg_return_false: }
 }
-\cs_new:Nn \erw_tl_fold:NN
-{
-  \use:c{tl_set:\g__erw_tl_fold_set_par_tl}
-  #2
-  {
-    \use:c{exp_args:\g__erw_tl_fold_apply_par_tl}{#1}{#2}
+\cs_new:Npn \__erw_new_compare_p:nnn
+#1 % <name>
+#2 % <signature>
+#3 % <code>
+{%
+  \prg_new_conditional:cnn{#1:#2}
+  {p}
+  {%
+    \bool_if:nTF
+    {#3}
+    {\prg_return_true:}
+    {\prg_return_false:}
   }
 }
-\cs_generate_variant:Nn \erw_tl_fold:NN {cN}
-\cs_new:Nn \erw_tl_gset_function:N
+\keys_define:nn{ __erw }
 {
-  \erw_cs_gset_eq:NN \g__erw_tl_function:n #1
+  new_compare_p.code:n = {\__erw_new_compare_p:nnn#1}
 }
-\cs_new:Nn \erw_tl_gset_function:n
-{
-  \erw_cs_gset_inline:Nn \g__erw_tl_function:n {#1}
+\erw_keys_set:n
+{%
+  new_compare_p =
+  {erw_compare} % <name>
+  {nNnNn}
+  { \__erw_compare:eecN{ #2{#3} }{ #2{#5} }{ #1:nNn }#4 }
 }
-\cs_new:Nn \erw_tl_last_item:n
-{
-  \exp_args:Nof \tl_item:nn
-  {#1}
-  {
-    \tl_count:n{#1}
+\cs_new:Npn
+\__erw_compare:nnNN
+#1 % <first>
+#2 % <second>
+#3 % <predicate>
+#4 % <operator>
+{ #3{ #1 }#4{ #2 } }
+\cs_generate_variant:Nn\__erw_compare:nnNN{eec}
+\erw_keys_set:n
+{%
+  new_compare_p =
+  {erw_compare_recurse} % <name>
+  {nnN}
+  { \__erw_compare_recurse:nnN{#1}{#2}#3 }
+}
+\cs_new:Npn
+\__erw_compare_recurse:nnN
+#1 % <tokenlist>
+#2 % <compare predicate name>
+#3 % <operator>
+{%
+  \erw_compare_recurse_p:nnNN
+  {#1} % <tokenlist>
+  {#2} % <compare predicate name>
+  \erw_identity:n % <function>
+  #3 % <operator>
+}
+\erw_keys_set:n
+{%
+  new_compare_p =
+  {erw_compare_recurse} % <name>
+  {nnNN}
+  { \__erw_compare_recurse:nnNN{#1}{#2}#3#4 }
+}
+\cs_new:Npn
+\__erw_compare_recurse:nnNN
+#1 % <tokenlist>
+#2 % <compare predicate name>
+#3 % <function>
+#4 % <operator>
+{ \__erw_compare_recurse:nNNw {#2}#3#4#1 \q_recursion_tail\q_recursion_stop }
+\cs_new:Npn
+\__erw_compare_recurse:nNNw
+#1 % <compare predicate name>
+#2 % <convert>
+#3 % <operator>
+#4 % <tokenlist>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#4}{\c_true_bool}
+  \__erw_compare_recurse:nNNnw{#1}{#2}{#3}#4\q_recursion_stop
+}
+\cs_new:Npn
+\__erw_compare_recurse:nNNnw
+#1 % <compare predicate name>
+#2 % <convert>
+#3 % <operator>
+#4 % <head>
+#5 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#5}{\c_true_bool}
+  \__erw_compare_recurse:nNNnnw
+  {#1} % <compare predicate name>
+  #2 % <convert>
+  #3 % <operator>
+  {#4} % <head>
+  #5 % <rest>
+  \q_recursion_stop
+}
+\cs_new:Npn
+\__erw_compare_recurse:nNNnnw
+#1 % <compare predicate name>
+#2 % <convert>
+#3 % <operator>
+#4 % <fisrt>
+#5 % <second>
+#6 % <rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF
+  { \erw_compare_p:nNnNn{#1}#2{#4}#3{#5} }
+  {%
+    \__erw_compare_recurse:nNNnw
+    {#1} % <compare predicate name>
+    #2 % <convert>
+    #3 % <operator>
+    {#5} % <head>
+    #6 % <rest>
+    \q_recursion_stop
   }
+  {\c_false_bool}
 }
-\cs_new:Nn \erw_tl_join:nn{#1#2}
-\cs_new:Nn \erw_tl_join:nnn{#1#2#3}
-\cs_new:Nn \erw_tl_join:nnnn{#1#2#3#4}
-\cs_new:Nn \erw_tl_join:nnnnn{#1#2#3#4#5}
-\cs_new_protected:Nn \erw_tl_map:n
-{
-  \__erw_tl_map:nn#1\q_recursion_tail\q_recursion_stop\q_recursion_tail\q_recursion_stop
+\erw_keys_set:n
+{%
+  new_compare_p =
+  {erw_int_incr}
+  {nn}
+  {\exp_args:Ne
+    \int_compare_p:nNn{ \int_eval:n{#1+1} } = {#2} }
 }
-\cs_new_protected:Nn \erw_tl_map:Nn
+\cs_new:Npn\__erw_keyval_key:w #1 = #2 \q_recursion_stop{#1}
+\cs_new:Npn\__erw_keyval_value:w #1 = #2 \q_recursion_stop{#2}
+\cs_new:Npn \erw_keyval_key:n#1{\__erw_keyval_key:w #1 \q_recursion_stop}
+\cs_new:Npn \erw_keyval_value:n#1{\__erw_keyval_value:w #1 \q_recursion_stop}
+\cs_new:Npn \erw_keyval:nn#1#2{ #1 = #2 }
+\erw_keys_set:n
 {
-  \cs_set_eq:NN \g__erw_tl_function:n #1
-  \erw_tl_map:n{#2}
+  new_compare_p = {erw_key_compare}
+  {nNn}{ \erw_compare_p:nNnNn
+    {int_compare_p}\erw_keyval_key:n{#1}#2{#3} },
+  new_compare_p = {erw_key_compare}
+  {n}{ \erw_compare_recurse_p:nnNN{#1}
+    {int_compare_p}\erw_keyval_key:n< }
 }
-\cs_new_protected:Nn \erw_tl_map_inline:nn
+\cs_new_protected:Npn
+\__erw_keyval_dispatch_build:nn
+#1 % <|_protected>
+#2 % <ext>
 {
-  \erw_cs_set_inline:Nn \g__erw_tl_function:n {#1}
-  \erw_tl_map:n{#2}
+  \use:c{cs_new#1:cpn}
+  {erw_keyval_dispatch#2:NNn}
+  ##1 % <unary>
+  ##2 % <binary>
+  ##3 % <keyval list>
+  { \use:c{__erw_keyval_dispatch#2:NNw}##1##2##3=\q_recursion_tail\q_recursion_stop }
+  \use:c{cs_new#1:cpn}
+  {__erw_keyval_dispatch#2:NNw}##1##2##3=##4\q_recursion_stop
+  { \quark_if_recursion_tail_stop_do:nn{##4}{##1{##3}}
+    \use:c{__erw_keyval_dispatch#2:Nw}##2##3=##4\q_recursion_stop }
+  \use:c{cs_new#1:cpn}
+  {__erw_keyval_dispatch#2:Nw}##1##2=##3=\q_recursion_tail\q_recursion_stop
+  {##1{##2}{##3}}
 }
-\cs_new:Nn \erw_tl_repeat:nn
-{
-  \int_step_inline:nnnn{1}{1}{#1}{#2}
+\__erw_keyval_dispatch_build:nn{}{}
+\__erw_keyval_dispatch_build:nn{_protected}{_protected}
+\cs_new:Npn
+\erw_remove_first:n
+#1 % <tokenlist>
+{\erw_remove_first_q:w#1\q_recursion_tail\q_recursion_stop}
+\cs_generate_variant:Nn\erw_remove_first:n{e}
+\cs_new:Npn
+\erw_remove_last:n
+#1 % <tokenlist>
+{\erw_remove_last_q:w#1\q_recursion_tail\q_recursion_stop}
+\cs_generate_variant:Nn\erw_remove_last:n{e}
+\cs_new:Npn
+\erw_first:n
+#1
+{\erw_first_q:w#1\q_recursion_tail\q_recursion_stop}
+\cs_generate_variant:Nn\erw_first:n{e}
+\cs_new:Npn
+\erw_last:n
+#1 % <tokenlist>
+{\erw_last_q:w#1\q_recursion_tail\q_recursion_stop}
+\cs_generate_variant:Nn\erw_last:n{e}
+\cs_new:Npn
+\erw_adjacent_insert:nn
+#1 % <list>
+#2 % <separator>
+{%
+  \erw_first:n{#1}
+  \erw_swap:en
+  { \erw_remove_first:n{#1} }
+  {%
+    \__erw_adjacent_insert:nw
+    {#2} % <separator>
+  }
+  \q_recursion_tail
+  \q_recursion_stop
 }
-\cs_new:Nn \erw_tl_split:nnn
+\cs_generate_variant:Nn\erw_adjacent_insert:nn{e}
+\cs_new:Npn
+\__erw_adjacent_insert:nw
+#1 % <separator>
+#2 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop:n{#2}
+  \__erw_adjacent_insert:new {#1}{\tl_if_head_is_group_p:n{#2}}#2 \q_recursion_stop
+}
+\cs_new:Npn
+\__erw_adjacent_insert:nnw
+#1 % <separator>
+#2 % <head is group>
+#3 % <head>
+#4 % <rest>
+\q_recursion_stop
+{%
+  #1\bool_if:nTF{#2}{{#3}}{#3}
+  \__erw_adjacent_insert:nw{#1}#4\q_recursion_stop
+}
+\cs_generate_variant:Nn\__erw_adjacent_insert:nnw{ne}
+\cs_new:Npn
+\erw_clist_tl:nn
+#1 % <bool>
+#2 % <list>
+{ \erw_clist_tl:nnw {#1} #2 \q_recursion_tail\q_recursion_stop }
+\cs_new:Npn
+\erw_clist_tl:nnw #1 #2\q_recursion_stop
+{\quark_if_recursion_tail_stop:n{#2}
+  \erw_clist_tl:nenw {#1}
+  {\tl_if_head_is_group_p:n{#2}} #2 \q_recursion_stop}
+\cs_generate_variant:Nn\erw_clist_tl:nnw{ne}
+\cs_new:Npn
+\erw_clist_tl:nnnw
+#1 % <bool>
+#2 % <head is group>
+#3 % <head>
+#4 % <rest>
+\q_recursion_stop
 {
-  \tl_head:n{#1}
-  \use:c{exp_args:#3} \tl_map_inline:nn
-  {
-    \tl_tail:n
-    {
-      #1
+  \quark_if_recursion_tail_stop_do:nn{#4}
+  {%
+    \bool_if:nTF
+    {\bool_lazy_and_p:nn{#1}{#2}}
+    {{#3}}{#3}
+  }
+  \bool_if:nTF{\bool_lazy_and_p:nn{#1}{#2}}
+  {{#3}}{#3},
+  \erw_clist_tl:nnw {#1} #4 \q_recursion_stop
+}
+\cs_generate_variant:Nn\erw_clist_tl:nnnw{ne}
+\prg_new_conditional:Npnn
+\erw_if_in_clist:nn
+#1 % <value>
+#2 % <clist>
+{p}
+{ \__erw_clist_if_in:nw {#1} #2, \q_recursion_tail \q_recursion_stop }
+\cs_new:Npn
+\__erw_clist_if_in:nw #1 #2 \q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop:n{#2}
+  \__erw_clist_if_in:nnw {#1} #2 \q_recursion_stop
+}
+\cs_new:Nn
+\__erw_clist_if_in:nn
+{\__erw_clist_if_in:nw{#1} #2 \q_recursion_stop}
+\cs_new:Npn
+\__erw_clist_if_in:nnw #1 #2, #3 \q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#3}
+  {%
+    \str_if_eq:nnTF{#1}{#2}
+    {\prg_return_true:}{\prg_return_false:}
+  }
+  \str_if_eq:nnTF{#1}{#2}
+  {\prg_return_true:}
+  {\__erw_clist_if_in:nw {#1} #3 \q_recursion_stop}
+  \__erw_empty:w\q_recursion_stop
+}
+\cs_new:Npn
+\erw_split_even:n
+#1 % <tokenlist>
+{%
+  \tl_if_empty:nF{#1}
+  {%
+    \exp_last_unbraced:Ne
+    \__erw_split_even:nnnw
+    {%
+      {\__erw_split_even_threshold:n{#1}} % <count>
+      {\tl_if_head_is_group_p:n{#1}} % <head is group>
     }
-  }{#2##1}
+    #1 % <tokenlist>
+    \q_recursion_tail
+    \q_recursion_stop
+  }
 }
-\cs_new:Nn \erw_tl_split:nn
-{
-  \erw_tl_split:nnn{#1}{#2}{Nf}
+\cs_generate_variant:Nn\erw_split_even:n{e}
+\cs_new:Npn
+\__erw_split_even_threshold:n
+#1 % <tokenlist>
+{\exp_args:Ne
+  \int_div_round:nn{\tl_count:n{#1}}{2}}
+\cs_new:Npn
+\__erw_split_even:nnnw
+#1 % <threshold>
+#2 % <head is group>
+#3 % <head>
+#4 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#4}
+  { { \bool_if:nTF{#2}{{#3}}{#3} }{} }
+  \exp_last_unbraced:Ne
+  \__erw_split_even:nnnnw
+  {%
+    {1} % <left size>
+    { \tl_if_head_is_group_p:n{#4} }
+    {#1} % <threshold count>
+    { \bool_if:nTF{#2}{{#3}}{#3} } % <left list>
+  }
+  #4 % <right list>
+  \q_recursion_stop
 }
-\cs_new_protected:Nn \erw_tl_map_thread_at:Nnn
+\cs_new:Npn
+\__erw_split_even:nnnnw
+#1 % <left size>
+#2 % <right head is group>
+#3 % <threshold count>
+#4 % <left list>
+#5 % <right head>
+#6 % <right rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF
+  { \int_compare_p:nNn {#1}<{#3} }
+  {%
+    \exp_last_unbraced:Ne
+    \__erw_split_even:nnnnw
+    {
+      { \int_eval:n{#1+1} } % <left size>
+      { \tl_if_head_is_group_p:n{#6} } % <right head is group>
+      {#3} % <threshold count>
+      {#4\bool_if:nTF{#2}{{#5}}{#5}} % <left list>
+    }
+    #6
+    \q_recursion_stop
+  }
+  {%
+    {#4}
+    {%
+      \bool_if:nTF{#2}{{#5}}{#5}
+      \erw_remove_last_q:w#6\q_recursion_stop\erw_last_q:w#6\q_recursion_stop}
+  }
+}
+\cs_new:Npn
+\erw_thread_sort:nnNn
+#1 % <first sorted list>
+#2 % <second sorted list>
+#3 % <compare predicate name>
+#4 % <compare operator>
+{%
+  \__erw_thread_sort:nNnnn
+  {#3} % <compare predicate name>
+  #4 % <compare operator>
+  {\c_empty_tl} % <accum>
+  {#1}
+  {#2}
+}
+\cs_generate_variant:Nn\erw_thread_sort:nnNn{ee}
+\cs_new:Npn
+\__erw_thread_sort:nNnnn
+#1 % <compare predicate name>
+#2 % <compare operator>
+#3 % <sorted>
+#4 % <first>
+#5 % <second>
+{%
+  \__erw_thread_sort:nNnww
+  {#1} % <compare predicate name>
+  {#2} % <compare operator>
+  {#3} % <sorted>
+  #4 \q_recursion_tail% <first>
+  \q_stop
+  #5 \q_recursion_tail% <second>
+  \q_recursion_stop
+}
+\cs_generate_variant:Nn\__erw_thread_sort:nNnnn{nNeee}
+\cs_new:Npn
+\__erw_thread_sort:nNnww
+#1 % <compare predicate name>
+#2 % <compare operator>
+#3 % <sorted>
+#4 % <first>
+\q_stop
+#5 % <second>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#4}
+  { #3 \erw_all_q:w #5 \q_recursion_stop }
+  \quark_if_recursion_tail_stop_do:nn{#5}
+  { #3 \erw_all_q:w #4 \q_recursion_stop }
+  \__erw_thread_sort:nNneeww
+  {#1}#2{#3}
+  { \tl_if_head_is_group_p:n{#4} }
+  { \tl_if_head_is_group_p:n{#5} }
+  #4\q_stop
+  #5\q_recursion_stop
+}
+\cs_new:Npn
+\__erw_thread_sort:nNnnnww
+#1 % <compare predicate name>
+#2 % <compare operator>
+#3 % <sorted>
+#4 % <head is begin>
+#5 % <head is begin>
+#6 % <first head>
+#7 % <first rest>
+\q_stop
+#8 % <second head>
+#9 % <second rest>
+\q_recursion_stop
+{%
+  \bool_if:nTF
+  { \use:c{#1:nNn}{#6}#2{#8} }
+  {%
+    \__erw_thread_sort:nNeee
+    {#1}
+    #2
+    {#3\bool_if:nTF{#4}{{#6}}{#6}}
+    {\erw_all_q:w#7\q_recursion_stop}
+    {\bool_if:nTF{#5}{{#8}}{#8}\erw_all_q:w#9\q_recursion_stop}
+  }
+  {%
+    \__erw_thread_sort:nNeee
+    {#1}
+    #2
+    {#3\bool_if:nTF{#5}{{#8}}{#8}}
+    {\bool_if:nTF{#4}{{#6}}{#6}\erw_all_q:w#7\q_recursion_stop}
+    {\erw_all_q:w#9\q_recursion_stop}
+  }
+}
+\cs_generate_variant:Nn\__erw_thread_sort:nNnnnww{nNnee}
+\cs_new:Npn
+\erw_merge_sort:nNn
+#1 % <compare predicate name>
+#2 % <compare operator>
+#3 % <unsorted list>
+{%
+  \tl_if_empty:nF{#3}
+  {%
+    \__erw_sort_merge:enNw
+    {\tl_if_head_is_group_p:n{#3}} % <head is group>
+    {#1} % <compare predicate name>
+    #2 % <compare operator>
+    #3 % <unsorted list>
+    \q_recursion_tail
+    \q_recursion_stop
+  }
+}
+\cs_generate_variant:Nn\erw_merge_sort:nNn{nNe}
+\cs_new:Npn
+\__erw_sort_merge:nnNw
+#1 % <head is group>
+#2 % <compare predicate name>
+#3 % <compare operator>
+#4 % <unsorted list head>
+#5 % <unsorted list rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#5}
+  { \bool_if:nTF{#1}{{#4}}{#4} }
+  \exp_last_unbraced:Ne
+  \__erw_sort_merge:nnnN
+  {%
+    \erw_split_even:e
+    {%
+      \bool_if:nTF{#1}{{#4}}{#4}
+      \erw_all_q:w#5\q_recursion_stop
+    }
+  } % {<first sorted list>}{<second sorted list>}
+  {#2} % <compare predicate name>
+  #3 % <compare operator>
+  \__erw_empty:w \q_recursion_stop
+}
+\cs_generate_variant:Nn\__erw_sort_merge:nnNw{e}
+\cs_new:Npn
+\__erw_sort_merge:nnnN
+#1 % <left unsorted list>
+#2 % <right unsorted list>
+#3 % <compare predicate name>
+#4 % <compare operator>
+{%
+  \erw_thread_sort:eeNn
+  {%
+    \__erw_sort_merge:enNw
+    {\tl_if_head_is_group_p:n{#1}}
+    {#3} % <compare predicate name>
+    #4 % <compare operator>
+    #1 % <unsorted list>
+    \q_recursion_tail
+    \q_recursion_stop
+  } % <first sorted list>
+  {%
+    \__erw_sort_merge:enNw
+    {\tl_if_head_is_group_p:n{#2}}
+    {#3} % <compare predicate name>
+    #4 % <compare operator>
+    #2 % <unsorted list>
+    \q_recursion_tail
+    \q_recursion_stop
+  } % <second sorted list>
+  {#3} % <compare predicate name>
+  #4 % <operator>
+}
+\msg_new:nnn{__erw}{tokenlist-incr}
+{expecting~an~ascending~tokenlist~got~#1~followed~by~#2}
+\cs_new:Npn
+\__erw_filter_uniq:nnw
+#1 % <compare predicate>
+#2 % <greatest>
+#3 % <tokenlist>
+\q_recursion_stop
+{ %
+  \quark_if_recursion_tail_stop:n{#3}
+  \__erw_filter_uniq_aux:nnw{#1}{#2}#3\q_recursion_stop}
+\cs_new:Npn
+\__erw_filter_uniq_aux:nw
+#1 % <compare predicate>
+#2 % <tokenlist head>
+#3 % <tokenlist rest>
+\q_recursion_stop
+{%
+  {#2}
+  \__erw_filter_uniq:nnw
+  {#1} % <compare predicate>
+  {#2} #3 % <tokenlist>
+  \q_recursion_stop }
+\cs_new:Npn
+\__erw_filter_uniq_aux:nnw
+#1 % <compare predicate>
+#2 % <last>
+#3 % <head token>
+#4 % <rest token>
+\q_recursion_stop
+{ %
+  \bool_if:nTF{\use:c{#1:nNn}{#3}<{#2}}
+  {\msg_error:nnnn{__erw}{tokenlist-incr}{#2}{#3}}
+  {%
+    \bool_if:nF
+    {\use:c{#1:nNn}{#3}={#2}}
+{\tl_if_single_token:nTF{#3}{#3}{{#3}}}
+}
+\quark_if_recursion_tail_stop:n{#4}
+\__erw_filter_uniq:nnw{#1}{#3}#4\q_recursion_stop }
+\cs_new:Npn
+\__erw_filter_uniq:nw
+#1 % <compare predicate>
+#2 % <tokenlist>
+{%
+  \quark_if_recursion_tail_stop_do:nn{#2}{\c_empty_tl}
+  \__erw_filter_uniq_aux:nw {#1}#2 \q_recursion_stop}
+\cs_new:Npn
+\erw_filter_uniq:nn
+#1 % <compare predicate>
+#2 % <tokenlist>
+{%
+  \__erw_filter_uniq_aux:nw
+  {#1} % <compare predicate>
+  #2
+  \q_recursion_tail % <head token>
+  \q_recursion_stop}
+\cs_new:Npn
+\erw_filter_uniq:n
+#1 % <ascending integers>
+{ \erw_filter_uniq:nn{int_compare_p}{#1} }
+\cs_generate_variant:Nn\erw_filter_uniq:nn{ne}
+\keys_define:nn{__erw}
+{ clist_map_inline.code:n = \__erw_map_inline_clist:nnn#1 }
+\cs_new_protected:Npn
+\__erw_map_inline_clist:nnn
+#1 % <clist>
+#2 % <signature>
+#3 % <code>
 {
-  \exp_args:Nf\int_case:nnTF
-  {
-    \tl_count:n{#3}
+  \cs_new_protected:cn
+  {__erw_do:#2}{#3}
+  \clist_map_inline:nn
+  {#1}
+  {\use:c{__erw_do:#2}##1}
+}
+\cs_new:Npn
+\erw_parameter:n
+#1 %^^A  <arity>
+{## #1}
+\cs_new:Npn
+\__erw_parameter_aux:nn
+#1 % <finish>
+#2 % <start>
+{ \int_step_function:nnN {#2}{#1}\erw_parameter:n}
+\cs_new:Npn
+\erw_parameter:nn
+#1 % <start>
+#2 % <count>
+{%
+  \exp_args:Ne
+  \__erw_parameter_aux:nn
+  {\int_eval:n{#1+#2-1}}{#1}}
+\cs_new:Npn
+\erw_argument:nn
+#1 % <position>
+#2 % <signature>
+{\__erw_argument:nw{#1}#2\q_recursion_tail\q_recursion_stop}
+\cs_new:Npn
+\__erw_argument_unit:nn
+#1 % <position>
+#2 % <n|N>
+{\use:c{__erw_argument_#2:w} #1 \q_recursion_stop}
+\cs_new:Npn\__erw_argument_n:w #1 \q_recursion_stop{{## #1}}
+\cs_new:Npn\__erw_argument_N:w #1 \q_recursion_stop{## #1}
+\cs_new:Npn
+\__erw_argument:nw
+#1 % <position>
+#2 % <signature list>
+\q_recursion_stop
+{ \quark_if_recursion_tail_stop:n{#2}
+  \__erw_argument:nnw{#1}#2\q_recursion_stop }
+\cs_new:Npn
+\__erw_argument:nnw
+#1 % <position>
+#2 % <n|N>
+#3 % <signature rest>
+\q_recursion_stop
+{%
+  \__erw_argument_unit:nn{#1}{#2}
+  \exp_args:Ne
+  \__erw_argument:nw
+  {\erw_int_incr:n{#1}}#3\q_recursion_stop }
+\makeatletter
+\def\__erw_make_group_token_const#1
+{\__erw_make_group_token_constAuxi#1\@gobbletwo{}}
+\def\__erw_make_group_token_constAuxi#1#
+{#1\__erw_make_group_token_constAuxii}
+\def\__erw_make_group_token_constAuxii#1
+{\c_group_begin_token
+  \__erw_make_group_token_const{#1}
+  \c_group_end_token
+  \__erw_make_group_token_constAuxi}
+\makeatother
+\cs_new:Npn
+\__erw_code_analyze:nw
+#1 % <accum>
+#2 % <first token>
+#3 % <second token>
+#4 % <third token>
+#5 % <rest>
+\q_recursion_stop
+{%
+  \quark_if_recursion_tail_stop_do:nn{#3}{#1}
+  \token_if_parameter:NTF#2
+  {%
+    \token_if_group_begin:NTF#4
+    {%
+      \__erw_code_analyze:nn
+      {#1{#3=N}}
+      {#5}
+    }
+    {%
+      \__erw_code_analyze:nn
+      {#1{#3=n}}
+      {#4#5}
+    }
   }
-  {
-    {1}{ \__erw_tl_map_thread_at:Nnn #1{#2}#3 }
-    {2}{ \__erw_tl_map_thread_at:Nnnn #1{#2}#3 }
-    {3}{ \__erw_tl_map_thread_at:Nnnnn #1{#2}#3 }
-    {4}{ \__erw_tl_map_thread_at:Nnnnnn #1{#2}#3 }
+  {%
+    \__erw_code_analyze:nn{#1}{#3#4#5}
   }
-  {
-    % Do nothing
+  \__erw_empty:w \q_recursion_stop
+}
+\cs_new:Npn
+\__erw_code_analyze:nn
+#1 % <accum>
+#2 % <first token>
+{%
+  \__erw_code_analyze:nw
+  {#1} % <accum>
+  #2 % <first token>
+  % <second token>
+  % <third token>
+  % <rest>
+  \q_recursion_stop
+}
+\cs_new:Npn
+\__erw_code_analyze_i:n
+#1 % <code-tokenlist>
+{%
+  \exp_args:Ne
+  \__erw_code_analyze:nn{\c_empty_tl}
+  {#1
+    \q_recursion_tail
+    \q_recursion_tail
+    \q_recursion_tail
   }
-  {
+}
+\cs_new:Npn
+\__erw_code_analyze:n
+#1 %^^A <code>
+{%
+  \exp_args:Ne
+  \__erw_code_analyze_i:n
+  { \__erw_make_group_token_const{#1} }
+}
+\cs_generate_variant:Nn\__erw_code_analyze:n{e}
+\cs_new:Npn
+\erw_code_analyze:n
+#1 %^^A <code>
+{%
+  \erw_filter_uniq:ne
+  {erw_key_compare_p}
+  {%
+    \erw_merge_sort:nNe
+    {erw_key_compare_p}<
+    { \__erw_code_analyze:n{#1} }
+  }
+}
+\msg_new:nnn{__erw}
+{code-adjacent-parameters}
+{code~has~non~adjacent~parameters;~#1}
+\cs_new:Npn
+\__erw_signature:n
+#1 % <position signature>
+{%
+  \bool_if:nTF
+  { \erw_compare_recurse_p:nnN{#1}{erw_key_compare_p}< }
+  { \tl_map_function:nN{#1}\erw_keyval_value:n }
+  {%
     \msg_error:nnn{__erw}
-    {generic}
-    {erw_tl_map_thread_at:~count~of~#3~not~withing~1~to~4}
+    {code-adjacent-parameters}{#1}
   }
 }
-\cs_new_protected:Nn \erw_tl_map_thread:Nn
-{
-  \int_step_inline:nn
-  {
-    \exp_args:Nf \tl_count:n{ \tl_head:n{#2} }
-  }
-  {
-    \erw_tl_map_thread_at:Nnn #1 {##1} {#2}
-  }
+\cs_generate_variant:Nn\__erw_signature:n{e}
+\cs_new:Npn
+\erw_signature:n
+#1 % <position signature>
+{%
+  \__erw_signature:e
+  { \erw_code_analyze:n{#1} }
 }
-\cs_new:Nn \erw_tl_separators:n
-{
-  \__erw_tl_separators:en{ \tl_count:n{#1} }{#1}
-}
+\ProcessKeysOptions{__erw}
 \ExplSyntaxOff
 %% 
-%% Copyright (C) 2018-2020 by Erwann Rogard
+%% Copyright (C) 2020-2022 by Erwann Rogard
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License (LPPL), either
