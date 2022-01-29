@@ -465,27 +465,6 @@ erw-l3.sty, and erw-l3.pdf.
   {n}{ \erw_compare_recurse_p:nnNN{#1}
     {int_compare_p}\erw_keyval_key:n< }
 }
-%^^A\cs_new_protected:Npn
-%^^A\@@_keyval_dispatch_build:nn
-%^^A#1 % <|_protected>
-%^^A#2 % <ext>
-%^^A{
-%^^A  \use:c{cs_new#1:cpn}
-%^^A  {erw_keyval_dispatch#2:NNn}
-%^^A  ##1 % <unary>
-%^^A  ##2 % <binary>
-%^^A  ##3 % <keyval list>
-%^^A  { \use:c{@@_keyval_dispatch#2:NNw}##1##2##3=\q_recursion_tail\q_recursion_stop }
-%^^A  \use:c{cs_new#1:cpn}
-%^^A  {@@_keyval_dispatch#2:NNw}##1##2##3=##4\q_recursion_stop
-%^^A  { \quark_if_recursion_tail_stop_do:nn{##4}{##1{##3}}
-%^^A    \use:c{@@_keyval_dispatch#2:Nw}##2##3=##4\q_recursion_stop }
-%^^A  \use:c{cs_new#1:cpn}
-%^^A  {@@_keyval_dispatch#2:Nw}##1##2=##3=\q_recursion_tail\q_recursion_stop
-%^^A  {##1{##2}{##3}}
-%^^A}
-%^^A\@@_keyval_dispatch_build:nn{}{}
-%^^A\@@_keyval_dispatch_build:nn{_protected}{_protected}
 %    \end{macrocode}
 % \section{\textsf{op's on list}}
 %    \begin{macrocode}
