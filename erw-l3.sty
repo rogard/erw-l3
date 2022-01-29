@@ -6,7 +6,7 @@
 %%
 %% erw-l3.dtx  (with options: `package')
 %% -----------------------------------------------------------------------------
-%% erw-l3 ---  Utilities based on LaTeX3, such as 'merge sort'
+%% erw-l3 --- Utilities based on LaTeX3, such as 'merge sort'
 %% Released under the LaTeX Project Public License v1.3c or later
 %% See http://www.latex-project.org/lppl.txt
 %% ----------------------------------------------------------------------------
@@ -15,8 +15,8 @@
  \RequirePackage{xparse, l3keys2e, xtemplate}[2021-06-01]
  \ProvidesExplPackage
  {erw-l3}                                             % Package name
- {2022-01-27}                                        % Release date
- {4.1}                                               % Release version
+ {2022-01-28}                                        % Release date
+ {4.2}                                               % Release version
  {erw-l3 --- Utilities based on LaTeX3, such as 'merge sort'  }       % Description
 \cs_generate_variant:Nn\int_compare_p:nNn{eNe}
 \cs_generate_variant:Nn\int_eval:n{e}
@@ -218,27 +218,6 @@
   {n}{ \erw_compare_recurse_p:nnNN{#1}
     {int_compare_p}\erw_keyval_key:n< }
 }
-\cs_new_protected:Npn
-\__erw_keyval_dispatch_build:nn
-#1 % <|_protected>
-#2 % <ext>
-{
-  \use:c{cs_new#1:cpn}
-  {erw_keyval_dispatch#2:NNn}
-  ##1 % <unary>
-  ##2 % <binary>
-  ##3 % <keyval list>
-  { \use:c{__erw_keyval_dispatch#2:NNw}##1##2##3=\q_recursion_tail\q_recursion_stop }
-  \use:c{cs_new#1:cpn}
-  {__erw_keyval_dispatch#2:NNw}##1##2##3=##4\q_recursion_stop
-  { \quark_if_recursion_tail_stop_do:nn{##4}{##1{##3}}
-    \use:c{__erw_keyval_dispatch#2:Nw}##2##3=##4\q_recursion_stop }
-  \use:c{cs_new#1:cpn}
-  {__erw_keyval_dispatch#2:Nw}##1##2=##3=\q_recursion_tail\q_recursion_stop
-  {##1{##2}{##3}}
-}
-\__erw_keyval_dispatch_build:nn{}{}
-\__erw_keyval_dispatch_build:nn{_protected}{_protected}
 \cs_new:Npn
 \erw_remove_first:n
 #1 % <tokenlist>

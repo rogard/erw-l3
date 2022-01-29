@@ -5,7 +5,7 @@
 %</internal> 
 %<*readme> 
 -----------------------------------------------------------------
-##### erw-l3 --- Utilities based on LaTeX3, such as \merge_sort:nNn
+##### erw-l3 --- Utilities based on LaTeX3, such as 'merge sort'
 - Source repository: https://github.com/rogard/erw-l3
 - Released under the LaTeX Project Public License v1.3c or later
 - See http://www.latex-project.org/lppl.txt
@@ -24,7 +24,7 @@
 \askforoverwritefalse
 \preamble
 -----------------------------------------------------------------------------
-erw-l3 ---  Utilities based on LaTeX3, such as 'merge sort' 
+erw-l3 --- Utilities based on LaTeX3, such as 'merge sort'
 Released under the LaTeX Project Public License v1.3c or later
 See http://www.latex-project.org/lppl.txt
 ----------------------------------------------------------------------------
@@ -71,8 +71,8 @@ erw-l3.sty, and erw-l3.pdf.
 %<package> \RequirePackage{xparse, l3keys2e, xtemplate}[2021-06-01]
 %<package> \ProvidesExplPackage
 %<package> {erw-l3}                                             % Package name
-%<package> {2022-01-27}                                        % Release date
-%<package> {4.1}                                               % Release version
+%<package> {2022-01-28}                                        % Release date
+%<package> {4.2}                                               % Release version
 %<package> {erw-l3 --- Utilities based on LaTeX3, such as 'merge sort'  }       % Description
 %<*driver> 
 \documentclass%^^A[show-notes]
@@ -81,7 +81,6 @@ erw-l3.sty, and erw-l3.pdf.
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
-% ^^A\documentclass[full, show-notes]{l3doc}
 % ^^A \listfiles
 \usepackage{amsmath, bookmark, enumitem, mathtools, microtype, tcolorbox, xparse}
 \usepackage[french, german, english]{babel}
@@ -235,8 +234,9 @@ erw-l3.sty, and erw-l3.pdf.
 % \changes{v4.0}{2022/01/27}
 %{Replacing 3.2 altogether (not used by any packages but mine that have been updated accordingly} 
 % \changes{v4.1}{2022/01/27}
-%{Removed commented portion labeled trash (thread), code_analyze, erw_compare_recurse_p:nnN[N], and keyval, as not used.} 
-%
+% {Removed commented portion labeled trash (thread), code_analyze, erw_compare_recurse_p:nnN[N], and keyval, as not used.}
+% \changes{v4.2}{2022/01.28}
+% {Removed \cs[no-index]{__erw_keyval_dispatch_build:nn}}
 % \StopEventually{
 % \clearpage
 % \PrintChanges
@@ -465,27 +465,27 @@ erw-l3.sty, and erw-l3.pdf.
   {n}{ \erw_compare_recurse_p:nnNN{#1}
     {int_compare_p}\erw_keyval_key:n< }
 }
-\cs_new_protected:Npn
-\@@_keyval_dispatch_build:nn
-#1 % <|_protected>
-#2 % <ext>
-{
-  \use:c{cs_new#1:cpn}
-  {erw_keyval_dispatch#2:NNn}
-  ##1 % <unary>
-  ##2 % <binary>
-  ##3 % <keyval list>
-  { \use:c{@@_keyval_dispatch#2:NNw}##1##2##3=\q_recursion_tail\q_recursion_stop }
-  \use:c{cs_new#1:cpn}
-  {@@_keyval_dispatch#2:NNw}##1##2##3=##4\q_recursion_stop
-  { \quark_if_recursion_tail_stop_do:nn{##4}{##1{##3}}
-    \use:c{@@_keyval_dispatch#2:Nw}##2##3=##4\q_recursion_stop }
-  \use:c{cs_new#1:cpn}
-  {@@_keyval_dispatch#2:Nw}##1##2=##3=\q_recursion_tail\q_recursion_stop
-  {##1{##2}{##3}}
-}
-\@@_keyval_dispatch_build:nn{}{}
-\@@_keyval_dispatch_build:nn{_protected}{_protected}
+%^^A\cs_new_protected:Npn
+%^^A\@@_keyval_dispatch_build:nn
+%^^A#1 % <|_protected>
+%^^A#2 % <ext>
+%^^A{
+%^^A  \use:c{cs_new#1:cpn}
+%^^A  {erw_keyval_dispatch#2:NNn}
+%^^A  ##1 % <unary>
+%^^A  ##2 % <binary>
+%^^A  ##3 % <keyval list>
+%^^A  { \use:c{@@_keyval_dispatch#2:NNw}##1##2##3=\q_recursion_tail\q_recursion_stop }
+%^^A  \use:c{cs_new#1:cpn}
+%^^A  {@@_keyval_dispatch#2:NNw}##1##2##3=##4\q_recursion_stop
+%^^A  { \quark_if_recursion_tail_stop_do:nn{##4}{##1{##3}}
+%^^A    \use:c{@@_keyval_dispatch#2:Nw}##2##3=##4\q_recursion_stop }
+%^^A  \use:c{cs_new#1:cpn}
+%^^A  {@@_keyval_dispatch#2:Nw}##1##2=##3=\q_recursion_tail\q_recursion_stop
+%^^A  {##1{##2}{##3}}
+%^^A}
+%^^A\@@_keyval_dispatch_build:nn{}{}
+%^^A\@@_keyval_dispatch_build:nn{_protected}{_protected}
 %    \end{macrocode}
 % \section{\textsf{op's on list}}
 %    \begin{macrocode}
